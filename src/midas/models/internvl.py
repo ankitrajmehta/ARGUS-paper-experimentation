@@ -178,6 +178,27 @@ class InternVLDriveLM:
             model_id, trust_remote_code=True, use_fast=False
         )
 
+    def free_cache(self) -> None:
+        """Release cached allocator blocks.
+
+        Both the CUDA and MPS allocators hold freed blocks for reuse. Across a
+        long sweep that cache grows steadily, and on Apple Silicon -- where GPU
+        and CPU share one pool -- it eventually pushes the process into swap and
+        the run slows to a crawl. Call this between scenes.
+        """
+        if self.device == "cuda":
+            torch.cuda.empty_cache()
+        elif self.device == "mps":
+            torch.mps.empty_cache()
+
+    def memory_gb(self) -> float:
+        """Currently allocated GPU memory, for progress logging."""
+        if self.device == "cuda":
+            return torch.cuda.memory_allocated() / 1e9
+        if self.device == "mps":
+            return torch.mps.current_allocated_memory() / 1e9
+        return 0.0
+
     def _generation_config(self) -> dict:
         cfg = {"max_new_tokens": self.max_new_tokens, "do_sample": self.do_sample}
         if self.do_sample:
@@ -235,9 +256,11 @@ class InternVLDriveLM:
             return_history=True,
         )
 
-        return Reply(
+        reply = Reply(
             long=long,
             short=short,
             action=drivelm.parse_action(short),
             retried=retried,
         )
+        del pixel_values, history
+        return reply

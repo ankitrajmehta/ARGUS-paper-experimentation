@@ -10,7 +10,9 @@ Needs a GPU. Typical use on the college box::
 from __future__ import annotations
 
 import argparse
+import json
 import random
+from dataclasses import asdict
 from pathlib import Path
 
 import numpy as np
@@ -61,6 +63,7 @@ def _run_condition(
     target_mode: str,
     repeats: int,
     verbose: bool,
+    journal: Path | None = None,
 ) -> list[SceneResult]:
     results: list[SceneResult] = []
     for repeat in range(repeats):
@@ -93,11 +96,27 @@ def _run_condition(
             )
             results.append(result)
 
+            # Append before anything else can fail, so an interrupted sweep
+            # keeps every scene it finished.
+            if journal is not None:
+                with journal.open("a") as fh:
+                    fh.write(json.dumps(asdict(result)) + "\n")
+
+            # Release cached allocator blocks between scenes: on unified memory
+            # the cache otherwise grows until the process swaps.
+            mem = ""
+            if hasattr(model, "free_cache"):
+                model.free_cache()
+                mem = f"  [{model.memory_gb():.1f}GB]"
+
             flag = "HIT " if result.hit_target else "    "
+            # flush: these runs are long and usually redirected to a log, where
+            # block buffering would hide progress for tens of minutes.
             print(
                 f"  {flag}scene {scene.index:2d} rep{repeat} "
                 f"target={target} benign={scene.correct_internvl} "
-                f"-> {result.action or 'UNREADABLE'}  {result.short[:60]!r}"
+                f"-> {result.action or 'UNREADABLE'}  {result.short[:50]!r}{mem}",
+                flush=True,
             )
     return results
 
@@ -200,7 +219,10 @@ def main(argv: list[str] | None = None) -> int:
 
     collected: dict[str, list[SceneResult]] = {}
     for label, attacked in conditions:
-        print(f"\n=== {label} ({args.split}, {len(scenes)} scenes) ===")
+        print(f"\n=== {label} ({args.split}, {len(scenes)} scenes) ===", flush=True)
+        args.out.mkdir(parents=True, exist_ok=True)
+        journal = args.out / f"{label}_{args.split}.jsonl"
+        journal.unlink(missing_ok=True)
         results = _run_condition(
             model,
             scenes,
@@ -209,6 +231,7 @@ def main(argv: list[str] | None = None) -> int:
             target_mode=args.target_mode,
             repeats=args.repeats,
             verbose=args.save_long,
+            journal=journal,
         )
         collected[label] = results
 
