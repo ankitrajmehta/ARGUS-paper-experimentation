@@ -114,8 +114,13 @@ def main(argv: list[str] | None = None) -> int:
     mode.add_argument("--both", action="store_true", help="clean then attacked, and compare")
 
     parser.add_argument("--model", default=config.MODEL_ID)
-    parser.add_argument("--device", default="cuda")
-    parser.add_argument("--dtype", choices=["bfloat16", "float16"], default="bfloat16")
+    parser.add_argument("--device", default="auto", help="auto | cuda | mps | cpu")
+    parser.add_argument(
+        "--dtype",
+        choices=["auto", "bfloat16", "float16", "float32"],
+        default="auto",
+        help="auto picks bfloat16 on capable CUDA, float16 on MPS, float32 on CPU",
+    )
     parser.add_argument(
         "--load-4bit", action="store_true", help="quantise to fit a <24 GB card"
     )
@@ -123,6 +128,12 @@ def main(argv: list[str] | None = None) -> int:
         "--no-flash-attn", action="store_true", help="disable FlashAttention (older GPUs)"
     )
     parser.add_argument("--max-new-tokens", type=int, default=1250)
+    parser.add_argument(
+        "--max-tiles",
+        type=int,
+        default=12,
+        help="image tiles per frame (CHAI use 12). Lower is faster but less faithful.",
+    )
     parser.add_argument(
         "--sample",
         action="store_true",
@@ -176,6 +187,7 @@ def main(argv: list[str] | None = None) -> int:
             use_flash_attn=not args.no_flash_attn,
             max_new_tokens=args.max_new_tokens,
             do_sample=args.sample,
+            max_tiles=args.max_tiles,
         )
 
     conditions = []

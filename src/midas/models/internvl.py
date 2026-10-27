@@ -25,6 +25,38 @@ IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 
 
+def resolve_device(requested: str = "auto") -> str:
+    """Pick a device, preferring CUDA then Apple Silicon then CPU."""
+    if requested != "auto":
+        return requested
+    if torch.cuda.is_available():
+        return "cuda"
+    if torch.backends.mps.is_available():
+        return "mps"
+    return "cpu"
+
+
+def resolve_dtype(requested: str, device: str) -> torch.dtype:
+    """Pick a dtype appropriate to the device.
+
+    bfloat16 needs compute capability >= 8.0 on NVIDIA, and its op coverage on
+    Apple's MPS backend is still incomplete, so anything but a capable CUDA card
+    falls back to float16.
+    """
+    if requested != "auto":
+        dtype = {"bfloat16": torch.bfloat16, "float16": torch.float16, "float32": torch.float32}
+        if requested not in dtype:
+            raise ValueError(f"dtype must be auto/bfloat16/float16/float32, got {requested!r}")
+        return dtype[requested]
+
+    if device == "cuda" and torch.cuda.is_bf16_supported():
+        return torch.bfloat16
+    if device == "cpu":
+        # float16 matmuls are not implemented on most CPUs.
+        return torch.float32
+    return torch.float16
+
+
 def _build_transform(input_size: int):
     return T.Compose(
         [
@@ -103,35 +135,45 @@ class InternVLDriveLM:
     def __init__(
         self,
         model_id: str = config.MODEL_ID,
-        device: str = "cuda",
-        dtype: str = "bfloat16",
+        device: str = "auto",
+        dtype: str = "auto",
         load_4bit: bool = False,
         use_flash_attn: bool = True,
         max_new_tokens: int = 1250,
         do_sample: bool = False,
+        max_tiles: int = 12,
     ) -> None:
-        self.device = device
+        # CHAI use max_num=12 with a thumbnail (util/internvl_image_loader.py).
+        # On a 1600x900 frame that is 9 tiles per image, 18 across the two
+        # cameras, ~4600 image tokens. Lowering it trades fidelity for speed.
+        self.max_tiles = max_tiles
+        self.device = resolve_device(device)
+        self.dtype = resolve_dtype(dtype, self.device)
         self.max_new_tokens = max_new_tokens
         self.do_sample = do_sample
 
-        torch_dtype = {"bfloat16": torch.bfloat16, "float16": torch.float16}.get(dtype)
-        if torch_dtype is None:
-            raise ValueError(f"dtype must be bfloat16 or float16, got {dtype!r}")
+        # FlashAttention is a CUDA-only kernel; InternVL's remote code imports it
+        # eagerly when the flag is set, so it has to be off elsewhere.
+        if self.device != "cuda":
+            use_flash_attn = False
 
         kwargs: dict = {
-            "torch_dtype": torch_dtype,
+            "torch_dtype": self.dtype,
             "low_cpu_mem_usage": True,
             "trust_remote_code": True,
             "use_flash_attn": use_flash_attn,
         }
         if load_4bit:
+            if self.device != "cuda":
+                raise ValueError("--load-4bit needs bitsandbytes, which is CUDA-only")
             # Fits an 8B model on a 12 GB card at some quality cost; record in results.
             kwargs["load_in_4bit"] = True
             kwargs["device_map"] = "auto"
 
+        print(f"  device={self.device} dtype={self.dtype} flash_attn={use_flash_attn}")
         self.model = AutoModel.from_pretrained(model_id, **kwargs).eval()
         if not load_4bit:
-            self.model = self.model.to(device)
+            self.model = self.model.to(self.device)
         self.tokenizer = AutoTokenizer.from_pretrained(
             model_id, trust_remote_code=True, use_fast=False
         )
@@ -152,7 +194,7 @@ class InternVLDriveLM:
         pixel_values = []
         num_patches_list = []
         for idx in drivelm.CAMERA_INDICES:
-            tiles = preprocess(images[idx]).to(self.model.dtype).to(self.device)
+            tiles = preprocess(images[idx], max_num=self.max_tiles).to(self.dtype).to(self.device)
             pixel_values.append(tiles)
             num_patches_list.append(tiles.size(0))
         pixel_values = torch.cat(pixel_values, dim=0)
