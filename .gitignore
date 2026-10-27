@@ -15,8 +15,8 @@ results/**/*.png
 results/**/*.jpg
 !results/.gitkeep
 
-# Model weights
-models/
+# Downloaded model weights (anchored: must not match src/midas/models/)
+/models/
 *.ckpt
 *.safetensors
 
