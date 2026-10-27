@@ -9,7 +9,14 @@ torch>=2.1
 torchvision
 transformers>=4.37,<4.50
 accelerate>=0.26
-sentencepiece
+# Pinned: sentencepiece 0.2.x rejects InternVL's tokenizer.model with
+# "INTERNAL: piece must not include null character" even though the file is
+# intact (sha256 matches the hub). 0.1.99 loads it. This also caps Python at
+# 3.11, which has no 0.2-only wheels.
+sentencepiece==0.1.99
+# InternVL's tokenizer is sentencepiece-based and loaded with use_fast=False,
+# which needs protobuf to parse tokenizer.model.
+protobuf
 einops
 timm
 # Only needed for --load-4bit on a <24 GB card.

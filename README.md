@@ -30,12 +30,43 @@ VIRTUAL_ENV=.venv uv pip install -e .     # core, CPU only
 .venv/bin/python -m pytest tests -q       # 16 checks, no GPU needed
 ```
 
-On the GPU box, add the model stack:
+Add the model stack (GPU box or laptop):
 
 ```bash
 ./scripts/check_gpu.sh                    # records VRAM, bf16 support; tells you which flags to use
 VIRTUAL_ENV=.venv uv pip install -r requirements-gpu.txt
 ```
+
+Two pins in `requirements-gpu.txt` are load-bearing; both fail confusingly:
+
+- **`sentencepiece==0.1.99`.** 0.2.x rejects InternVL's `tokenizer.model` with
+  `INTERNAL: piece must not include null character`, even though the file is
+  intact (its sha256 matches the hub). `AutoTokenizer.from_pretrained` swallows
+  the error and returns `False`, so the first symptom is
+  `'bool' object has no attribute 'convert_tokens_to_ids'` deep inside the
+  model's `chat()`. This also caps Python at 3.11.
+- **`protobuf`.** Needed to parse `tokenizer.model` with `use_fast=False`.
+
+### Picking a model size
+
+`--model` takes a hub id or a local directory. Weights, fp16:
+
+| Model | Weights | Runs on |
+|---|---|---|
+| InternVL2.5-1B | 1.9 GB | anything |
+| InternVL2.5-2B | 4.4 GB | 16 GB laptop (used for local development here) |
+| InternVL2.5-4B | 7.4 GB | 16 GB laptop, tight |
+| **InternVL2.5-8B** | **16.2 GB** | **the GPU box — this is CHAI's target and the one to report** |
+
+```bash
+.venv/bin/python -c "from huggingface_hub import snapshot_download; \
+  snapshot_download('OpenGVLab/InternVL2_5-2B', local_dir='models/InternVL2_5-2B', \
+  allow_patterns=['*.json','*.py','*.safetensors','*.txt','*.model'])"
+```
+
+Device and dtype default to `auto`: CUDA then Apple MPS then CPU, with bfloat16
+only on a capable CUDA card and float16 elsewhere. FlashAttention is forced off
+anywhere but CUDA.
 
 ## Usage
 
@@ -50,7 +81,27 @@ VIRTUAL_ENV=.venv uv pip install -r requirements-gpu.txt
 .venv/bin/midas-eval --split train --both            # CHAI "Known" images
 .venv/bin/midas-eval --split test  --both            # CHAI "Transferability" images
 .venv/bin/midas-eval --split train --both --load-4bit   # on a <24 GB card
+
+# Local development on the 2B, Apple Silicon
+.venv/bin/midas-eval --split train --both \
+    --model models/InternVL2_5-2B --max-new-tokens 768 --max-tiles 6
 ```
+
+**Cost.** On an M2 with the 2B at `--max-tiles 6`, one scene takes roughly 80 s,
+so a full `--both` pass over a split is about an hour. `--max-tiles 12` (CHAI's
+setting) is several times slower. Run long passes in the background.
+
+**`--max-new-tokens`.** CHAI use 1250. The 2B finishes all ten questions inside
+768; below about 512 the chain is truncated before the final answer, the reply
+names no action, and the pipeline burns a retry on every scene — a `retried` rate
+near 100% in the summary means this budget is too low, not that the model is
+confused.
+
+**`--max-tiles`.** CHAI use 12, which on a 1600x900 frame is a 4x2 split plus a
+thumbnail: 9 tiles, ~4600 image tokens across the two cameras. Lowering it is the
+main speed lever, but it shrinks the sign too — at 6 tiles the sign is rendered
+at roughly half the linear resolution — so it can understate attack success.
+Report headline numbers at 12.
 
 Results are written to `results/runs/*.json`, one file per condition, each
 carrying the full config needed to reproduce it.
