@@ -1,0 +1,20 @@
+[project]
+name = "midas"
+version = "0.1.0"
+description = "MIDAS - reproducing the CHAI visual sign-injection attack and defending it with activation steering"
+requires-python = ">=3.10"
+dynamic = ["dependencies"]
+
+[project.scripts]
+midas-render = "midas.cli.render_signs:main"
+midas-eval = "midas.cli.run_eval:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }

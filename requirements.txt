@@ -1,0 +1,4 @@
+# Core: data loading, sign rendering, evaluation. CPU-only, runs on any laptop.
+numpy<2
+opencv-python-headless>=4.9
+pillow>=10
