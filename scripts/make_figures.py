@@ -173,7 +173,7 @@ def fig_asr():
     ax.grid(axis="y", color=MUTED, linewidth=0.5, alpha=0.5)
     ax.set_axisbelow(True)
     ax.legend(frameon=False, loc="upper right", fontsize=8.5)
-    ax.set_title("Figure 4  The sign changes the decision on the train split",
+    ax.set_title("Figure 5  The sign changes the decision on the train split",
                  color=INK, fontsize=10, weight="bold", loc="left", pad=8)
     save(fig, "fig4_asr.png")
 
@@ -214,7 +214,7 @@ def fig_probe():
     ax.set_yticks([40, 60, 80, 100]); ax.set_yticklabels(["40%", "60%", "80%", "100%"])
     ax.grid(axis="y", color=MUTED, linewidth=0.5, alpha=0.5); ax.set_axisbelow(True)
     ax.legend(frameon=False, loc="upper left", fontsize=8.5)
-    ax.set_title("Figure 5  The middle layers show which instruction the model follows",
+    ax.set_title("Figure 6  The middle layers show which instruction the model follows",
                  color=INK, fontsize=10, weight="bold", loc="left", pad=8)
     save(fig, "fig5_probe.png")
 
@@ -251,7 +251,7 @@ def fig_sweep():
     ax.set_ylim(0, 100); ax.set_yticks([0, 25, 50, 75, 100])
     ax.set_yticklabels(["0%", "25%", "50%", "75%", "100%"])
     ax.grid(axis="y", color=MUTED, linewidth=0.5, alpha=0.5); ax.set_axisbelow(True)
-    ax.set_title("Figure 6  The defense does not change the result",
+    ax.set_title("Figure 7  The defense does not change the result",
                  color=INK, fontsize=10, weight="bold", loc="left", pad=8)
     save(fig, "fig6_sweep.png")
 
