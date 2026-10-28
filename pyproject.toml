@@ -8,6 +8,8 @@ dynamic = ["dependencies"]
 [project.scripts]
 midas-render = "midas.cli.render_signs:main"
 midas-eval = "midas.cli.run_eval:main"
+midas-activations = "midas.cli.extract_activations:main"
+midas-probes = "midas.cli.train_probes:main"
 
 [build-system]
 requires = ["setuptools>=68"]
