@@ -200,3 +200,27 @@ def test_steerer_ranks_layers_by_probe_accuracy():
     )
     steerer = Steerer(model=None, artifact=art, config=SteerConfig(top_layers=2))
     assert [d.layer for d in steerer.selected()] == [9, 5]
+
+
+def test_clis_do_not_reference_removed_artifact_fields(tmp_path):
+    """The multi-layer refactor renamed artifact.layer -> layer_indices.
+
+    A stale attribute crashes only once a model has loaded, which on this
+    hardware is minutes in; catch it statically instead.
+    """
+    import ast
+    from pathlib import Path
+
+    removed = {"layer", "direction", "subspace", "margin"}
+    offenders = []
+    for path in Path("src/midas/cli").glob("*.py"):
+        tree = ast.parse(path.read_text())
+        for node in ast.walk(tree):
+            if (
+                isinstance(node, ast.Attribute)
+                and node.attr in removed
+                and isinstance(node.value, ast.Name)
+                and node.value.id == "artifact"
+            ):
+                offenders.append(f"{path.name}: artifact.{node.attr}")
+    assert offenders == [], offenders

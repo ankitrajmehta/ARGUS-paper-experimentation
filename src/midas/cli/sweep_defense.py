@@ -65,7 +65,10 @@ def main(argv: list[str] | None = None) -> int:
 
     print(f"loading {args.model} ...")
     model = InternVLDriveLM(model_id=args.model, max_tiles=args.max_tiles)
-    print(f"defense: layer {artifact.layer}, gate layer {artifact.gate_layer}\n")
+    print(
+        f"defense: layers {artifact.layer_indices}, "
+        f"gate layer {artifact.gate_layer}\n"
+    )
 
     # Render once; the images do not change between configurations.
     prepared = []

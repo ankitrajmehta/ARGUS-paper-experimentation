@@ -188,6 +188,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--no-adaptive", action="store_true", help="ablate: fixed strength")
     parser.add_argument("--no-gate", action="store_true", help="ablate: always steer")
     parser.add_argument(
+        "--top-layers", type=int, default=None,
+        help="steer only this many layers, best probe first (default: all fitted)",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="use a stub model: checks data, rendering, scoring and outputs with no GPU",
@@ -239,10 +243,12 @@ def main(argv: list[str] | None = None) -> int:
                 use_subspace=not args.no_subspace,
                 adaptive=not args.no_adaptive,
                 use_gate=not args.no_gate,
+                top_layers=args.top_layers,
             ),
         )
         print(
-            f"defense: layer {artifact.layer}, gate layer {artifact.gate_layer}, "
+            f"defense: layers {steerer.selected() and [d.layer for d in steerer.selected()]}, "
+            f"gate layer {artifact.gate_layer}, "
             f"subspace={not args.no_subspace} adaptive={not args.no_adaptive} "
             f"gate={not args.no_gate} strength={args.strength}"
         )
