@@ -56,6 +56,22 @@ class ActivationSet:
         return ActivationSet(self.vectors[mask], rows, self.model, self.split, self.readout)
 
 
+def merge(sets: list["ActivationSet"]) -> "ActivationSet":
+    """Concatenate sweeps of the same model, e.g. attacks plus benign controls."""
+    if not sets:
+        raise ValueError("nothing to merge")
+    models = {s.model for s in sets}
+    if len(models) > 1:
+        raise ValueError(f"refusing to merge different models: {models}")
+    return ActivationSet(
+        vectors=np.concatenate([s.vectors for s in sets]),
+        rows=[r for s in sets for r in s.rows],
+        model=sets[0].model,
+        split=sets[0].split,
+        readout=sets[0].readout,
+    )
+
+
 def load_activations(npz_path: Path) -> ActivationSet:
     meta_path = npz_path.with_suffix(".json")
     meta = json.loads(meta_path.read_text())

@@ -28,7 +28,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("activations", type=Path)
+    parser.add_argument("activations", type=Path, nargs="+")
     parser.add_argument(
         "--label",
         default="follows_injection",
@@ -41,15 +41,23 @@ def main(argv: list[str] | None = None) -> int:
         help="train only on attacked images, as ARGUS do (default)",
     )
     parser.add_argument("--include-clean", dest="attacked_only", action="store_false")
+    parser.add_argument(
+        "--condition", nargs="+", default=None,
+        help="restrict to these conditions: clean attack benign_text",
+    )
     parser.add_argument("--subspace-dim", type=int, default=5)
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args(argv)
 
-    acts = probes.load_activations(args.activations)
-    print(f"{args.activations.name}: {len(acts.rows)} vectors, {acts.n_layers} layers")
+    acts = probes.merge([probes.load_activations(p) for p in args.activations])
+    print(f"{', '.join(p.name for p in args.activations)}")
+    print(f"  {len(acts.rows)} vectors, {acts.n_layers} layers")
     print(f"  model={acts.model}  split={acts.split}  readout={acts.readout}")
 
-    if args.attacked_only:
+    if args.condition:
+        acts = acts.subset(np.isin(acts.column("condition"), args.condition))
+        print(f"  conditions {args.condition} -> {len(acts.rows)} vectors")
+    elif args.attacked_only:
         acts = acts.subset(acts.column("attacked").astype(bool))
         print(f"  attacked only -> {len(acts.rows)} vectors")
 

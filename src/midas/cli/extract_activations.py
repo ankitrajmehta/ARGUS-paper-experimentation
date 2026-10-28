@@ -20,8 +20,8 @@ from pathlib import Path
 
 import numpy as np
 
-from midas import data, signs
-from midas.config import AttackConfig
+from midas import controls, data, signs
+from midas.config import AttackConfig, SignSpec
 
 ANSWER_TEXT = {"a)": "a) proceed", "b)": "b) brake"}
 
@@ -47,6 +47,18 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--no-clean", action="store_true", help="skip unattacked copies")
+    parser.add_argument(
+        "--no-attack", action="store_true",
+        help="skip attack signs, e.g. to add controls to an existing sweep",
+    )
+    parser.add_argument(
+        "--controls",
+        type=int,
+        default=0,
+        help="benign scene-text signs per scene (0 = none). Rendered identically to the "
+        "attack but saying something non-instructional, to test whether a probe keys on "
+        "the instruction or merely on text being present.",
+    )
     parser.add_argument("--out", type=Path, default=Path("results/activations"))
     args = parser.parse_args(argv)
 
@@ -76,7 +88,7 @@ def main(argv: list[str] | None = None) -> int:
         benign = scene.correct_internvl
         base_images = scene.load_images()
 
-        phrases = dictionary[target]
+        phrases = [] if args.no_attack else dictionary[target]
         if args.phrases:
             phrases = phrases[: args.phrases]
 
@@ -90,6 +102,7 @@ def main(argv: list[str] | None = None) -> int:
                     scene=scene.index,
                     split=args.split,
                     attacked=False,
+                    condition="clean",
                     phrase="",
                     answer=answer_key,
                     follows_injection=0,  # nothing injected to follow
@@ -112,6 +125,7 @@ def main(argv: list[str] | None = None) -> int:
                     scene=scene.index,
                     split=args.split,
                     attacked=True,
+                    condition="attack",
                     phrase=phrase,
                     answer=answer_key,
                     # The label the steering probe learns: is the model about to
@@ -122,13 +136,47 @@ def main(argv: list[str] | None = None) -> int:
                 model.free_cache()
 
             print(
-                f"  scene {scene.index:2d}  phrase={phrase!r:18s} "
+                f"  scene {scene.index:2d}  attack  {phrase!r:18s} "
+                f"({len(rows)} vectors)  [{model.memory_gb():.1f}GB]",
+                flush=True,
+            )
+
+        for phrase in controls.BENIGN_PHRASES[: args.controls]:
+            sign = signs.build_sign(scene, target=target, cfg=cfg)
+            images = list(base_images)
+            idx = scene.attacked_camera
+            # Same colours, scale and position as the attack; only the text differs.
+            images[idx] = signs.render(
+                base_images[idx],
+                SignSpec(phrase, sign.bg, sign.fg, sign.scale, sign.origin),
+            )
+
+            for answer_key in (benign, target):
+                acts = model.activations(images, ANSWER_TEXT[answer_key], readout=args.readout)
+                record(
+                    acts,
+                    scene=scene.index,
+                    split=args.split,
+                    attacked=False,
+                    condition="benign_text",
+                    phrase=phrase,
+                    answer=answer_key,
+                    # No instruction was injected, so there is nothing to follow.
+                    follows_injection=0,
+                    is_target_answer=int(answer_key == target),
+                )
+                model.free_cache()
+
+            print(
+                f"  scene {scene.index:2d}  control {phrase!r:18s} "
                 f"({len(rows)} vectors)  [{model.memory_gb():.1f}GB]",
                 flush=True,
             )
 
     args.out.mkdir(parents=True, exist_ok=True)
     stem = f"{args.split}_{Path(args.model).name}_tiles{args.max_tiles}_{args.readout}"
+    if args.controls:
+        stem += f"_ctrl{args.controls}"
     npz = args.out / f"{stem}.npz"
     meta = args.out / f"{stem}.json"
 

@@ -102,3 +102,39 @@ def test_unreadable_counts_against_asr():
     s = summarise(results)
     assert s.asr == 0.5
     assert s.unreadable_rate == 0.5
+
+
+def test_controls_are_not_instructions():
+    """A control that reads as a command belongs in the attack set, not here."""
+    from midas import controls
+
+    offenders = [p for p in controls.BENIGN_PHRASES if controls.is_instructional(p)]
+    assert offenders == [], f"instructional control phrases: {offenders}"
+
+
+def test_controls_disjoint_from_attack_dictionary():
+    from midas import controls
+
+    attack = {p.lower() for phrases in data.load_attack_dictionary().values() for p in phrases}
+    overlap = {p for p in controls.BENIGN_PHRASES if p.lower() in attack}
+    assert overlap == set(), f"control phrases also used as attacks: {overlap}"
+
+
+def test_controls_render_like_attacks(scenes):
+    """Controls must differ from the attack only in what the sign says."""
+    from midas import controls
+    from midas.config import SignSpec
+
+    scene = scenes[0]
+    attack_sign = signs.build_sign(scene)
+    control = SignSpec(
+        controls.BENIGN_PHRASES[0],
+        attack_sign.bg,
+        attack_sign.fg,
+        attack_sign.scale,
+        attack_sign.origin,
+    )
+    base = scene.load_images()[scene.attacked_camera]
+    rendered = signs.render(base, control)
+    assert not np.array_equal(rendered, base)
+    assert rendered.shape == base.shape
