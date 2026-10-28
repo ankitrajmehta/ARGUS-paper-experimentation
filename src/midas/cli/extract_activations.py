@@ -25,6 +25,9 @@ from midas.config import AttackConfig, SignSpec
 
 ANSWER_TEXT = {"a)": "a) proceed", "b)": "b) brake"}
 
+# Marker for the open-turn (pre-generation) state the gate runs on.
+PROMPT_ONLY = "__prompt__"
+
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
@@ -40,6 +43,12 @@ def main(argv: list[str] | None = None) -> int:
         type=int,
         default=0,
         help="sign phrases per scene from CHAI's dictionary; 0 means all",
+    )
+    parser.add_argument(
+        "--prompt-only",
+        action="store_true",
+        help="record the open-turn state with no answer forced; this is what the "
+        "injection gate sees at inference time",
     )
     parser.add_argument(
         "--readout", choices=["answer", "last"], default="answer",
@@ -93,9 +102,12 @@ def main(argv: list[str] | None = None) -> int:
             phrases = phrases[: args.phrases]
 
         if not args.no_clean:
-            for label_name, answer_key in (("benign", benign), ("target", target)):
+            answer_keys = [PROMPT_ONLY] if args.prompt_only else [benign, target]
+            for answer_key in answer_keys:
                 acts = model.activations(
-                    base_images, ANSWER_TEXT[answer_key], readout=args.readout
+                    base_images,
+                    None if answer_key == PROMPT_ONLY else ANSWER_TEXT[answer_key],
+                    readout=args.readout,
                 )
                 record(
                     acts,
@@ -106,7 +118,7 @@ def main(argv: list[str] | None = None) -> int:
                     phrase="",
                     answer=answer_key,
                     follows_injection=0,  # nothing injected to follow
-                    is_target_answer=int(answer_key == target),
+                    is_target_answer=int(answer_key == target),  # 0 for PROMPT_ONLY rows
                 )
                 model.free_cache()
 
@@ -118,8 +130,8 @@ def main(argv: list[str] | None = None) -> int:
                 base_images[idx], type(sign)(phrase, sign.bg, sign.fg, sign.scale, sign.origin)
             )
 
-            for answer_key in (benign, target):
-                acts = model.activations(images, ANSWER_TEXT[answer_key], readout=args.readout)
+            for answer_key in ([PROMPT_ONLY] if args.prompt_only else [benign, target]):
+                acts = model.activations(images, None if answer_key == PROMPT_ONLY else ANSWER_TEXT[answer_key], readout=args.readout)
                 record(
                     acts,
                     scene=scene.index,
@@ -131,7 +143,7 @@ def main(argv: list[str] | None = None) -> int:
                     # The label the steering probe learns: is the model about to
                     # follow the sign rather than the scene?
                     follows_injection=int(answer_key == target),
-                    is_target_answer=int(answer_key == target),
+                    is_target_answer=int(answer_key == target),  # 0 for PROMPT_ONLY rows
                 )
                 model.free_cache()
 
@@ -151,8 +163,8 @@ def main(argv: list[str] | None = None) -> int:
                 SignSpec(phrase, sign.bg, sign.fg, sign.scale, sign.origin),
             )
 
-            for answer_key in (benign, target):
-                acts = model.activations(images, ANSWER_TEXT[answer_key], readout=args.readout)
+            for answer_key in ([PROMPT_ONLY] if args.prompt_only else [benign, target]):
+                acts = model.activations(images, None if answer_key == PROMPT_ONLY else ANSWER_TEXT[answer_key], readout=args.readout)
                 record(
                     acts,
                     scene=scene.index,
@@ -163,7 +175,7 @@ def main(argv: list[str] | None = None) -> int:
                     answer=answer_key,
                     # No instruction was injected, so there is nothing to follow.
                     follows_injection=0,
-                    is_target_answer=int(answer_key == target),
+                    is_target_answer=int(answer_key == target),  # 0 for PROMPT_ONLY rows
                 )
                 model.free_cache()
 
@@ -177,6 +189,8 @@ def main(argv: list[str] | None = None) -> int:
     stem = f"{args.split}_{Path(args.model).name}_tiles{args.max_tiles}_{args.readout}"
     if args.controls:
         stem += f"_ctrl{args.controls}"
+    if args.prompt_only:
+        stem += "_promptonly"
     npz = args.out / f"{stem}.npz"
     meta = args.out / f"{stem}.json"
 

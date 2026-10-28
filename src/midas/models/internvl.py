@@ -225,7 +225,7 @@ class InternVLDriveLM:
     def activations(
         self,
         images: list[np.ndarray],
-        answer: str,
+        answer: str | None,
         layers: list[int] | None = None,
         question: str | None = None,
         readout: str = "answer",
@@ -236,6 +236,11 @@ class InternVLDriveLM:
         whatever came out, we append each candidate answer to the same prompt and
         read the activations directly. Both classes then differ only in the
         answer, not in sampling luck or chain-of-thought length.
+
+        ``answer=None`` leaves the assistant turn open, exactly as generation
+        sees it. That is the state the injection gate must run on at inference,
+        since no answer exists yet; training the gate on answer-token states
+        instead would fit a position the model never occupies in deployment.
 
         ``readout`` selects which token's state to take. The chat template
         closes the assistant turn with ``<|im_end|>\n``, so the literal final
@@ -262,6 +267,10 @@ class InternVLDriveLM:
         template.append_message(template.roles[0], question or drivelm.build_prompt())
         template.append_message(template.roles[1], answer)
         query = template.get_prompt()
+        if answer is None:
+            # An open turn ends at the assistant header, which is where the
+            # model would begin generating.
+            readout = "last"
 
         for num_patches in num_patches_list:
             image_tokens = IMG_START + IMG_CTX * self.model.num_image_token * num_patches + IMG_END
