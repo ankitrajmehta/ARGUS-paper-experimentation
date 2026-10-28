@@ -76,6 +76,12 @@ def load_activations(npz_path: Path) -> ActivationSet:
     meta_path = npz_path.with_suffix(".json")
     meta = json.loads(meta_path.read_text())
     vectors = np.load(npz_path)["activations"]
+
+    # Sweeps recorded before benign controls existed have no "condition"; they
+    # only ever held clean and attacked rows, so it is recoverable.
+    for row in meta["rows"]:
+        row.setdefault("condition", "attack" if row["attacked"] else "clean")
+
     return ActivationSet(
         vectors=vectors,
         rows=meta["rows"],
