@@ -4,10 +4,22 @@ The question a probe answers is ARGUS's: in the model's internal state, is
 "about to follow the sign" linearly separable from "about to follow the scene"?
 If it is, that direction is what the defense steers along.
 
-The validation split matters more than the probe. With 15 scenes and a handful
-of sign phrases, a probe evaluated on random splits can score near-perfectly by
-memorising a scene's background or a phrase's wording. Held-out *groups* --
-unseen scenes, or unseen wordings -- are the only honest estimate.
+The validation split matters more than the probe, and most splits here leak.
+Within one scene the label is fully determined by which answer was forced, so
+any split that leaves a scene in both train and test lets a probe memorise
+(scene, answer) and score ~100% at layer 1 -- long before the network could
+encode anything about instructions. Holding out *wording* alone does exactly
+that, since every scene still appears on both sides.
+
+Only splits that hold out whole scenes are informative:
+
+``scene``         test scenes unseen in training.
+``scene+phrase``  stricter: test samples use an unseen scene *and* an unseen
+                  sign wording, with both excluded from training.
+
+As a floor to compare against, the forced answer token alone predicts the label
+about 60% of the time, because the attacker's target is "brake" in 9 of the 15
+scenes and "proceed" in 6.
 """
 
 from __future__ import annotations
@@ -69,25 +81,52 @@ class LayerScore:
         return "#" * filled + "." * (width - filled)
 
 
+def blocked_splits(
+    scenes: np.ndarray,
+    phrases: np.ndarray,
+    n_splits: int = 5,
+    seed: int = 0,
+):
+    """Folds whose test samples share no scene *and* no wording with training.
+
+    GroupKFold can only block one factor at a time. Here both are partitioned,
+    and any sample touching a held-out scene or a held-out phrase is dropped
+    from training, so neither can leak.
+    """
+    rng = np.random.RandomState(seed)
+    scene_folds = np.array_split(rng.permutation(np.unique(scenes)), n_splits)
+    phrase_folds = np.array_split(rng.permutation(np.unique(phrases)), n_splits)
+
+    for held_scenes, held_phrases in zip(scene_folds, phrase_folds):
+        in_scene = np.isin(scenes, held_scenes)
+        in_phrase = np.isin(phrases, held_phrases)
+        test = np.where(in_scene & in_phrase)[0]
+        train = np.where(~in_scene & ~in_phrase)[0]
+        if len(test) and len(train):
+            yield train, test
+
+
 def probe_layer(
     X: np.ndarray,
     y: np.ndarray,
     groups: np.ndarray,
     n_splits: int = 5,
     seed: int = 0,
+    splits: list | None = None,
 ) -> tuple[float, float]:
     """Grouped cross-validated accuracy of a logistic probe on one layer.
 
     Groups never straddle the train/test boundary, so the score reflects
     generalisation to unseen scenes (or unseen wordings), not recall.
     """
-    n_groups = len(np.unique(groups))
-    if n_groups < 2:
-        return float("nan"), float("nan")
-    splits = min(n_splits, n_groups)
+    if splits is None:
+        n_groups = len(np.unique(groups))
+        if n_groups < 2:
+            return float("nan"), float("nan")
+        splits = list(GroupKFold(n_splits=min(n_splits, n_groups)).split(X, y, groups))
 
     scores = []
-    for train_idx, test_idx in GroupKFold(n_splits=splits).split(X, y, groups):
+    for train_idx, test_idx in splits:
         if len(np.unique(y[train_idx])) < 2 or len(np.unique(y[test_idx])) < 2:
             continue
         scaler = StandardScaler().fit(X[train_idx])
@@ -108,10 +147,21 @@ def sweep_layers(
 ) -> list[LayerScore]:
     """Probe accuracy at every layer."""
     y = acts.column(label_key).astype(int)
-    groups = acts.column(group_key)
+
+    splits = None
+    groups = None
+    if group_key == "scene+phrase":
+        splits = list(
+            blocked_splits(acts.column("scene"), acts.column("phrase"), n_splits=n_splits)
+        )
+    else:
+        groups = acts.column(group_key)
+
     scores = []
     for layer in range(acts.n_layers):
-        acc, std = probe_layer(acts.vectors[:, layer, :], y, groups, n_splits=n_splits)
+        acc, std = probe_layer(
+            acts.vectors[:, layer, :], y, groups, n_splits=n_splits, splits=splits
+        )
         scores.append(LayerScore(layer, acc, std, len(y)))
     return scores
 

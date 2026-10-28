@@ -2,13 +2,15 @@
 
     midas-probes results/activations/train_InternVL2_5-2B_tiles6_answer.npz
 
-Two generalisation tests are reported, because they fail for different reasons:
+Two honest splits are reported:
 
-* held-out **scene** -- does the direction survive a new road scene?
-* held-out **phrase** -- or has the probe just learned one sign's wording?
+* held-out **scene** -- does the direction survive an unseen road scene?
+* held-out **scene+phrase** -- stricter: unseen scene *and* unseen wording.
 
-A probe that scores well by scene but poorly by phrase has memorised the text,
-which is exactly the failure the defense must not be built on.
+Holding out wording alone is deliberately omitted: it leaves every scene on both
+sides of the split, and since the label is determined by the forced answer within
+a scene, a probe memorises (scene, answer) and scores ~100% at layer 1. Compare
+against the ~60% floor obtainable from the answer token alone.
 """
 
 from __future__ import annotations
@@ -57,8 +59,12 @@ def main(argv: list[str] | None = None) -> int:
           f"{len(np.unique(acts.column('phrase')))} phrases")
 
     results = {}
-    for group_key, caption in (("scene", "held-out scene"), ("phrase", "held-out phrase")):
-        if len(np.unique(acts.column(group_key))) < 2:
+    for group_key, caption in (
+        ("scene", "held-out scene"),
+        ("scene+phrase", "held-out scene + phrase"),
+    ):
+        probe_col = "scene" if group_key == "scene+phrase" else group_key
+        if len(np.unique(acts.column(probe_col))) < 2:
             print(f"\n{caption}: skipped (needs >=2 groups)")
             continue
 
