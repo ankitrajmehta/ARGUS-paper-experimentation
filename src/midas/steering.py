@@ -131,6 +131,12 @@ class SteerConfig:
     use_gate: bool = True
     # Cap on a single step, as a fraction of the activation's own norm.
     max_step_ratio: float = 0.25
+    # Steer every position rather than only the last. During generation the last
+    # position *is* the current token, so "last" is right there. But a single
+    # prefill pass over a complete sequence -- as forced-choice scoring uses --
+    # computes the answer tokens' logits from earlier positions, so steering only
+    # the final position would change nothing measurable.
+    all_positions: bool = False
     # Gate threshold on the signed distance. 0 is the fitted boundary; raising it
     # makes the defense more conservative about intervening.
     gate_threshold: float = 0.0
@@ -221,14 +227,21 @@ class Steerer:
         import torch
 
         hidden = output[0] if isinstance(output, tuple) else output
-        row = hidden[0, -1, :].detach().float().cpu().numpy()
-        delta = self._delta(row)
-        if np.allclose(delta, 0):
+        n = hidden.shape[1]
+        positions = range(n) if (self.config.all_positions and n > 1) else [n - 1]
+
+        rows = hidden[0].detach().float().cpu().numpy()
+        deltas = np.zeros((len(positions), rows.shape[1]), dtype=np.float32)
+        for slot, pos in enumerate(positions):
+            deltas[slot] = self._delta(rows[pos])
+
+        if not deltas.any():
             return output
 
-        step = torch.from_numpy(delta).to(hidden.device, hidden.dtype)
-        hidden[0, -1, :] = hidden[0, -1, :] + step
-        self.n_steps_steered += 1
+        step = torch.from_numpy(deltas).to(hidden.device, hidden.dtype)
+        index = torch.tensor(list(positions), device=hidden.device)
+        hidden[0, index, :] = hidden[0, index, :] + step
+        self.n_steps_steered += len(positions)
         return (hidden,) + output[1:] if isinstance(output, tuple) else hidden
 
     # -- lifecycle -------------------------------------------------------

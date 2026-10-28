@@ -307,6 +307,90 @@ class InternVLDriveLM:
         del pixel_values, input_ids, attention_mask, image_flags, out, hidden
         return acts
 
+    @torch.no_grad()
+    def score_answers(
+        self,
+        images: list[np.ndarray],
+        answers: dict[str, str],
+        steerer=None,
+    ) -> dict[str, float]:
+        """Mean log-probability the model assigns to each candidate answer.
+
+        A forced-choice proxy for ``ask()``: two forward passes instead of
+        generating ~768 tokens twice, so roughly ten times cheaper. That matters
+        because tuning steering on a handful of generated scenes is tuning on
+        noise -- one scene flipping moves ASR by 33 points at n=3.
+
+        It measures which answer the model prefers, not what it would actually
+        emit after a long chain of thought, so it is a tuning signal rather than
+        a substitute for the headline ASR.
+        """
+        import contextlib
+
+        pixel_values, num_patches_list = self._encode_images(images)
+        IMG_START, IMG_END, IMG_CTX = "<img>", "</img>", "<IMG_CONTEXT>"
+        self.model.img_context_token_id = self.tokenizer.convert_tokens_to_ids(IMG_CTX)
+        end_id = self.tokenizer.convert_tokens_to_ids("<|im_end|>")
+
+        def build(answer: str | None) -> str:
+            template = self._conv_template()
+            template.system_message = self.model.system_message
+            template.append_message(template.roles[0], drivelm.build_prompt())
+            template.append_message(template.roles[1], answer)
+            query = template.get_prompt()
+            for num_patches in num_patches_list:
+                tokens = IMG_START + IMG_CTX * self.model.num_image_token * num_patches + IMG_END
+                query = query.replace("<image>", tokens, 1)
+            return query
+
+        # The open turn ends where the answer would begin, which locates the
+        # answer tokens without assuming a fixed template suffix.
+        prefix_len = self.tokenizer(build(None), return_tensors="pt")["input_ids"].shape[1]
+
+        if steerer is not None:
+            gate_activation = None
+            if steerer.config.use_gate:
+                layer = steerer.artifact.gate_layer
+                gate_activation = self.activations(images, None, layers=[layer])[layer].numpy()
+            steerer.prepare(gate_activation)
+
+        scores: dict[str, float] = {}
+        for key, answer in answers.items():
+            encoded = self.tokenizer(build(answer), return_tensors="pt")
+            input_ids = encoded["input_ids"].to(self.device)
+            attention_mask = encoded["attention_mask"].to(self.device)
+            image_flags = torch.ones(
+                pixel_values.size(0), 1, dtype=torch.long, device=self.device
+            )
+
+            context = steerer if steerer is not None else contextlib.nullcontext()
+            with context:
+                out = self.model(
+                    pixel_values=pixel_values,
+                    input_ids=input_ids,
+                    attention_mask=attention_mask,
+                    image_flags=image_flags,
+                    return_dict=True,
+                )
+
+            logits = out.logits[0].float()
+            ids = input_ids[0]
+            # Answer tokens run from the end of the open turn to <|im_end|>.
+            matches = (ids == end_id).nonzero().flatten()
+            stop = int(matches[-1]) if len(matches) else len(ids)
+            span = range(prefix_len, stop)
+            if not len(span):
+                scores[key] = float("nan")
+                continue
+
+            logprobs = torch.log_softmax(logits, dim=-1)
+            total = sum(float(logprobs[i - 1, ids[i]]) for i in span)
+            scores[key] = total / len(span)
+            del out, logits, logprobs
+
+        del pixel_values
+        return scores
+
     @property
     def n_layers(self) -> int:
         return self.model.config.llm_config.num_hidden_layers
