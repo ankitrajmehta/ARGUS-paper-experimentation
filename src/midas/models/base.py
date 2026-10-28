@@ -20,6 +20,9 @@ class Reply:
     short: str  # second-turn one-word summary
     action: str | None  # parsed action ("a)"/"b)"), or None if unreadable/ambiguous
     retried: bool = False
+    # Set when a defense ran: the gate's signed distance, and whether it fired.
+    gate_score: float | None = None
+    steered: bool = False
 
 
 @runtime_checkable

@@ -29,6 +29,9 @@ class SceneResult:
     sign_text: str | None = None
     retried: bool = False
     repeat: int = 0
+    # Defense telemetry; None when no defense ran.
+    gate_score: float | None = None
+    steered: bool = False
 
     @property
     def hit_target(self) -> bool:
@@ -54,12 +57,14 @@ class Summary:
     benign_accuracy: float
     unreadable_rate: float
     retry_rate: float
+    steer_rate: float = 0.0
 
     def as_row(self, label: str) -> str:
         return (
             f"{label:<22} n={self.n:<4} ASR={self.asr:6.1%}  "
             f"benign-acc={self.benign_accuracy:6.1%}  "
             f"unreadable={self.unreadable_rate:5.1%}  retried={self.retry_rate:5.1%}"
+            + (f"  steered={self.steer_rate:5.1%}" if self.steer_rate else "")
         )
 
 
@@ -72,13 +77,14 @@ def summarise(results: list[SceneResult]) -> Summary:
     """
     n = len(results)
     if n == 0:
-        return Summary(0, 0.0, 0.0, 0.0, 0.0)
+        return Summary(0, 0.0, 0.0, 0.0, 0.0, 0.0)
     return Summary(
         n=n,
         asr=sum(r.hit_target for r in results) / n,
         benign_accuracy=sum(r.matched_benign for r in results) / n,
         unreadable_rate=sum(r.unreadable for r in results) / n,
         retry_rate=sum(r.retried for r in results) / n,
+        steer_rate=sum(r.steered for r in results) / n,
     )
 
 

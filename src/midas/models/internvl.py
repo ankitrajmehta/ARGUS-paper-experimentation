@@ -312,12 +312,33 @@ class InternVLDriveLM:
         return self.model.config.llm_config.num_hidden_layers
 
     @torch.no_grad()
-    def ask(self, images: list[np.ndarray], retry_on_unreadable: bool = True) -> Reply:
+    def ask(
+        self,
+        images: list[np.ndarray],
+        retry_on_unreadable: bool = True,
+        steerer=None,
+    ) -> Reply:
         """Run CHAI's two-turn DriveLM exchange on one scene.
 
         ``images`` is the full six-camera list; only CAM_FRONT and CAM_BACK are
         shown to the model, matching upstream.
+
+        With a ``steerer``, the gate is evaluated first on the open-turn state --
+        the same position it was fitted on -- and steering is then applied to
+        every generated token.
         """
+        import contextlib
+        gate_score = None
+        steered = False
+        if steerer is not None:
+            gate_activation = None
+            if steerer.config.use_gate:
+                layer = steerer.artifact.gate_layer
+                gate_activation = self.activations(images, None, layers=[layer])[layer].numpy()
+            steered = steerer.prepare(gate_activation)
+            gate_score = steerer.last_gate_score
+            self.free_cache()
+
         pixel_values = []
         num_patches_list = []
         for idx in drivelm.CAMERA_INDICES:
@@ -328,20 +349,9 @@ class InternVLDriveLM:
 
         gen_cfg = self._generation_config()
 
-        long, history = self.model.chat(
-            self.tokenizer,
-            pixel_values,
-            drivelm.build_prompt(),
-            gen_cfg,
-            num_patches_list=num_patches_list,
-            history=None,
-            return_history=True,
-        )
-
-        retried = False
-        if retry_on_unreadable and drivelm.chai_needs_retry(long):
-            # CHAI re-queries once when the reply names no action.
-            retried = True
+        # Hooks stay installed for the whole exchange, so both turns are steered.
+        context = steerer if (steerer is not None and steered) else contextlib.nullcontext()
+        with context:
             long, history = self.model.chat(
                 self.tokenizer,
                 pixel_values,
@@ -352,21 +362,37 @@ class InternVLDriveLM:
                 return_history=True,
             )
 
-        short, _ = self.model.chat(
-            self.tokenizer,
-            pixel_values,
-            drivelm.build_summarise_prompt(long),
-            gen_cfg,
-            num_patches_list=num_patches_list,
-            history=history,
-            return_history=True,
-        )
+            retried = False
+            if retry_on_unreadable and drivelm.chai_needs_retry(long):
+                # CHAI re-queries once when the reply names no action.
+                retried = True
+                long, history = self.model.chat(
+                    self.tokenizer,
+                    pixel_values,
+                    drivelm.build_prompt(),
+                    gen_cfg,
+                    num_patches_list=num_patches_list,
+                    history=None,
+                    return_history=True,
+                )
+
+            short, _ = self.model.chat(
+                self.tokenizer,
+                pixel_values,
+                drivelm.build_summarise_prompt(long),
+                gen_cfg,
+                num_patches_list=num_patches_list,
+                history=history,
+                return_history=True,
+            )
 
         reply = Reply(
             long=long,
             short=short,
             action=drivelm.parse_action(short),
             retried=retried,
+            gate_score=gate_score,
+            steered=steered,
         )
         del pixel_values, history
         return reply

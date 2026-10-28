@@ -38,6 +38,15 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("activations", type=Path, nargs="+")
+    parser.add_argument(
+        "--gate-activations",
+        type=Path,
+        nargs="+",
+        default=None,
+        help="separate sweep for the gate, normally --prompt-only. The gate must be "
+        "fitted on the open-turn state it sees at inference; reusing answer-token "
+        "activations flatters it with a signal that does not exist yet.",
+    )
     parser.add_argument("--out", type=Path, default=Path("results/defense/artifact"))
     parser.add_argument("--subspace-dim", type=int, default=5)
     parser.add_argument("--layer", type=int, default=None, help="override steering layer")
@@ -72,7 +81,20 @@ def main(argv: list[str] | None = None) -> int:
 
     # --- gate: an injected instruction, or just ordinary signage?
     print("\ninjection gate (attack vs clean + benign text):")
-    gate_set = acts.subset(np.isin(cond, ["attack", "benign_text", "clean"]))
+    if args.gate_activations:
+        gate_source = probes.merge(
+            [probes.load_activations(p) for p in args.gate_activations]
+        )
+        gcond = gate_source.column("condition")
+        print(f"    using {len(gate_source.rows)} prompt-only vectors: "
+              f"{ {c: int((gcond == c).sum()) for c in np.unique(gcond)} }")
+    else:
+        gate_source = acts
+        gcond = cond
+        print("    WARNING: fitting the gate on answer-token activations; at inference "
+              "no answer exists yet. Pass --gate-activations from a --prompt-only sweep.")
+
+    gate_set = gate_source.subset(np.isin(gcond, ["attack", "benign_text", "clean"]))
     gate_y = (gate_set.column("condition") == "attack").astype(int)
     for row, label in zip(gate_set.rows, gate_y):
         row["is_attack"] = int(label)
@@ -83,7 +105,7 @@ def main(argv: list[str] | None = None) -> int:
             "the defense would steer every frame. Re-run extraction with --controls."
         )
 
-    gate_layer = args.gate_layer or _best_layer(gate_set, "is_attack")
+    gate_layer = args.gate_layer or _best_layer(gate_set, "is_attack", "scene+phrase")
     gate_X = gate_set.vectors[:, gate_layer, :]
     gate_clf, gate_scaler = _fit_probe(gate_X, gate_y)
 

@@ -64,6 +64,7 @@ def _run_condition(
     repeats: int,
     verbose: bool,
     journal: Path | None = None,
+    steerer=None,
 ) -> list[SceneResult]:
     results: list[SceneResult] = []
     for repeat in range(repeats):
@@ -80,7 +81,11 @@ def _run_condition(
 
             if isinstance(model, _StubModel):
                 model.pending = (scene.correct_internvl, target, attacked)
-            reply = model.ask(images)
+            reply = (
+                model.ask(images, steerer=steerer)
+                if steerer is not None
+                else model.ask(images)
+            )
             result = SceneResult(
                 scene_index=scene.index,
                 split=scene.split,
@@ -93,6 +98,8 @@ def _run_condition(
                 sign_text=sign_text,
                 retried=reply.retried,
                 repeat=repeat,
+                gate_score=reply.gate_score,
+                steered=reply.steered,
             )
             results.append(result)
 
@@ -171,6 +178,16 @@ def main(argv: list[str] | None = None) -> int:
         "--save-long", action="store_true", help="store full chain-of-thought in the JSON"
     )
     parser.add_argument(
+        "--defend",
+        type=Path,
+        default=None,
+        help="path to a fitted defense artifact; steers generation when the gate fires",
+    )
+    parser.add_argument("--strength", type=float, default=1.0)
+    parser.add_argument("--no-subspace", action="store_true", help="ablate: raw direction")
+    parser.add_argument("--no-adaptive", action="store_true", help="ablate: fixed strength")
+    parser.add_argument("--no-gate", action="store_true", help="ablate: always steer")
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="use a stub model: checks data, rendering, scoring and outputs with no GPU",
@@ -209,6 +226,27 @@ def main(argv: list[str] | None = None) -> int:
             max_tiles=args.max_tiles,
         )
 
+    steerer = None
+    if args.defend:
+        from midas.steering import DefenseArtifact, SteerConfig, Steerer
+
+        artifact = DefenseArtifact.load(args.defend)
+        steerer = Steerer(
+            model,
+            artifact,
+            SteerConfig(
+                strength=args.strength,
+                use_subspace=not args.no_subspace,
+                adaptive=not args.no_adaptive,
+                use_gate=not args.no_gate,
+            ),
+        )
+        print(
+            f"defense: layer {artifact.layer}, gate layer {artifact.gate_layer}, "
+            f"subspace={not args.no_subspace} adaptive={not args.no_adaptive} "
+            f"gate={not args.no_gate} strength={args.strength}"
+        )
+
     conditions = []
     if args.both:
         conditions = [("baseline", False), ("attack", True)]
@@ -232,6 +270,7 @@ def main(argv: list[str] | None = None) -> int:
             repeats=args.repeats,
             verbose=args.save_long,
             journal=journal,
+            steerer=steerer,
         )
         collected[label] = results
 

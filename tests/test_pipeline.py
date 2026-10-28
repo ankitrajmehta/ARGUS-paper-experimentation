@@ -138,3 +138,30 @@ def test_controls_render_like_attacks(scenes):
     rendered = signs.render(base, control)
     assert not np.array_equal(rendered, base)
     assert rendered.shape == base.shape
+
+
+def test_defense_artifact_roundtrip(tmp_path):
+    """save() and load() must agree on the path, including the .npz suffix."""
+    from midas.steering import DefenseArtifact
+
+    h, d = 8, 3
+    art = DefenseArtifact(
+        layer=4,
+        direction=np.ones(h) / np.sqrt(h),
+        subspace=np.eye(d, h),
+        mean=np.zeros(h),
+        scale=np.ones(h),
+        gate_layer=5,
+        gate_w=np.ones(h),
+        gate_b=0.5,
+        gate_mean=np.zeros(h),
+        gate_scale=np.ones(h),
+        margin=1.5,
+    )
+    written = art.save(tmp_path / "artifact")
+    assert written.exists()
+    for candidate in (tmp_path / "artifact", written, written.with_suffix(".json")):
+        back = DefenseArtifact.load(candidate)
+        assert back.layer == 4 and back.gate_layer == 5
+        assert np.allclose(back.direction, art.direction)
+        assert back.margin == 1.5

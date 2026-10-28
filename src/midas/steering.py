@@ -68,7 +68,9 @@ class DefenseArtifact:
         return float(z @ self.direction)
 
     def save(self, path: Path) -> Path:
-        path = Path(path)
+        # np.savez_compressed appends .npz, so normalise here or load() cannot
+        # find what save() reported writing.
+        path = Path(path).with_suffix(".npz")
         path.parent.mkdir(parents=True, exist_ok=True)
         np.savez_compressed(
             path,
@@ -98,8 +100,9 @@ class DefenseArtifact:
 
     @classmethod
     def load(cls, path: Path) -> "DefenseArtifact":
-        path = Path(path)
-        arrays = np.load(path)
+        # Accept the stem, the .npz or the .json; they name one artifact.
+        path = Path(path).with_suffix("")
+        arrays = np.load(path.with_suffix(".npz"))
         meta = json.loads(path.with_suffix(".json").read_text())
         return cls(
             layer=meta["layer"],
@@ -126,6 +129,8 @@ class SteerConfig:
     use_subspace: bool = True
     adaptive: bool = True
     use_gate: bool = True
+    # Cap on a single step, as a fraction of the activation's own norm.
+    max_step_ratio: float = 0.25
     # Gate threshold on the signed distance. 0 is the fitted boundary; raising it
     # makes the defense more conservative about intervening.
     gate_threshold: float = 0.0
@@ -143,6 +148,7 @@ class Steerer:
         self._active = False
         self.last_gate_score: float | None = None
         self.n_steps_steered = 0
+        self.n_steps_clipped = 0
 
     # -- layer access ----------------------------------------------------
 
@@ -167,26 +173,46 @@ class Steerer:
     # -- the intervention ------------------------------------------------
 
     def _delta(self, hidden_row: np.ndarray) -> np.ndarray:
-        """How far to move one activation, in model space."""
+        """How far to move one activation, in raw model space.
+
+        The probe lives in standardised space: ``z = (a - mean) / scale`` and
+        ``score = z . d``. To shift the score by a known amount the step has to
+        be mapped back through the scaler, so a move of ``t`` along ``d`` in
+        standardised space is ``t * scale * d`` in activation space.
+
+        Adaptive strength follows ARGUS: choose ``t`` so the steered activation
+        lands at the centre of the "following the scene" class rather than just
+        over the boundary, i.e. ``t = score + margin``.
+
+        An earlier version multiplied this by ``||a||`` as SafeSteer do. That is
+        only valid when the coefficient is O(1); here it is a standardised
+        distance of 5-10, so the step came out several times the activation norm
+        and the model emitted word salad. The two scalings are not composable --
+        this uses the probe geometry alone, with a cap as a backstop.
+        """
         art = self.artifact
         direction = art.refined_direction if self.config.use_subspace else art.direction
 
         if self.config.adaptive:
-            # Enough to carry the activation across the probe boundary and on to
-            # the centre of the "following the scene" class, and no further:
-            # over-steering is what costs utility.
-            distance = art.follow_score(hidden_row)
-            alpha = max(0.0, distance + art.margin)
+            t = max(0.0, art.follow_score(hidden_row) + art.margin)
         else:
-            alpha = self.config.strength
+            t = 1.0
+        t *= self.config.strength
 
-        if alpha <= 0:
+        if t <= 0:
             return np.zeros_like(hidden_row)
 
-        # SafeSteer scales the step by the activation's own norm, which keeps a
-        # single strength usable across layers and token positions.
-        unit = direction / (np.linalg.norm(direction) + 1e-8)
-        return -self.config.strength * alpha * unit * np.linalg.norm(hidden_row)
+        delta = -t * art.scale * direction
+
+        # Backstop: never move an activation further than a fixed fraction of its
+        # own norm. Without it a mis-scaled probe can push the hidden state far
+        # outside the distribution the layers above were trained on.
+        norm = np.linalg.norm(delta)
+        ceiling = self.config.max_step_ratio * np.linalg.norm(hidden_row)
+        if norm > ceiling > 0:
+            delta *= ceiling / norm
+            self.n_steps_clipped += 1
+        return delta
 
     def _hook(self, module, args, output):
         if not self._active:
