@@ -87,9 +87,11 @@ anywhere but CUDA.
     --model models/InternVL2_5-2B --max-new-tokens 768 --max-tiles 6
 ```
 
-**Cost.** On an M2 with the 2B at `--max-tiles 6`, one scene takes roughly 80 s,
-so a full `--both` pass over a split is about an hour. `--max-tiles 12` (CHAI's
-setting) is several times slower. Run long passes in the background.
+**Cost.** On an M2 with the 2B at `--max-tiles 6`, one scene takes roughly 50 s
+once the allocator cache is being released, so a full `--both` pass over a split
+is about 25 minutes. Run long passes in the background; progress and per-scene
+memory are printed live, and each result is appended to a `.jsonl` as it lands,
+so an interrupted sweep keeps whatever it finished.
 
 **`--max-new-tokens`.** CHAI use 1250. The 2B finishes all ten questions inside
 768; below about 512 the chain is truncated before the final answer, the reply
@@ -102,6 +104,14 @@ thumbnail: 9 tiles, ~4600 image tokens across the two cameras. Lowering it is th
 main speed lever, but it shrinks the sign too — at 6 tiles the sign is rendered
 at roughly half the linear resolution — so it can understate attack success.
 Report headline numbers at 12.
+
+**`--max-tiles 12` does not fit on a 16 GB laptop.** FlashAttention is CUDA-only,
+so on MPS attention runs eager and the full score matrix is materialised. At 12
+tiles the sequence is ~6400 tokens, about 1.3 GB per layer in fp16, against
+~0.35 GB at 6 tiles. A 12-tile run drove swap from 2 GB to 8.6 GB and slowed to
+~450 s per scene before it was killed. Laptop work is capped at `--max-tiles 6`;
+the faithful setting needs the GPU box, where FlashAttention never builds that
+matrix.
 
 Results are written to `results/runs/*.json`, one file per condition, each
 carrying the full config needed to reproduce it.
