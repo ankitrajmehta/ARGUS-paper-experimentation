@@ -2,16 +2,18 @@
 
 Three pieces, following ARGUS and SafeSteer:
 
-* a **direction** at a mid-network layer, pointing from "following the scene"
-  toward "following the sign". Steering moves against it.
+* a **direction** at one or more mid-network layers, pointing from "following
+  the scene" toward "following the sign". Steering moves against it.
 * a **subspace** (SafeSteer): the top singular directions of the paired
   activation differences. Projecting the raw direction into it drops components
   that happen to correlate in this small sample but carry no safety signal.
 * a **gate** (ARGUS): a second probe deciding whether an injected instruction is
   present at all, so clean frames and ordinary signage are left untouched.
 
-Steering is applied to the last token's hidden state at the chosen layer, during
-both prefill and each generation step.
+Steering several layers at once is the point of the per-layer structure below.
+A single-layer intervention left behaviour unchanged even though it moved 92% of
+activations across the probe boundary offline, and ARGUS steer the top-N layers
+rather than one.
 """
 
 from __future__ import annotations
@@ -24,48 +26,57 @@ import numpy as np
 
 
 @dataclass
-class DefenseArtifact:
-    """Everything needed to steer, fitted offline and reloaded at inference.
+class LayerDefense:
+    """The steering geometry fitted at one layer.
 
-    Probes are fitted on standardised features, so the scaler statistics have to
-    travel with the weights or the decision boundary is meaningless at runtime.
+    The probe lives in standardised space, so ``mean``/``scale`` must travel
+    with the weights or the decision boundary is meaningless at runtime.
     """
 
     layer: int
-    direction: np.ndarray  # (hidden,) unit norm, points toward following the sign
+    direction: np.ndarray  # (hidden,) unit norm, toward following the sign
     subspace: np.ndarray  # (dim, hidden) orthonormal rows
-    mean: np.ndarray  # (hidden,) standardiser used when fitting
+    mean: np.ndarray  # (hidden,)
     scale: np.ndarray  # (hidden,)
+    # Mean distance of "following the scene" samples from the hyperplane;
+    # adaptive steering aims to land there rather than just over the boundary.
+    margin: float
+    accuracy: float = float("nan")  # held-out probe accuracy, for ranking layers
 
+    @property
+    def refined_direction(self) -> np.ndarray:
+        """Direction projected into the safety subspace, re-normalised."""
+        v = self.subspace.T @ (self.subspace @ self.direction)
+        norm = np.linalg.norm(v)
+        return v / norm if norm > 0 else self.direction
+
+    def follow_score(self, activation: np.ndarray) -> float:
+        """Signed distance from the probe; > 0 means following the sign."""
+        z = (activation - self.mean) / self.scale
+        return float(z @ self.direction)
+
+
+@dataclass
+class DefenseArtifact:
+    """A fitted defense: steering geometry per layer, plus one gate."""
+
+    layers: list[LayerDefense]
     gate_layer: int
-    gate_w: np.ndarray  # (hidden,)
+    gate_w: np.ndarray
     gate_b: float
     gate_mean: np.ndarray
     gate_scale: np.ndarray
-
-    # Average signed distance of "following the scene" samples from the probe
-    # hyperplane. Adaptive steering aims to land a steered activation here
-    # rather than merely on the far side of the boundary.
-    margin: float
     model: str = ""
     notes: str = ""
 
     @property
-    def refined_direction(self) -> np.ndarray:
-        """Direction after projection into the safety subspace, re-normalised."""
-        v = self.subspace.T @ (self.subspace @ self.direction)
-        norm = np.linalg.norm(v)
-        return v / norm if norm > 0 else self.direction
+    def layer_indices(self) -> list[int]:
+        return [d.layer for d in self.layers]
 
     def gate_score(self, activation: np.ndarray) -> float:
         """Signed distance from the gate hyperplane; > 0 means injection."""
         z = (activation - self.gate_mean) / self.gate_scale
         return float(z @ self.gate_w + self.gate_b)
-
-    def follow_score(self, activation: np.ndarray) -> float:
-        """Signed distance from the steering probe; > 0 means following the sign."""
-        z = (activation - self.mean) / self.scale
-        return float(z @ self.direction)
 
     def save(self, path: Path) -> Path:
         # np.savez_compressed appends .npz, so normalise here or load() cannot
@@ -74,10 +85,10 @@ class DefenseArtifact:
         path.parent.mkdir(parents=True, exist_ok=True)
         np.savez_compressed(
             path,
-            direction=self.direction,
-            subspace=self.subspace,
-            mean=self.mean,
-            scale=self.scale,
+            direction=np.stack([d.direction for d in self.layers]),
+            subspace=np.stack([d.subspace for d in self.layers]),
+            mean=np.stack([d.mean for d in self.layers]),
+            scale=np.stack([d.scale for d in self.layers]),
             gate_w=self.gate_w,
             gate_mean=self.gate_mean,
             gate_scale=self.gate_scale,
@@ -85,13 +96,15 @@ class DefenseArtifact:
         path.with_suffix(".json").write_text(
             json.dumps(
                 {
-                    "layer": self.layer,
+                    "layers": [
+                        {"layer": d.layer, "margin": d.margin, "accuracy": d.accuracy}
+                        for d in self.layers
+                    ],
                     "gate_layer": self.gate_layer,
                     "gate_b": self.gate_b,
-                    "margin": self.margin,
                     "model": self.model,
                     "notes": self.notes,
-                    "subspace_dim": int(self.subspace.shape[0]),
+                    "subspace_dim": int(self.layers[0].subspace.shape[0]),
                 },
                 indent=2,
             )
@@ -104,18 +117,25 @@ class DefenseArtifact:
         path = Path(path).with_suffix("")
         arrays = np.load(path.with_suffix(".npz"))
         meta = json.loads(path.with_suffix(".json").read_text())
+        layers = [
+            LayerDefense(
+                layer=entry["layer"],
+                direction=arrays["direction"][i],
+                subspace=arrays["subspace"][i],
+                mean=arrays["mean"][i],
+                scale=arrays["scale"][i],
+                margin=entry["margin"],
+                accuracy=entry.get("accuracy", float("nan")),
+            )
+            for i, entry in enumerate(meta["layers"])
+        ]
         return cls(
-            layer=meta["layer"],
-            direction=arrays["direction"],
-            subspace=arrays["subspace"],
-            mean=arrays["mean"],
-            scale=arrays["scale"],
+            layers=layers,
             gate_layer=meta["gate_layer"],
             gate_w=arrays["gate_w"],
             gate_b=meta["gate_b"],
             gate_mean=arrays["gate_mean"],
             gate_scale=arrays["gate_scale"],
-            margin=meta["margin"],
             model=meta.get("model", ""),
             notes=meta.get("notes", ""),
         )
@@ -129,7 +149,12 @@ class SteerConfig:
     use_subspace: bool = True
     adaptive: bool = True
     use_gate: bool = True
-    # Cap on a single step, as a fraction of the activation's own norm.
+    # Gate threshold on the signed distance. 0 is the fitted boundary; raising it
+    # makes the defense more conservative about intervening.
+    gate_threshold: float = 0.0
+    # Cap on a single step, as a fraction of the activation's own norm. Without
+    # it a mis-scaled probe pushes hidden states outside the distribution the
+    # layers above were trained on and the model emits word salad.
     max_step_ratio: float = 0.25
     # Steer every position rather than only the last. During generation the last
     # position *is* the current token, so "last" is right there. But a single
@@ -137,9 +162,8 @@ class SteerConfig:
     # computes the answer tokens' logits from earlier positions, so steering only
     # the final position would change nothing measurable.
     all_positions: bool = False
-    # Gate threshold on the signed distance. 0 is the fitted boundary; raising it
-    # makes the defense more conservative about intervening.
-    gate_threshold: float = 0.0
+    # Steer only this many layers, best probe first. None means all fitted layers.
+    top_layers: int | None = None
 
 
 class Steerer:
@@ -150,7 +174,7 @@ class Steerer:
         self.artifact = artifact
         self.config = config or SteerConfig()
         self._handles: list = []
-        # Set per sample by prepare(); None means "decide nothing, do not steer".
+        self._tensors: dict[int, tuple] = {}
         self._active = False
         self.last_gate_score: float | None = None
         self.n_steps_steered = 0
@@ -162,11 +186,20 @@ class Steerer:
         """InternVL wraps an InternLM2/Qwen2 causal LM; its blocks live here."""
         return self.model.model.language_model.model.layers
 
+    def selected(self) -> list[LayerDefense]:
+        """Layers to steer, best probe first."""
+        ranked = sorted(
+            self.artifact.layers,
+            key=lambda d: (-d.accuracy if not np.isnan(d.accuracy) else 0.0, d.layer),
+        )
+        return ranked[: self.config.top_layers] if self.config.top_layers else ranked
+
     # -- gating ----------------------------------------------------------
 
     def prepare(self, activation: np.ndarray | None) -> bool:
         """Decide whether to steer this sample, from a gate-layer activation."""
         self.n_steps_steered = 0
+        self.n_steps_clipped = 0
         if not self.config.use_gate or activation is None:
             self._active = True
             self.last_gate_score = None
@@ -178,84 +211,98 @@ class Steerer:
 
     # -- the intervention ------------------------------------------------
 
-    def _delta(self, hidden_row: np.ndarray) -> np.ndarray:
-        """How far to move one activation, in raw model space.
+    def _cached(self, defense: LayerDefense, device):
+        """Probe geometry as on-device tensors.
 
-        The probe lives in standardised space: ``z = (a - mean) / scale`` and
-        ``score = z . d``. To shift the score by a known amount the step has to
-        be mapped back through the scaler, so a move of ``t`` along ``d`` in
-        standardised space is ``t * scale * d`` in activation space.
-
-        Adaptive strength follows ARGUS: choose ``t`` so the steered activation
-        lands at the centre of the "following the scene" class rather than just
-        over the boundary, i.e. ``t = score + margin``.
-
-        An earlier version multiplied this by ``||a||`` as SafeSteer do. That is
-        only valid when the coefficient is O(1); here it is a standardised
-        distance of 5-10, so the step came out several times the activation norm
-        and the model emitted word salad. The two scalings are not composable --
-        this uses the probe geometry alone, with a cap as a backstop.
+        Cached because the step is computed inside a forward hook for every
+        token: doing it in NumPy meant a host round-trip per position, which is
+        what made a full-sequence steered pass several times slower than an
+        unsteered one.
         """
-        art = self.artifact
-        direction = art.refined_direction if self.config.use_subspace else art.direction
+        key = defense.layer
+        if key not in self._tensors:
+            import torch
 
-        if self.config.adaptive:
-            t = max(0.0, art.follow_score(hidden_row) + art.margin)
-        else:
-            t = 1.0
-        t *= self.config.strength
+            direction = (
+                defense.refined_direction if self.config.use_subspace else defense.direction
+            )
 
-        if t <= 0:
-            return np.zeros_like(hidden_row)
+            def to(array):
+                return torch.as_tensor(
+                    np.ascontiguousarray(array, dtype=np.float32), device=device
+                )
 
-        delta = -t * art.scale * direction
+            self._tensors[key] = (
+                to(defense.mean),
+                to(defense.scale),
+                to(direction),
+                to(defense.scale * direction),
+            )
+        return self._tensors[key]
 
-        # Backstop: never move an activation further than a fixed fraction of its
-        # own norm. Without it a mis-scaled probe can push the hidden state far
-        # outside the distribution the layers above were trained on.
-        norm = np.linalg.norm(delta)
-        ceiling = self.config.max_step_ratio * np.linalg.norm(hidden_row)
-        if norm > ceiling > 0:
-            delta *= ceiling / norm
-            self.n_steps_clipped += 1
-        return delta
+    def _steer(self, hidden, defense: LayerDefense) -> None:
+        """Move the selected positions of one layer's hidden state, in place.
 
-    def _hook(self, module, args, output):
-        if not self._active:
-            return output
-
+        A shift of ``t`` along the probe direction in standardised space is
+        ``t * scale * direction`` in activation space. Adaptive strength follows
+        ARGUS: choose ``t`` so the steered activation lands at the centre of the
+        "following the scene" class rather than just over the boundary.
+        """
         import torch
 
-        hidden = output[0] if isinstance(output, tuple) else output
         n = hidden.shape[1]
-        positions = range(n) if (self.config.all_positions and n > 1) else [n - 1]
+        if self.config.all_positions and n > 1:
+            index = torch.arange(n, device=hidden.device)
+        else:
+            index = torch.tensor([n - 1], device=hidden.device)
 
-        rows = hidden[0].detach().float().cpu().numpy()
-        deltas = np.zeros((len(positions), rows.shape[1]), dtype=np.float32)
-        for slot, pos in enumerate(positions):
-            deltas[slot] = self._delta(rows[pos])
+        rows = hidden[0, index, :].to(torch.float32)
+        mean, scale, direction, step_dir = self._cached(defense, hidden.device)
 
-        if not deltas.any():
-            return output
+        if self.config.adaptive:
+            scores = ((rows - mean) / scale) @ direction
+            t = torch.clamp(scores + defense.margin, min=0.0)
+        else:
+            t = torch.ones(rows.shape[0], device=hidden.device, dtype=torch.float32)
+        t = t * self.config.strength
 
-        step = torch.from_numpy(deltas).to(hidden.device, hidden.dtype)
-        index = torch.tensor(list(positions), device=hidden.device)
-        hidden[0, index, :] = hidden[0, index, :] + step
-        self.n_steps_steered += len(positions)
-        return (hidden,) + output[1:] if isinstance(output, tuple) else hidden
+        delta = -t.unsqueeze(1) * step_dir.unsqueeze(0)
+
+        # Backstop against a mis-scaled probe.
+        norms = delta.norm(dim=1)
+        ceilings = rows.norm(dim=1) * self.config.max_step_ratio
+        over = norms > ceilings
+        if bool(over.any()):
+            factor = torch.where(over, ceilings / norms.clamp(min=1e-8), torch.ones_like(norms))
+            delta = delta * factor.unsqueeze(1)
+            self.n_steps_clipped += int(over.sum())
+
+        hidden[0, index, :] = (rows + delta).to(hidden.dtype)
+        self.n_steps_steered += int(index.numel())
+
+    def _make_hook(self, defense: LayerDefense):
+        def hook(module, args, output):
+            if not self._active:
+                return output
+            hidden = output[0] if isinstance(output, tuple) else output
+            self._steer(hidden, defense)
+            return (hidden,) + output[1:] if isinstance(output, tuple) else hidden
+
+        return hook
 
     # -- lifecycle -------------------------------------------------------
 
     def __enter__(self) -> "Steerer":
-        layers = self._decoder_layers()
-        if not 0 <= self.artifact.layer - 1 < len(layers):
-            raise IndexError(
-                f"layer {self.artifact.layer} out of range for {len(layers)} decoder blocks"
-            )
-        # Activations are indexed with layer 0 = embeddings, so hidden_states[i]
-        # is the output of decoder block i-1.
-        target = layers[self.artifact.layer - 1]
-        self._handles.append(target.register_forward_hook(self._hook, with_kwargs=False))
+        blocks = self._decoder_layers()
+        for defense in self.selected():
+            # Activations are indexed with layer 0 = embeddings, so
+            # hidden_states[i] is the output of decoder block i-1.
+            idx = defense.layer - 1
+            if not 0 <= idx < len(blocks):
+                raise IndexError(
+                    f"layer {defense.layer} out of range for {len(blocks)} decoder blocks"
+                )
+            self._handles.append(blocks[idx].register_forward_hook(self._make_hook(defense)))
         return self
 
     def __exit__(self, *exc) -> None:

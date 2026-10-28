@@ -16,7 +16,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 
 from midas import probes
-from midas.steering import DefenseArtifact
+from midas.steering import DefenseArtifact, LayerDefense
 
 
 def _fit_probe(X: np.ndarray, y: np.ndarray):
@@ -25,12 +25,10 @@ def _fit_probe(X: np.ndarray, y: np.ndarray):
     return clf, scaler
 
 
-def _best_layer(acts: probes.ActivationSet, label_key: str, group_key: str = "scene") -> int:
+def _ranked_layers(acts: probes.ActivationSet, label_key: str, group_key: str = "scene"):
     scores = probes.sweep_layers(acts, label_key=label_key, group_key=group_key)
     valid = [s for s in scores if not np.isnan(s.accuracy)]
-    best = max(valid, key=lambda s: s.accuracy)
-    print(f"    best layer {best.layer} at {best.accuracy:.1%} (held-out {group_key})")
-    return best.layer
+    return sorted(valid, key=lambda s: -s.accuracy)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -49,7 +47,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--out", type=Path, default=Path("results/defense/artifact"))
     parser.add_argument("--subspace-dim", type=int, default=5)
-    parser.add_argument("--layer", type=int, default=None, help="override steering layer")
+    parser.add_argument(
+        "--layers", type=int, nargs="+", default=None, help="override steering layers"
+    )
+    parser.add_argument(
+        "--top-n", type=int, default=5,
+        help="fit this many layers, best held-out probe accuracy first. ARGUS steer "
+        "several layers at once; steering one left behaviour unchanged here.",
+    )
     parser.add_argument("--gate-layer", type=int, default=None)
     args = parser.parse_args(argv)
 
@@ -58,26 +63,44 @@ def main(argv: list[str] | None = None) -> int:
     counts = {c: int((cond == c).sum()) for c in np.unique(cond)}
     print(f"{len(acts.rows)} vectors: {counts}")
 
-    # --- steering direction: on attacked frames, which instruction is followed?
-    print("\nsteering probe (attacked frames only):")
+    # --- steering directions: on attacked frames, which instruction is followed?
+    print("\nsteering probes (attacked frames only):")
     attacked = acts.subset(cond == "attack")
-    layer = args.layer or _best_layer(attacked, "follows_injection")
 
-    X = attacked.vectors[:, layer, :]
-    y = attacked.column("follows_injection").astype(int)
-    clf, scaler = _fit_probe(X, y)
-    direction = clf.coef_[0] / np.linalg.norm(clf.coef_[0])
+    if args.layers:
+        chosen = [(layer, float("nan")) for layer in args.layers]
+    else:
+        ranked = _ranked_layers(attacked, "follows_injection")
+        chosen = [(s.layer, s.accuracy) for s in ranked[: args.top_n]]
 
-    # Distance of the "following the scene" class from the boundary, in the
-    # standardised space the probe lives in; adaptive steering aims for it.
-    z = scaler.transform(X)
-    margin = float(np.abs(z[y == 0] @ direction).mean())
+    layer_defenses = []
+    for layer, accuracy in chosen:
+        X = attacked.vectors[:, layer, :]
+        y = attacked.column("follows_injection").astype(int)
+        clf, scaler = _fit_probe(X, y)
+        direction = clf.coef_[0] / np.linalg.norm(clf.coef_[0])
 
-    subspace = probes.safety_subspace(attacked, layer, dim=args.subspace_dim)
-    energy = float(np.linalg.norm(subspace @ direction))
-    print(f"    subspace {subspace.shape[0]}x{subspace.shape[1]}, "
-          f"direction energy inside: {energy:.1%}")
-    print(f"    margin: {margin:.2f}")
+        # Distance of the "following the scene" class from the boundary, in the
+        # standardised space the probe lives in; adaptive steering aims for it.
+        z = scaler.transform(X)
+        margin = float(np.abs(z[y == 0] @ direction).mean())
+
+        subspace = probes.safety_subspace(attacked, layer, dim=args.subspace_dim)
+        energy = float(np.linalg.norm(subspace @ direction))
+        print(f"    layer {layer:2d}  probe {accuracy:6.1%}  margin {margin:5.2f}  "
+              f"subspace energy {energy:5.1%}")
+
+        layer_defenses.append(
+            LayerDefense(
+                layer=layer,
+                direction=direction,
+                subspace=subspace,
+                mean=scaler.mean_,
+                scale=scaler.scale_,
+                margin=margin,
+                accuracy=accuracy,
+            )
+        )
 
     # --- gate: an injected instruction, or just ordinary signage?
     print("\ninjection gate (attack vs clean + benign text):")
@@ -105,22 +128,23 @@ def main(argv: list[str] | None = None) -> int:
             "the defense would steer every frame. Re-run extraction with --controls."
         )
 
-    gate_layer = args.gate_layer or _best_layer(gate_set, "is_attack", "scene+phrase")
+    if args.gate_layer:
+        gate_layer = args.gate_layer
+    else:
+        gate_ranked = _ranked_layers(gate_set, "is_attack", "scene+phrase")
+        gate_layer = gate_ranked[0].layer
+        print(f"    best gate layer {gate_layer} at {gate_ranked[0].accuracy:.1%} "
+              f"(held-out scene+phrase)")
     gate_X = gate_set.vectors[:, gate_layer, :]
     gate_clf, gate_scaler = _fit_probe(gate_X, gate_y)
 
     artifact = DefenseArtifact(
-        layer=layer,
-        direction=direction,
-        subspace=subspace,
-        mean=scaler.mean_,
-        scale=scaler.scale_,
+        layers=layer_defenses,
         gate_layer=gate_layer,
         gate_w=gate_clf.coef_[0],
         gate_b=float(gate_clf.intercept_[0]),
         gate_mean=gate_scaler.mean_,
         gate_scale=gate_scaler.scale_,
-        margin=margin,
         model=acts.model,
         notes=f"fitted on {len(acts.rows)} vectors: {counts}",
     )

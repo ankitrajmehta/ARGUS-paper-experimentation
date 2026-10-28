@@ -49,6 +49,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--no-subspace", action="store_true")
     parser.add_argument("--no-adaptive", action="store_true")
     parser.add_argument("--no-gate", action="store_true")
+    parser.add_argument(
+        "--top-layers", type=int, nargs="+", default=[1],
+        help="how many layers to steer; several values sweep them",
+    )
     parser.add_argument("--out", type=Path, default=Path("results/defense/sweep.json"))
     args = parser.parse_args(argv)
 
@@ -84,7 +88,8 @@ def main(argv: list[str] | None = None) -> int:
           f"{agree}/{len(prepared)} scenes\n")
 
     rows = []
-    for strength in args.strengths:
+    configs = [(s, k) for k in args.top_layers for s in args.strengths]
+    for strength, top_k in configs:
         steerer = None
         if strength > 0:
             steerer = Steerer(
@@ -97,6 +102,7 @@ def main(argv: list[str] | None = None) -> int:
                     use_gate=not args.no_gate,
                     # Scoring is one prefill pass; see SteerConfig.all_positions.
                     all_positions=True,
+                    top_layers=top_k,
                 ),
             )
 
@@ -116,13 +122,14 @@ def main(argv: list[str] | None = None) -> int:
         n = len(prepared)
         row = {
             "strength": strength,
+            "top_layers": top_k,
             "attack_rate": hits_attack / n,
             "clean_keep": keeps_clean / n,
             "gate_fire_rate": gated / n if steerer is not None else None,
             "n": n,
         }
         rows.append(row)
-        label = "no defense" if strength == 0 else f"strength {strength:g}"
+        label = "no defense" if strength == 0 else f"L{top_k} strength {strength:g}"
         gate = "" if row["gate_fire_rate"] is None else f"  gate fired {row['gate_fire_rate']:5.0%}"
         print(
             f"  {label:16s} attack_rate={row['attack_rate']:6.1%}  "

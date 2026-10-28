@@ -142,26 +142,61 @@ def test_controls_render_like_attacks(scenes):
 
 def test_defense_artifact_roundtrip(tmp_path):
     """save() and load() must agree on the path, including the .npz suffix."""
-    from midas.steering import DefenseArtifact
+    from midas.steering import DefenseArtifact, LayerDefense
 
     h, d = 8, 3
+    layers = [
+        LayerDefense(
+            layer=layer,
+            direction=np.ones(h) / np.sqrt(h),
+            subspace=np.eye(d, h),
+            mean=np.zeros(h),
+            scale=np.ones(h),
+            margin=1.5,
+            accuracy=0.9 - 0.1 * i,
+        )
+        for i, layer in enumerate((4, 6))
+    ]
     art = DefenseArtifact(
-        layer=4,
-        direction=np.ones(h) / np.sqrt(h),
-        subspace=np.eye(d, h),
-        mean=np.zeros(h),
-        scale=np.ones(h),
+        layers=layers,
         gate_layer=5,
         gate_w=np.ones(h),
         gate_b=0.5,
         gate_mean=np.zeros(h),
         gate_scale=np.ones(h),
-        margin=1.5,
     )
     written = art.save(tmp_path / "artifact")
     assert written.exists()
     for candidate in (tmp_path / "artifact", written, written.with_suffix(".json")):
         back = DefenseArtifact.load(candidate)
-        assert back.layer == 4 and back.gate_layer == 5
-        assert np.allclose(back.direction, art.direction)
-        assert back.margin == 1.5
+        assert back.layer_indices == [4, 6] and back.gate_layer == 5
+        assert np.allclose(back.layers[0].direction, layers[0].direction)
+        assert back.layers[0].margin == 1.5
+
+
+def test_steerer_ranks_layers_by_probe_accuracy():
+    """top_layers must take the strongest probes, not the lowest indices."""
+    from midas.steering import DefenseArtifact, LayerDefense, SteerConfig, Steerer
+
+    h = 4
+    def layer(idx, acc):
+        return LayerDefense(
+            layer=idx,
+            direction=np.ones(h) / np.sqrt(h),
+            subspace=np.eye(1, h),
+            mean=np.zeros(h),
+            scale=np.ones(h),
+            margin=1.0,
+            accuracy=acc,
+        )
+
+    art = DefenseArtifact(
+        layers=[layer(2, 0.60), layer(9, 0.95), layer(5, 0.80)],
+        gate_layer=1,
+        gate_w=np.ones(h),
+        gate_b=0.0,
+        gate_mean=np.zeros(h),
+        gate_scale=np.ones(h),
+    )
+    steerer = Steerer(model=None, artifact=art, config=SteerConfig(top_layers=2))
+    assert [d.layer for d in steerer.selected()] == [9, 5]
