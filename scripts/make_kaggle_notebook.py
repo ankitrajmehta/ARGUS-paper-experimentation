@@ -179,7 +179,10 @@ assert candidates, (
     "ready, then push again."
 )
 SOURCE = Path(candidates[0]).parent
-WORK = Path("/kaggle/working/midas")
+# Not "/kaggle/working/midas": Kaggle puts /kaggle/working on sys.path, so a
+# directory of that name shadows the installed package and `import midas`
+# resolves to an empty namespace package with __file__ None.
+WORK = Path("/kaggle/working/midas_src")
 print("source dataset:", SOURCE)
 
 # /kaggle/input is read-only and `pip install -e` needs to write egg-info.
@@ -199,7 +202,12 @@ assert frames == 184, "frame count wrong -- the upload was incomplete"
 
 %pip install -q -e .
 
-import midas
+import importlib, midas
+importlib.reload(midas)
+assert midas.__file__, (
+    "`midas` imported as a namespace package, so something on sys.path shadows "
+    "it -- check for a directory of that name under /kaggle/working"
+)
 print("midas installed from", midas.__file__)
 ''')
 
