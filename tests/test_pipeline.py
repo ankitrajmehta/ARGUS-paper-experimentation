@@ -224,3 +224,44 @@ def test_clis_do_not_reference_removed_artifact_fields(tmp_path):
             ):
                 offenders.append(f"{path.name}: artifact.{node.attr}")
     assert offenders == [], offenders
+
+
+def test_flash_attention_gated_on_compute_capability():
+    """FA2 needs sm_80+. A T4 is sm_75 and aborts at the first forward pass.
+
+    The check must look at the capability, not at whether flash_attn imports:
+    the package installs fine on Turing and only fails at runtime.
+    """
+    import ast
+    from pathlib import Path
+
+    source = Path("src/midas/models/internvl.py").read_text()
+    assert "def supports_flash_attention" in source
+    tree = ast.parse(source)
+    fn = next(
+        n for n in ast.walk(tree)
+        if isinstance(n, ast.FunctionDef) and n.name == "supports_flash_attention"
+    )
+    body = ast.unparse(fn)
+    assert "get_device_capability" in body, "must inspect compute capability"
+    assert ">= 8" in body, "must require sm_80 or newer"
+
+
+def test_kaggle_notebook_is_valid_and_configured():
+    """The notebook is generated; a broken one wastes a GPU session to discover."""
+    import json
+    from pathlib import Path
+
+    nb_path = Path("kaggle/midas_kaggle.ipynb")
+    if not nb_path.exists():
+        pytest.skip("notebook not generated")
+
+    nb = json.loads(nb_path.read_text())
+    assert nb["nbformat"] == 4
+    sources = ["".join(c["source"]) for c in nb["cells"]]
+    joined = "\n".join(sources)
+
+    # Every GPU invocation must shard across both T4s; one T4 cannot hold 8B.
+    assert joined.count("--device-map auto") >= 4, "GPU commands must shard across both T4s"
+    assert "sentencepiece==0.1.99" in joined, "the tokenizer pin must be installed"
+    assert "transformers>=4.37,<4.50" in joined, "transformers must be capped below 4.50"

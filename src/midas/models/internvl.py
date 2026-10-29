@@ -25,6 +25,21 @@ IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 
 
+def supports_flash_attention(device: str) -> bool:
+    """Whether FlashAttention-2 can run on this device.
+
+    The FA2 kernels need compute capability 8.0 (Ampere) or newer. A Turing card
+    such as Kaggle's T4 is 7.5, where the kernel aborts with "FlashAttention only
+    supports Ampere GPUs or newer". Checking the capability is safer than
+    checking whether the package imports, because the package installs happily
+    on Turing and only fails at the first forward pass.
+    """
+    if device != "cuda" or not torch.cuda.is_available():
+        return False
+    major, _ = torch.cuda.get_device_capability()
+    return major >= 8
+
+
 def resolve_device(requested: str = "auto") -> str:
     """Pick a device, preferring CUDA then Apple Silicon then CPU."""
     if requested != "auto":
@@ -49,6 +64,7 @@ def resolve_dtype(requested: str, device: str) -> torch.dtype:
             raise ValueError(f"dtype must be auto/bfloat16/float16/float32, got {requested!r}")
         return dtype[requested]
 
+    # Turing has no native bfloat16, so a T4 falls through to float16.
     if device == "cuda" and torch.cuda.is_bf16_supported():
         return torch.bfloat16
     if device == "cpu":
@@ -139,6 +155,7 @@ class InternVLDriveLM:
         dtype: str = "auto",
         load_4bit: bool = False,
         use_flash_attn: bool = True,
+        device_map: str | None = None,
         max_new_tokens: int = 1250,
         do_sample: bool = False,
         max_tiles: int = 12,
@@ -152,9 +169,8 @@ class InternVLDriveLM:
         self.max_new_tokens = max_new_tokens
         self.do_sample = do_sample
 
-        # FlashAttention is a CUDA-only kernel; InternVL's remote code imports it
-        # eagerly when the flag is set, so it has to be off elsewhere.
-        if self.device != "cuda":
+        # FlashAttention-2 is CUDA-only and needs Ampere or newer.
+        if use_flash_attn and not supports_flash_attention(self.device):
             use_flash_attn = False
 
         kwargs: dict = {
@@ -168,12 +184,24 @@ class InternVLDriveLM:
                 raise ValueError("--load-4bit needs bitsandbytes, which is CUDA-only")
             # Fits an 8B model on a 12 GB card at some quality cost; record in results.
             kwargs["load_in_4bit"] = True
-            kwargs["device_map"] = "auto"
+            kwargs["device_map"] = device_map or "auto"
+        elif device_map:
+            # Shard across several GPUs, e.g. an 8B model over two 16 GB T4s.
+            # accelerate places the layers, so the .to(device) below must not run.
+            kwargs["device_map"] = device_map
 
-        print(f"  device={self.device} dtype={self.dtype} flash_attn={use_flash_attn}")
+        print(
+            f"  device={self.device} dtype={self.dtype} "
+            f"flash_attn={use_flash_attn} device_map={device_map or 'none'}"
+        )
+        self.sharded = bool(load_4bit or device_map)
         self.model = AutoModel.from_pretrained(model_id, **kwargs).eval()
-        if not load_4bit:
+        if not self.sharded:
             self.model = self.model.to(self.device)
+        else:
+            # With accelerate placing layers, inputs go to wherever the embedding
+            # lives rather than to a single nominated device.
+            self.device = str(next(self.model.parameters()).device)
         self.tokenizer = AutoTokenizer.from_pretrained(
             model_id, trust_remote_code=True, use_fast=False
         )

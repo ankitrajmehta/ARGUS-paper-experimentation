@@ -38,6 +38,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--device", default="auto")
     parser.add_argument("--dtype", default="auto")
     parser.add_argument("--max-tiles", type=int, default=6)
+    parser.add_argument("--device-map", default=None, help="e.g. 'auto' to shard over GPUs")
     parser.add_argument(
         "--phrases",
         type=int,
@@ -81,7 +82,11 @@ def main(argv: list[str] | None = None) -> int:
 
     print(f"loading {args.model} ...")
     model = InternVLDriveLM(
-        model_id=args.model, device=args.device, dtype=args.dtype, max_tiles=args.max_tiles
+        model_id=args.model,
+        device=args.device,
+        dtype=args.dtype,
+        max_tiles=args.max_tiles,
+        device_map=args.device_map,
     )
 
     rows: list[dict] = []

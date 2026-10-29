@@ -151,6 +151,11 @@ def main(argv: list[str] | None = None) -> int:
         "--load-4bit", action="store_true", help="quantise to fit a <24 GB card"
     )
     parser.add_argument(
+        "--device-map",
+        default=None,
+        help="shard across GPUs with accelerate, e.g. 'auto' for an 8B model on two T4s",
+    )
+    parser.add_argument(
         "--no-flash-attn", action="store_true", help="disable FlashAttention (older GPUs)"
     )
     parser.add_argument("--max-new-tokens", type=int, default=1250)
@@ -225,6 +230,7 @@ def main(argv: list[str] | None = None) -> int:
             dtype=args.dtype,
             load_4bit=args.load_4bit,
             use_flash_attn=not args.no_flash_attn,
+            device_map=args.device_map,
             max_new_tokens=args.max_new_tokens,
             do_sample=args.sample,
             max_tiles=args.max_tiles,

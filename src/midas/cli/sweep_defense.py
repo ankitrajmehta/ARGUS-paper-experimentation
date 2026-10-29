@@ -41,6 +41,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--split", choices=["train", "test"], default="train")
     parser.add_argument("--model", default="models/InternVL2_5-2B")
     parser.add_argument("--max-tiles", type=int, default=6)
+    parser.add_argument("--device-map", default=None, help="e.g. 'auto' to shard over GPUs")
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument(
         "--strengths", type=float, nargs="+", default=[0.0, 0.5, 1.0, 2.0],
@@ -64,7 +65,9 @@ def main(argv: list[str] | None = None) -> int:
     from midas.models.internvl import InternVLDriveLM
 
     print(f"loading {args.model} ...")
-    model = InternVLDriveLM(model_id=args.model, max_tiles=args.max_tiles)
+    model = InternVLDriveLM(
+        model_id=args.model, max_tiles=args.max_tiles, device_map=args.device_map
+    )
     print(
         f"defense: layers {artifact.layer_indices}, "
         f"gate layer {artifact.gate_layer}\n"
