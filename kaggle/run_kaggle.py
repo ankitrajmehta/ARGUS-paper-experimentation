@@ -74,7 +74,7 @@ def fetch_data() -> None:
     from huggingface_hub import hf_hub_download, snapshot_download
 
     snapshot_download(MODEL_REPO, revision=MODEL_REV, local_dir=MODELS / MODEL_REPO.split("/")[1])
-    if EXPERIMENT in ("e2", "e2b", "e2c"):
+    if EXPERIMENT in ("e2", "e2b", "e2c", "e3a", "e3b"):
         for name in THOR_FILES:
             hf_hub_download(THOR_REPO, name, repo_type="dataset", revision=THOR_REV, local_dir=DATA / "ai2thor")
         return
@@ -140,6 +140,10 @@ def main() -> None:
     out = WORK / "outputs" / RUN_NAME
     log_path = log_dir / f"{RUN_NAME}.log"
     step(f"{EXPERIMENT} {RUN_NAME}")
+    if EXPERIMENT in ("e3a", "e3b"):
+        run_e3(out, env, log_path)
+        step("done")
+        return
     if EXPERIMENT == "e1":
         run_logged([
             sys.executable, str(CODE / "experiments/e1/run_e1.py"),
@@ -199,6 +203,57 @@ def build_e2_frames(e2_dir: Path, env: dict, log_path: Path) -> None:
     script = CODE / "experiments/e2/build_e2.py"
     run_logged([sys.executable, str(script), "--frames-dir", str(DATA / "ai2thor/data"), "--output-dir", str(e2_dir)], env, log_path)
     check_e2_fingerprints(e2_dir)
+
+
+def check_rebuild(rebuilt: Path) -> None:
+    # Rebuilt sign frames must carry exactly the texts/actions of the run whose responses E3 reuses.
+    import json
+
+    def strip(path: Path) -> list[dict]:
+        rows = json.loads(path.read_text(encoding="utf-8"))
+        return [{k: v for k, v in r.items() if k not in ("images", "clean_image")} for r in rows]
+
+    hits = sorted(Path("/kaggle/input").rglob(f"data/{rebuilt.name}"))
+    if not hits:
+        raise FileNotFoundError(f"no mounted data/{rebuilt.name} to check the rebuild against")
+    for hit in hits:
+        if strip(hit) != strip(rebuilt):
+            raise RuntimeError(f"rebuilt {rebuilt} differs from mounted {hit}")
+    print(f"rebuilt {rebuilt.name} matches {len(hits)} mounted copies")
+
+
+def run_e3(out: Path, env: dict, log_path: Path) -> None:
+    # E3 reuses E2/E2b/E2c activations and responses; frames are rebuilt (seeded) and checked against the mounts.
+    e2_dir, e2b_dir, e2c_dir = ROOT / "e2", ROOT / "e2b", ROOT / "e2c"
+    build_e2_frames(e2_dir, env, log_path)
+    copy_mounted("e2_train.pt", e2_dir)
+    run_logged([sys.executable, str(CODE / "experiments/e2b/build_e2b.py"), "--e2-dir", str(e2_dir), "--output-dir", str(e2b_dir)], env, log_path)
+    copy_mounted("e2b_test.pt", e2b_dir)
+    run_logged([sys.executable, str(CODE / "experiments/e2c/build_e2c.py"), "--e2-dir", str(e2_dir), "--output-dir", str(e2c_dir)], env, log_path)
+    copy_mounted("e2c_train.pt", e2c_dir)
+    for path in [e2b_dir / "data" / "e2b_test.json", e2c_dir / "data" / "e2c_train.json", e2c_dir / "data" / "e2c_test.json"]:
+        check_rebuild(path)
+
+    scripts = CODE / "experiments/e3"
+    sources = ["--e2-dir", str(e2_dir), "--e2b-dir", str(e2b_dir), "--e2c-dir", str(e2c_dir)]
+    frames = ["--max-frames", str(MAX_SAMPLES)] if MAX_SAMPLES < 94 else []
+    if EXPERIMENT == "e3a":
+        e1_dir = e1_output_dir()
+        e1_args = ["--e1-dir", str(e1_dir)] if e1_dir else []
+        run_logged([sys.executable, str(scripts / "collect_e3a.py"), "--config", str(CODE / CONFIG), *sources, "--output-dir", str(out), *frames], env, log_path)
+        run_logged([sys.executable, str(scripts / "analyze_e3a.py"), *sources, "--output-dir", str(out), *e1_args], env, log_path)
+        return
+    hits = sorted(Path("/kaggle/input").rglob("results/e3a_report.json"))
+    if not hits:
+        raise FileNotFoundError("no results/e3a_report.json under /kaggle/input; attach the argus-e3a output")
+    e3a_dir = hits[0].parent.parent
+    print(f"E3a probes from {e3a_dir}")
+    e3a_args = ["--e3a-dir", str(e3a_dir), "--output-dir", str(out)]
+    run_logged([sys.executable, str(scripts / "respond_e3b.py"), "--config", str(CODE / CONFIG), *sources, *e3a_args, *frames], env, log_path)
+    run_logged([sys.executable, str(scripts / "analyze_e3b.py"), *sources, *e3a_args, *frames], env, log_path)
+    # Masked frames are reproducible; keep a few for the report.
+    for path in sorted((out / "data" / "masked").glob("*.png"))[8:]:
+        path.unlink()
 
 
 def run_e2b(e2_dir: Path, e2b: Path, e1_args: list[str], env: dict, log_path: Path) -> None:
