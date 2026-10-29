@@ -249,6 +249,7 @@ def run_e3(out: Path, env: dict, log_path: Path) -> None:
     e3a_dir = hits[0].parent.parent
     print(f"E3a probes from {e3a_dir}")
     e3a_args = ["--e3a-dir", str(e3a_dir), "--output-dir", str(out)]
+    run_logged([sys.executable, str(scripts / "diagnose_e3a.py"), *sources, *e3a_args], env, log_path)
     run_logged([sys.executable, str(scripts / "respond_e3b.py"), "--config", str(CODE / CONFIG), *sources, *e3a_args, *frames], env, log_path)
     run_logged([sys.executable, str(scripts / "analyze_e3b.py"), *sources, *e3a_args, *frames], env, log_path)
     # Masked frames are reproducible; keep a few for the report.

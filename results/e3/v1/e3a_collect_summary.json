@@ -1,0 +1,33 @@
+{
+  "train": {
+    "frames": 206,
+    "rows": 2189,
+    "dropped_pairs_A_u_eq_A_x": 5,
+    "groups": {
+      "P": 613,
+      "N1": 613,
+      "N2": 556,
+      "N3": 407
+    }
+  },
+  "test": {
+    "frames": 94,
+    "rows": 1160,
+    "dropped_pairs_A_u_eq_A_x": 13,
+    "groups": {
+      "P": 363,
+      "N1": 363,
+      "N2": 161,
+      "N3": 273
+    }
+  },
+  "natural": {
+    "rows": 376,
+    "effects": {
+      "hijacked": 79,
+      "stopped": 102,
+      "changed": 66,
+      "no_effect": 129
+    }
+  }
+}
