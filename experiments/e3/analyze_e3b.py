@@ -38,13 +38,19 @@ def bootstrap(values: dict[int, list[float]], reps: int = 2000, seed: int = 0) -
     return [round(float(np.percentile(means, 2.5)), 4), round(float(np.percentile(means, 97.5)), 4)]
 
 
-def load_arms(dirs: dict[str, Path], e3a_dir: Path, res: Path):
-    """Final answer per (arm, variant, frame) under E2c-detector gating; also returns flags and arm names."""
+# Generated arms (v1: mask..steer_behavior; v2: mask_ground, *_strong). The oracle mask has no always-on form.
+ARMS = ["mask", "mask_ground", "note", "steer_detect", "steer_behavior", "steer_detect_strong", "steer_behavior_strong"]
+
+
+def load_arms(dirs: dict[str, Path], e3a_dir: Path, res: Path | list[Path]):
+    """Final answer per (arm, variant, frame) under E2c-detector gating; also returns flags and arm names.
+    `res` may list several result dirs (E3b v1 + v2); arms are looked up in each."""
     base = baseline_responses(dirs)
     det = load_json(e3a_dir / "results" / "e3a_detect_flags.json")
     flags = {v: {r["id"]: r["flag"] for r in det["flags"][v]} for v in TEST_VARIANTS if v in det["flags"]}
-    arms_raw = {name: by_key(res / f"e3b_{name}.json") for name in ["mask", "note", "steer_detect", "steer_behavior"]}
-    arms_raw = {k: v for k, v in arms_raw.items() if v}
+    arms_raw = {}
+    for d in (res if isinstance(res, list) else [res]):
+        arms_raw.update({name: rows for name in ARMS if (rows := by_key(d / f"e3b_{name}.json"))})
 
     def answer(arm: str, v: str, i: int) -> str:
         flagged = flags.get(v, {}).get(i, False)
@@ -58,8 +64,8 @@ def load_arms(dirs: dict[str, Path], e3a_dir: Path, res: Path):
             return base[v][i]
         return row["response"] if (always or flagged) else base[v][i]
 
-    arm_names = ["none", "stop"] + [a for a in ["mask", "note", "steer_detect", "steer_behavior"] if a in arms_raw]
-    arm_names += [f"{a}_always" for a in ["note", "steer_detect", "steer_behavior"] if a in arms_raw]
+    arm_names = ["none", "stop"] + [a for a in ARMS if a in arms_raw]
+    arm_names += [f"{a}_always" for a in ARMS if a in arms_raw and a != "mask"]
     return answer, arm_names, base, det, flags, arms_raw
 
 
@@ -71,12 +77,13 @@ def main() -> None:
     parser.add_argument("--e3a-dir", required=True)
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--max-frames", type=int)
+    parser.add_argument("--extra-results", nargs="*", default=[], help="More E3b result dirs to merge (e.g. v1 when analysing v2).")
     args = parser.parse_args()
 
     dirs = {"e2": Path(args.e2_dir), "e2b": Path(args.e2b_dir), "e2c": Path(args.e2c_dir)}
     res = Path(args.output_dir) / "results"
     frames = subset(load_frames(dirs, "test"), args.max_frames)
-    answer, arm_names, base, det, flags, arms_raw = load_arms(dirs, Path(args.e3a_dir), res)
+    answer, arm_names, base, det, flags, arms_raw = load_arms(dirs, Path(args.e3a_dir), [res, *map(Path, args.extra_results)])
     report = {"n_frames": len(frames), "detect_layer": det["layer"], "selection_rule": {"stop_margin": STOP_MARGIN,
               "harmless_consistency_min": HARMLESS_CONSISTENCY_MIN}, "arms": {}}
     for arm in arm_names:
@@ -108,16 +115,30 @@ def main() -> None:
         report["arms"][arm] = {"pooled": summary, "per_variant": per_variant}
 
     # Latency: baseline from the repro subset; re-plan arms cost one extra generation on flagged frames only.
-    repro = by_key(res / "e3b_repro.json")
+    repro = next((r for d in [res, *map(Path, args.extra_results)] if (r := by_key(d / "e3b_repro.json"))), {})
     base_s = float(np.median([r["seconds"] for r in repro.values()])) if repro else None
     flag_rate = float(np.mean([f for v in TEST_VARIANTS for f in flags.get(v, {}).values()]))
     latency = {"baseline_generation_s": base_s, "detector": "one 2048-d dot product on a state the planner already computes",
                "pooled_flag_rate": round(flag_rate, 4), "arms": {}}
     for name, rows in arms_raw.items():
         med = float(np.median([r["seconds"] for r in rows.values()]))
-        extra = med if name in ("mask", "note") else (med - base_s if base_s else None)
+        extra = med if name in ("mask", "mask_ground", "note") else (med - base_s if base_s else None)
         latency["arms"][name] = {"median_s": round(med, 4), "extra_s_when_applied": None if extra is None else round(extra, 4)}
     report["latency"] = latency
+    if "mask_ground" in arms_raw:
+        # How well the VLM finds the sign itself (v2), per variant; oracle overlap exists only for sign frames.
+        g = {}
+        for v in TEST_VARIANTS:
+            rows = [r for (vv, i), r in arms_raw["mask_ground"].items() if vv == v and i in frames]
+            g[v] = {"no_box": round(float(np.mean([not r["boxes"] for r in rows])), 4),
+                    "masked_fraction": round(float(np.mean([r["masked_fraction"] for r in rows])), 4)}
+            if v != "clean":
+                g[v]["oracle_covered_mean"] = round(float(np.mean([r["oracle_covered"] for r in rows])), 4)
+                g[v]["oracle_covered_ge_90"] = round(float(np.mean([r["oracle_covered"] >= 0.9 for r in rows])), 4)
+                g[v]["iou_mean"] = round(float(np.mean([r["iou"] for r in rows])), 4)
+        report["grounding"] = {"per_variant": g, "ground_seconds_median": round(float(np.median(
+            [r["ground_seconds"] for r in arms_raw["mask_ground"].values()])), 4)}
+        print("grounding", report["grounding"])
     if repro:
         report["repro_match_rate"] = round(float(np.mean([same_action(r["response"], base[v][i]) for (v, i), r in repro.items()])), 4)
 
