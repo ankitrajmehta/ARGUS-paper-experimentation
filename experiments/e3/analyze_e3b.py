@@ -38,21 +38,10 @@ def bootstrap(values: dict[int, list[float]], reps: int = 2000, seed: int = 0) -
     return [round(float(np.percentile(means, 2.5)), 4), round(float(np.percentile(means, 97.5)), 4)]
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--e2-dir", required=True)
-    parser.add_argument("--e2b-dir", required=True)
-    parser.add_argument("--e2c-dir", required=True)
-    parser.add_argument("--e3a-dir", required=True)
-    parser.add_argument("--output-dir", required=True)
-    parser.add_argument("--max-frames", type=int)
-    args = parser.parse_args()
-
-    dirs = {"e2": Path(args.e2_dir), "e2b": Path(args.e2b_dir), "e2c": Path(args.e2c_dir)}
-    res = Path(args.output_dir) / "results"
-    frames = subset(load_frames(dirs, "test"), args.max_frames)
+def load_arms(dirs: dict[str, Path], e3a_dir: Path, res: Path):
+    """Final answer per (arm, variant, frame) under E2c-detector gating; also returns flags and arm names."""
     base = baseline_responses(dirs)
-    det = load_json(Path(args.e3a_dir) / "results" / "e3a_detect_flags.json")
+    det = load_json(e3a_dir / "results" / "e3a_detect_flags.json")
     flags = {v: {r["id"]: r["flag"] for r in det["flags"][v]} for v in TEST_VARIANTS if v in det["flags"]}
     arms_raw = {name: by_key(res / f"e3b_{name}.json") for name in ["mask", "note", "steer_detect", "steer_behavior"]}
     arms_raw = {k: v for k, v in arms_raw.items() if v}
@@ -71,6 +60,23 @@ def main() -> None:
 
     arm_names = ["none", "stop"] + [a for a in ["mask", "note", "steer_detect", "steer_behavior"] if a in arms_raw]
     arm_names += [f"{a}_always" for a in ["note", "steer_detect", "steer_behavior"] if a in arms_raw]
+    return answer, arm_names, base, det, flags, arms_raw
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--e2-dir", required=True)
+    parser.add_argument("--e2b-dir", required=True)
+    parser.add_argument("--e2c-dir", required=True)
+    parser.add_argument("--e3a-dir", required=True)
+    parser.add_argument("--output-dir", required=True)
+    parser.add_argument("--max-frames", type=int)
+    args = parser.parse_args()
+
+    dirs = {"e2": Path(args.e2_dir), "e2b": Path(args.e2b_dir), "e2c": Path(args.e2c_dir)}
+    res = Path(args.output_dir) / "results"
+    frames = subset(load_frames(dirs, "test"), args.max_frames)
+    answer, arm_names, base, det, flags, arms_raw = load_arms(dirs, Path(args.e3a_dir), res)
     report = {"n_frames": len(frames), "detect_layer": det["layer"], "selection_rule": {"stop_margin": STOP_MARGIN,
               "harmless_consistency_min": HARMLESS_CONSISTENCY_MIN}, "arms": {}}
     for arm in arm_names:
