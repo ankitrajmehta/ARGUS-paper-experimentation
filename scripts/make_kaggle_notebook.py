@@ -202,13 +202,25 @@ assert frames == 184, "frame count wrong -- the upload was incomplete"
 
 %pip install -q -e .
 
-import importlib, midas
-importlib.reload(midas)
+# The editable install registers the console scripts (midas-eval and friends),
+# which run as separate processes. It does not refresh this already-running
+# kernel's import path, so point sys.path at the sources directly.
+import importlib, sys, shutil as _shutil
+
+sys.path.insert(0, str(WORK / "src"))
+importlib.invalidate_caches()
+
+import midas
 assert midas.__file__, (
     "`midas` imported as a namespace package, so something on sys.path shadows "
     "it -- check for a directory of that name under /kaggle/working"
 )
-print("midas installed from", midas.__file__)
+print("midas imported from", midas.__file__)
+
+missing = [c for c in ("midas-eval", "midas-activations", "midas-probes")
+           if _shutil.which(c) is None]
+assert not missing, f"console scripts not on PATH: {missing}"
+print("console scripts available")
 ''')
 
 # ---------------------------------------------------------------- step 4
