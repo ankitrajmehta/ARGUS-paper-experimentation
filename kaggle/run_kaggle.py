@@ -155,10 +155,17 @@ def main() -> None:
         analyze = [sys.executable, str(scripts / "analyze_e2.py"), "--output-dir", str(out)]
         e1_dir = e1_output_dir()
         print(f"E1 probes for transfer_e1: {e1_dir}")
-        run_logged(analyze + (["--e1-dir", str(e1_dir)] if e1_dir else []), env, log_path)
+        e1_args = ["--e1-dir", str(e1_dir)] if e1_dir else []
+        run_logged(analyze + e1_args, env, log_path)
+
+        # E2b: same test frames with plain attack wording and legitimate imperative signs.
+        e2b, scripts_b = WORK / "outputs" / f"{RUN_NAME}_e2b", CODE / "experiments/e2b"
+        run_logged([sys.executable, str(scripts_b / "build_e2b.py"), "--e2-dir", str(out), "--output-dir", str(e2b)], env, log_path)
+        run_logged([sys.executable, str(scripts_b / "collect_e2b.py"), "--config", str(CODE / CONFIG), "--output-dir", str(e2b), "--behavior-n", str(BEHAVIOR_N)], env, log_path)
+        run_logged([sys.executable, str(scripts_b / "analyze_e2b.py"), "--e2-dir", str(out), "--output-dir", str(e2b), *e1_args], env, log_path)
         # Rendered frames are reproducible from the seed; keep the kernel output small.
-        shutil.rmtree(out / "data" / "train", ignore_errors=True)
-        shutil.rmtree(out / "data" / "test", ignore_errors=True)
+        for folder in [out / "data" / "train", out / "data" / "test", e2b / "data" / "test"]:
+            shutil.rmtree(folder, ignore_errors=True)
     step("done")
 
 
