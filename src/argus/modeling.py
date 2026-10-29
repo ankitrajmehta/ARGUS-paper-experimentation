@@ -73,6 +73,7 @@ def vision_runner(config: dict[str, Any]) -> "VisionLanguageRunner":
         video_options=video_options(config),
         image_options=image_options(config),
         dtype=model_dtype(cfg_get(config, "model.dtype", "bfloat16")),
+        vision_dtype=model_dtype(cfg_get(config, "model.vision_dtype")) if cfg_get(config, "model.vision_dtype") else None,
         quantization=cfg_get(config, "model.quantization"),
         allow_offload=bool(cfg_get(config, "model.allow_offload", False)),
     )
@@ -145,6 +146,7 @@ class VisionLanguageRunner:
         image_options: dict[str, Any] | None = None,
         quantization: str | None = None,
         allow_offload: bool = False,
+        vision_dtype: torch.dtype | None = None,
     ):
         set_cuda_device(device)
         from qwen_vl_utils import process_vision_info
@@ -162,6 +164,10 @@ class VisionLanguageRunner:
         ).eval()
         if not allow_offload:
             check_on_gpu(self.model)
+        if vision_dtype is not None:
+            # The fp16 vision tower overflows to NaN on text-heavy images; the model casts its
+            # output back to the language-model dtype, so only the encoder runs at this precision.
+            self.model.visual.to(vision_dtype)
         silence_greedy_sampling_warnings(self.model)
         if getattr(self.processor, "tokenizer", None) is not None:
             self.processor.tokenizer.padding_side = "left"
@@ -253,8 +259,11 @@ class VisionLanguageRunner:
         inputs = self._inputs(text, media, prefix=prefix, media_type=media_type)
         outputs = self.model(**inputs, output_hidden_states=True)
         # Skip the embedding state so index 0 corresponds to transformer layer 0.
-        states = [hidden[:, token].detach().cpu() for hidden in outputs.hidden_states[1:]]
-        return torch.stack(states).squeeze(1)
+        states = torch.stack([hidden[:, token].detach().cpu() for hidden in outputs.hidden_states[1:]]).squeeze(1)
+        if not torch.isfinite(states).all():
+            # Fail fast: NaN rows would otherwise surface hours later in probe training.
+            raise FloatingPointError(f"non-finite activations for {media}; try model.vision_dtype: float32")
+        return states
 
 
 def _clean_json_text(text: str) -> str:

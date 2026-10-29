@@ -4,6 +4,8 @@
 model:
   path: "/tmp/argus/models/Qwen2.5-VL-3B-Instruct"
   dtype: "float16"
+  # fp16 vision tower overflows to NaN on text-heavy frames (seen on T4); run it in float32.
+  vision_dtype: "float32"
   quantization: null
   allow_offload: false
 
