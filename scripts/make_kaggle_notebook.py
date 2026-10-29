@@ -97,22 +97,43 @@ torch** — that risks breaking GPU support and wastes several minutes.
 
 Two pins are load-bearing and cost us hours to diagnose locally:
 
-- **`sentencepiece==0.1.99`.** Version 0.2.x rejects InternVL's `tokenizer.model`
-  as malformed even though its checksum matches the hub. `AutoTokenizer` swallows
-  the error and returns `False`, so the failure surfaces much later as
-  `'bool' object has no attribute 'convert_tokens_to_ids'`.
+- **`sentencepiece==0.2.1`.** Version 0.2.2 rejects InternVL's `tokenizer.model`
+  as malformed even though its checksum matches the hub; `AutoTokenizer` swallows
+  the error and returns `False`, which surfaces much later as `'bool' object has
+  no attribute 'convert_tokens_to_ids'`. 0.1.99 also works but has no Python 3.13
+  wheel, and Kaggle now runs 3.13 — pinning it makes pip try a source build,
+  which fails and aborts the whole install.
 - **`transformers<4.50`.** InternVL2.5's remote code does not inherit from
-  `GenerationMixin`, which 4.50 made mandatory.
+  `GenerationMixin`, which 4.50 made mandatory. Kaggle ships 5.x, so this is a
+  real downgrade and takes a minute.
+
+The install is checked below rather than assumed: a failed pip run leaves the
+preinstalled versions in place, and the notebook would then fail much later for
+reasons that look unrelated.
 """)
 
 code('''
-%pip install -q "transformers>=4.37,<4.50" "sentencepiece==0.1.99" protobuf \\
+%pip install -q "transformers>=4.37,<4.50" "sentencepiece==0.2.1" protobuf \\
     "accelerate>=0.26" timm einops "numpy<2" opencv-python-headless scikit-learn pytest
 
-import transformers, sentencepiece, accelerate
+import importlib, sentencepiece, transformers, accelerate
+for mod in (transformers, sentencepiece, accelerate):
+    importlib.reload(mod)
+
 print("transformers :", transformers.__version__)
 print("sentencepiece:", sentencepiece.__version__)
 print("accelerate   :", accelerate.__version__)
+
+major, minor = (int(x) for x in transformers.__version__.split(".")[:2])
+assert (major, minor) < (4, 50), (
+    f"transformers {transformers.__version__} is too new; InternVL2.5's remote "
+    "code needs <4.50. The pip step above must have failed -- scroll up."
+)
+assert sentencepiece.__version__ == "0.2.1", (
+    f"sentencepiece {sentencepiece.__version__} installed, need 0.2.1. "
+    "0.2.2 cannot read InternVL's tokenizer and fails confusingly later."
+)
+print("\nversion checks passed")
 ''')
 
 # ---------------------------------------------------------------- step 3
@@ -131,26 +152,43 @@ code('''
 import os, shutil, subprocess, glob
 from pathlib import Path
 
-candidates = glob.glob("/kaggle/input/*/pyproject.toml")
+INPUT = Path("/kaggle/input")
+print("contents of /kaggle/input:")
+if INPUT.exists():
+    for entry in sorted(INPUT.iterdir()):
+        inner = sorted(p.name for p in entry.iterdir())[:12] if entry.is_dir() else []
+        print(f"  {entry.name}/  -> {inner}")
+else:
+    print("  (missing entirely -- no dataset is attached to this kernel)")
+
+# Search recursively: a dataset may mount its payload one level deeper than
+# expected depending on how the archive was packed.
+candidates = glob.glob("/kaggle/input/**/pyproject.toml", recursive=True)
 assert candidates, (
-    "MIDAS source dataset not attached. Add it via Add Data -> Your Datasets, "
-    "or run scripts/kaggle_deploy.py upload first."
+    "MIDAS source not found under /kaggle/input. Attach the dataset via "
+    "Add Data -> Your Datasets, or re-run scripts/kaggle_deploy.py upload. "
+    "If the dataset was created moments before this kernel started, it may "
+    "still have been processing -- wait for `kaggle datasets status` to read "
+    "ready, then push again."
 )
 SOURCE = Path(candidates[0]).parent
 WORK = Path("/kaggle/working/midas")
-print("source dataset:", SOURCE)
+print("\nsource dataset:", SOURCE)
 
-# /kaggle/input is read-only and pip install -e needs to write egg-info.
+# /kaggle/input is read-only and `pip install -e` needs to write egg-info.
 if WORK.exists():
     shutil.rmtree(WORK)
 shutil.copytree(SOURCE, WORK)
 os.chdir(WORK)
 
-assert (WORK / "vendor" / "chai" / "training.json").exists(), (
-    "CHAI artefacts missing from the dataset; re-run the upload step"
+chai = WORK / "vendor" / "chai"
+assert (chai / "training.json").exists(), (
+    f"CHAI artefacts missing from the dataset (looked in {chai}); "
+    "re-run the upload step"
 )
-frames = len(glob.glob(str(WORK / "vendor/chai/DriveLM_dataset/**/*.jpg"), recursive=True))
+frames = len(glob.glob(str(chai / "DriveLM_dataset/**/*.jpg"), recursive=True))
 print(f"CHAI frames present: {frames} (expect 184)")
+assert frames == 184, "frame count wrong -- the upload was incomplete"
 
 %pip install -q -e .
 

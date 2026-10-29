@@ -263,5 +263,25 @@ def test_kaggle_notebook_is_valid_and_configured():
 
     # Every GPU invocation must shard across both T4s; one T4 cannot hold 8B.
     assert joined.count("--device-map auto") >= 4, "GPU commands must shard across both T4s"
-    assert "sentencepiece==0.1.99" in joined, "the tokenizer pin must be installed"
+    # 0.2.2 breaks InternVL's tokenizer; 0.1.99 has no Python 3.13 wheel.
+    assert "sentencepiece==0.2.1" in joined, "the tokenizer pin must be installed"
     assert "transformers>=4.37,<4.50" in joined, "transformers must be capped below 4.50"
+
+
+def test_bfloat16_gated_on_compute_capability_not_torch_helper():
+    """torch.cuda.is_bf16_supported() returns True on a T4 (sm_75).
+
+    Recent PyTorch counts emulated bf16 as supported, but Turing has no bf16
+    tensor cores, so trusting that helper picks a far slower path than float16.
+    """
+    import ast
+    from pathlib import Path
+
+    tree = ast.parse(Path("src/midas/models/internvl.py").read_text())
+    fn = next(
+        n for n in ast.walk(tree)
+        if isinstance(n, ast.FunctionDef) and n.name == "resolve_dtype"
+    )
+    body = ast.unparse(fn)
+    assert "is_bf16_supported" not in body, "must not trust the torch helper"
+    assert "get_device_capability" in body and ">= 8" in body

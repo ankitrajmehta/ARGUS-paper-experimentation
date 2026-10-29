@@ -64,8 +64,11 @@ def resolve_dtype(requested: str, device: str) -> torch.dtype:
             raise ValueError(f"dtype must be auto/bfloat16/float16/float32, got {requested!r}")
         return dtype[requested]
 
-    # Turing has no native bfloat16, so a T4 falls through to float16.
-    if device == "cuda" and torch.cuda.is_bf16_supported():
+    # Gate bfloat16 on compute capability, not torch.cuda.is_bf16_supported().
+    # That helper returns True on a Turing T4 (sm_75) because recent PyTorch
+    # counts emulated support, but Turing has no bf16 tensor cores, so the
+    # emulated path is far slower than float16 and buys nothing.
+    if device == "cuda" and torch.cuda.get_device_capability()[0] >= 8:
         return torch.bfloat16
     if device == "cpu":
         # float16 matmuls are not implemented on most CPUs.

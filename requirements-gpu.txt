@@ -9,11 +9,13 @@ torch>=2.1
 torchvision
 transformers>=4.37,<4.50
 accelerate>=0.26
-# Pinned: sentencepiece 0.2.x rejects InternVL's tokenizer.model with
-# "INTERNAL: piece must not include null character" even though the file is
-# intact (sha256 matches the hub). 0.1.99 loads it. This also caps Python at
-# 3.11, which has no 0.2-only wheels.
-sentencepiece==0.1.99
+# Pinned: sentencepiece 0.2.2 rejects InternVL's tokenizer.model with
+# "INTERNAL: piece must not include null character", even though the file is
+# intact (its sha256 matches the hub). AutoTokenizer swallows that error and
+# returns False, so it surfaces much later as "'bool' has no attribute
+# convert_tokens_to_ids". 0.2.1 loads it correctly and, unlike 0.1.99, ships
+# wheels for Python 3.13 -- which Kaggle now runs.
+sentencepiece==0.2.1
 # InternVL's tokenizer is sentencepiece-based and loaded with use_fast=False,
 # which needs protobuf to parse tokenizer.model.
 protobuf
