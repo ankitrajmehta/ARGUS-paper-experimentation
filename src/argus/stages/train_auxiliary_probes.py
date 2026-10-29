@@ -9,6 +9,7 @@ from argus.io_utils import seed_everything
 from argus.media import ensure_image_argus_stage
 from argus.probes import (
     OrthogonalLogisticRegression,
+    activation_layer_count,
     load_edit_xy,
     load_pickle,
     normalized_probe_vector,
@@ -39,7 +40,7 @@ def main() -> None:
         return
 
     all_metrics = []
-    for layer in range(28):
+    for layer in range(activation_layer_count(train_path)):
         train_x, train_y, val_x, val_y = load_edit_xy(train_path, layer, ratio)
         # Auxiliary probes are trained orthogonal to earlier basis vectors.
         basis = [normalized_probe_vector(load_pickle(paths.probe_dir / "edit" / f"mllm_layer{layer}.pickle"))]

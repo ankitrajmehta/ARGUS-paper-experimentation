@@ -10,7 +10,7 @@ from argus.config import cfg_get, get_paths, load_config, resolve_input_path
 from argus.eval_metrics import score_response, summarize_scores
 from argus.io_utils import load_json, save_json, seed_everything
 from argus.media import get_modality, split_json_path, video_options
-from argus.modeling import AudioLanguageRunner, VisionLanguageRunner
+from argus.modeling import AudioLanguageRunner, VisionLanguageRunner, vision_runner
 
 
 def selected_baselines(raw: str | None) -> list[str]:
@@ -58,11 +58,7 @@ def run_one_baseline(args: argparse.Namespace, baseline: str) -> Path:
     if modality == "audio":
         runner = AudioLanguageRunner(resolve_input_path(config, "model.path"), device=cfg_get(config, "run.device"))
     else:
-        runner = VisionLanguageRunner(
-            resolve_input_path(config, "model.path"),
-            device=cfg_get(config, "run.device"),
-            video_options=video_options(config),
-        )
+        runner = vision_runner(config)
     data = load_json(split_json_path(paths, config, "test"))
     if args.num_shards > 1:
         data = [item for index, item in enumerate(data) if index % args.num_shards == args.shard_index]

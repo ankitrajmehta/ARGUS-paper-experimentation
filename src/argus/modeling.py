@@ -62,6 +62,19 @@ def get_language_layers(model: Any) -> Any:
     raise AttributeError(f"Cannot locate language-model layers. Top-level children: {available}; layer-like modules: {layer_like[:20]}")
 
 
+def vision_runner(config: dict[str, Any]) -> "VisionLanguageRunner":
+    # Single construction point so every stage sees images at the same resolution.
+    from .config import cfg_get, resolve_input_path
+    from .media import image_options, video_options
+
+    return VisionLanguageRunner(
+        resolve_input_path(config, "model.path"),
+        device=cfg_get(config, "run.device"),
+        video_options=video_options(config),
+        image_options=image_options(config),
+    )
+
+
 def silence_greedy_sampling_warnings(model: Any) -> None:
     generation_config = getattr(model, "generation_config", None)
     if generation_config is None:
@@ -77,6 +90,7 @@ class VisionLanguageRunner:
         device: str | None = None,
         dtype: torch.dtype = torch.bfloat16,
         video_options: dict[str, Any] | None = None,
+        image_options: dict[str, Any] | None = None,
     ):
         set_cuda_device(device)
         from qwen_vl_utils import process_vision_info
@@ -84,6 +98,7 @@ class VisionLanguageRunner:
 
         self.process_vision_info = process_vision_info
         self.video_options = video_options or {}
+        self.image_options = image_options or {}
         self.processor = AutoProcessor.from_pretrained(str(model_path))
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
             str(model_path),
@@ -107,7 +122,7 @@ class VisionLanguageRunner:
                 "role": "user",
                 "content": [
                     {"type": "text", "text": text},
-                    media_block(media, media_type, self.video_options),
+                    media_block(media, media_type, self.image_options if media_type == "image" else self.video_options),
                 ],
             }
         ]

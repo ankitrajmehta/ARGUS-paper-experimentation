@@ -66,9 +66,21 @@ def video_options(config: dict[str, Any], prefix: str = "data") -> dict[str, Any
     return options
 
 
+def image_options(config: dict[str, Any]) -> dict[str, Any]:
+    # Caps visual tokens per image; small GPUs need this, but injected text must stay legible.
+    options: dict[str, Any] = {}
+    max_pixels = cfg_get(config, "data.image_max_pixels")
+    min_pixels = cfg_get(config, "data.image_min_pixels")
+    if max_pixels is not None:
+        options["max_pixels"] = int(max_pixels)
+    if min_pixels is not None:
+        options["min_pixels"] = int(min_pixels)
+    return options
+
+
 def media_block(path: str | Path, kind: str, options: dict[str, Any] | None = None) -> dict[str, Any]:
     if kind == "image":
-        return {"type": "image", "image": str(path)}
+        return {"type": "image", "image": str(path), **(options or {})}
     if kind == "video":
         return {"type": "video", "video": str(path), **(options or {})}
     if kind == "audio":

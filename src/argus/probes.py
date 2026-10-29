@@ -22,6 +22,13 @@ def shuffle_xy(x: list[np.ndarray], y: list[int]) -> tuple[list[np.ndarray], lis
     return list(xs), list(ys)
 
 
+def activation_layer_count(path: Path) -> int:
+    # Layer count comes from the saved activations, so probes follow whatever model produced them.
+    first = torch.load(path, map_location="cpu")[0]
+    key = next(k for k in first if k.endswith("activation"))
+    return int(first[key].shape[0])
+
+
 def load_detection_xy(path: Path, layer: int, ratio: float = 0.8):
     dataset = torch.load(path, map_location="cpu")
     clean = [_to_numpy(item["clean_activation"][layer]) for item in dataset]

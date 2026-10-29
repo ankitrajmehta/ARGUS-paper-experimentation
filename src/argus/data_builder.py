@@ -82,7 +82,10 @@ def load_vtqa_dataset(config: dict[str, Any]) -> Any:
             return load_dataset(str(path / "vtqa2023.py"), vtqa_config, trust_remote_code=trust_remote_code)
         return load_dataset(str(path), vtqa_config, trust_remote_code=trust_remote_code)
 
-    return load_dataset(raw_path, vtqa_config, trust_remote_code=trust_remote_code)
+    # The VTQA script skips its download when local_url holds the extracted annotations/ and image/ folders.
+    local_url = cfg_get(config, "data.vtqa_local_url")
+    extra = {"local_url": str(resolve_input_path(config, "data.vtqa_local_url"))} if local_url else {}
+    return load_dataset(raw_path, vtqa_config, trust_remote_code=trust_remote_code, **extra)
 
 
 def render_caption_block(base_image: Image.Image, text: str, font_path: Path, font_size: int, margin: int = 20) -> Image.Image:
