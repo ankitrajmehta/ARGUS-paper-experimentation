@@ -2,3 +2,4 @@ data/alpaca/
 outputs*/
 __pycache__/
 *.pyc
+kaggle/.build/

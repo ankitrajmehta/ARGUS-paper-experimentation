@@ -72,9 +72,18 @@ def vision_runner(config: dict[str, Any]) -> "VisionLanguageRunner":
         device=cfg_get(config, "run.device"),
         video_options=video_options(config),
         image_options=image_options(config),
+        dtype=model_dtype(cfg_get(config, "model.dtype", "bfloat16")),
         quantization=cfg_get(config, "model.quantization"),
         allow_offload=bool(cfg_get(config, "model.allow_offload", False)),
     )
+
+
+def model_dtype(name: str) -> torch.dtype:
+    # T4/P100 (Kaggle) have no native bf16, so those runs use float16.
+    dtypes = {"bfloat16": torch.bfloat16, "float16": torch.float16, "float32": torch.float32}
+    if name not in dtypes:
+        raise ValueError(f"model.dtype must be one of {sorted(dtypes)}, got {name!r}")
+    return dtypes[name]
 
 
 def vision_model_class(model_path: str | Path) -> Any:
