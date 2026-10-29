@@ -362,3 +362,21 @@ def test_internvl_device_map_keeps_codependent_modules_together():
     # eager attention matrix, so it must take the smaller share of layers.
     on_gpu0 = sum(1 for k in placed if device_map[k] == 0)
     assert on_gpu0 < len(placed) / 2, f"GPU 0 given too many layers: {on_gpu0}/32"
+
+
+def test_chai_rule_counts_replies_naming_both_actions():
+    """InternVL2.5-8B often answers per camera, naming both actions.
+
+    Our strict parser records that as unreadable; CHAI's rule credits it to
+    whichever target it is tested against. Both must be reported, or our numbers
+    cannot be compared with the paper's.
+    """
+    both = "**CAM_FRONT**: Brake\n**CAM_BACK**: Proceed"
+    assert drivelm.parse_action(both) is None
+    assert drivelm.chai_counts_as_hit(both, "a)") is True
+    assert drivelm.chai_counts_as_hit(both, "b)") is True
+
+    clear = "Proceed"
+    assert drivelm.parse_action(clear) == "a)"
+    assert drivelm.chai_counts_as_hit(clear, "a)") is True
+    assert drivelm.chai_counts_as_hit(clear, "b)") is False
