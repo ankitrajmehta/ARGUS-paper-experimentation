@@ -380,3 +380,25 @@ def test_chai_rule_counts_replies_naming_both_actions():
     assert drivelm.parse_action(clear) == "a)"
     assert drivelm.chai_counts_as_hit(clear, "a)") is True
     assert drivelm.chai_counts_as_hit(clear, "b)") is False
+
+
+def test_kaggle_notebook_covers_the_whole_pipeline():
+    """Every stage must appear, or a GPU session silently skips one.
+
+    An edit once replaced a span of the generator that happened to contain the
+    sweep cell; the run completed "successfully" having never run the defense
+    evaluation, and the gap only showed up when its output file was missing.
+    """
+    import json
+    from pathlib import Path
+
+    nb_path = Path("kaggle/midas_kaggle.ipynb")
+    if not nb_path.exists():
+        pytest.skip("notebook not generated")
+
+    joined = "\n".join(
+        "".join(c["source"]) for c in json.loads(nb_path.read_text())["cells"]
+    )
+    for stage in ("midas-eval", "midas-activations", "midas-probes",
+                  "midas-fit-defense", "midas-sweep-defense"):
+        assert stage in joined, f"notebook never runs {stage}"

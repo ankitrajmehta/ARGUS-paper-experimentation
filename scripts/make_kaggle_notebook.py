@@ -434,6 +434,38 @@ subprocess.run(
 )
 ''')
 
+code(f'''
+# The sweep is the expensive half: it scores both candidate answers for every
+# scene under each configuration. Steering one layer and five is compared,
+# because a single-layer intervention left behaviour unchanged on the 2B.
+!midas-sweep-defense /kaggle/working/results/defense/train_8b \\
+    --model {MODEL} --device-map auto --max-tiles 6 \\
+    --strengths 0 0.5 1 2 --top-layers 1 5 \\
+    --out /kaggle/working/results/defense/sweep_8b.json
+''')
+
+code('''
+import json
+from pathlib import Path
+
+path = Path("/kaggle/working/results/defense/sweep_8b.json")
+assert path.exists(), "the sweep produced no output -- check the cell above"
+
+rows = json.loads(path.read_text())
+base = next(r["attack_rate"] for r in rows if r["strength"] == 0)
+print(f"{'configuration':22s} {'attack':>8s} {'vs none':>9s} {'utility':>9s}")
+for r in rows:
+    label = "no defense" if r["strength"] == 0 else (
+        f"{r.get('top_layers', 1)} layer(s) s={r['strength']:g}"
+    )
+    delta = "--" if r["strength"] == 0 else f"{r['attack_rate'] - base:+.1%}"
+    print(f"{label:22s} {r['attack_rate']:8.1%} {delta:>9s} {r['clean_keep']:8.1%}")
+
+spread = max(r["attack_rate"] for r in rows) - min(r["attack_rate"] for r in rows)
+print(f"\\nspread across configurations: {spread:.1%} "
+      f"({round(spread * rows[0]['n'])} scenes of {rows[0]['n']})")
+''')
+
 # ---------------------------------------------------------------- step 11
 md("""
 ## 11. Package the results
