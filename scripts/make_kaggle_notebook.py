@@ -447,7 +447,7 @@ code(f'''
 # because a single-layer intervention left behaviour unchanged on the 2B.
 !midas-sweep-defense /kaggle/working/results/defense/train_8b \\
     --model {MODEL} --device-map auto --max-tiles 6 \\
-    --strengths 0 1 5 10 --top-layers 1 5 \\
+    --strengths 0 5 10 --top-layers 5 --max-step-ratio 0.25 0.5 1.0 \\
     --out /kaggle/working/results/defense/sweep_8b.json
 ''')
 
@@ -584,17 +584,24 @@ One and five layers, four strengths. `clean_keep` is the utility measure: the
 share of unattacked frames where the defended model still prefers what the
 undefended model preferred.
 
-The strengths run further than on the 2B (up to 10) because the adaptive step is
-a smaller fraction of the activation norm here. The run also reports
-`steps` (how many activations were actually modified) and `dlogp` (how far the
-decision margin moved): without those, "the defense had no effect" and "the hook
-never fired" look identical in the attack rate.
+This run sweeps the **step cap** as well. The previous sweep showed the
+intervention firing (136,725 activations modified) and moving the decision
+margin by 1.45 nats, yet not flipping a single scene — but at strength 10 about
+half the steps hit the 25%-of-norm safety cap, so the realised push was smaller
+than requested. Raising the cap separates two very different conclusions:
+
+* the direction is **inert** — the model's decision does not depend on it; or
+* it needs a push **larger than is safe** — which is a different claim, and a
+  weaker defense.
+
+The cap exists because an unbounded step once reduced the model to word salad,
+so `clean_keep` is the thing to watch: if it falls, the cap was load-bearing.
 """)
 
     code(f'''
 !midas-sweep-defense /kaggle/working/results/defense/train_8b \\
     --model {MODEL} --device-map auto --max-tiles 6 \\
-    --strengths 0 1 5 10 --top-layers 1 5 \\
+    --strengths 0 5 10 --top-layers 5 --max-step-ratio 0.25 0.5 1.0 \\
     --out /kaggle/working/results/defense/sweep_8b.json
 ''')
 

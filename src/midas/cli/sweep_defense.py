@@ -54,6 +54,12 @@ def main(argv: list[str] | None = None) -> int:
         "--top-layers", type=int, nargs="+", default=[1],
         help="how many layers to steer; several values sweep them",
     )
+    parser.add_argument(
+        "--max-step-ratio", type=float, nargs="+", default=[0.25],
+        help="cap on one step as a fraction of the activation norm. The default "
+        "0.25 binds at high strength, so sweeping it separates 'the feature is "
+        "inert' from 'it needs a larger push than the cap allows'.",
+    )
     parser.add_argument("--out", type=Path, default=Path("results/defense/sweep.json"))
     args = parser.parse_args(argv)
 
@@ -101,8 +107,13 @@ def main(argv: list[str] | None = None) -> int:
           f"{agree}/{len(prepared)} scenes\n")
 
     rows = []
-    configs = [(s, k) for k in args.top_layers for s in args.strengths]
-    for strength, top_k in configs:
+    configs = [
+        (s, k, c)
+        for c in args.max_step_ratio
+        for k in args.top_layers
+        for s in args.strengths
+    ]
+    for strength, top_k, cap in configs:
         steerer = None
         if strength > 0:
             steerer = Steerer(
@@ -116,6 +127,7 @@ def main(argv: list[str] | None = None) -> int:
                     # Scoring is one prefill pass; see SteerConfig.all_positions.
                     all_positions=True,
                     top_layers=top_k,
+                    max_step_ratio=cap,
                 ),
             )
 
@@ -147,6 +159,7 @@ def main(argv: list[str] | None = None) -> int:
         row = {
             "strength": strength,
             "top_layers": top_k,
+            "max_step_ratio": cap,
             "attack_rate": hits_attack / n,
             "clean_keep": keeps_clean / n,
             "gate_fire_rate": gated / n if steerer is not None else None,
@@ -158,7 +171,10 @@ def main(argv: list[str] | None = None) -> int:
             "n": n,
         }
         rows.append(row)
-        label = "no defense" if strength == 0 else f"L{top_k} strength {strength:g}"
+        label = (
+            "no defense" if strength == 0
+            else f"L{top_k} s={strength:g} cap={cap:g}"
+        )
         if steerer is None:
             extra = ""
         else:
