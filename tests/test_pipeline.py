@@ -299,12 +299,14 @@ def test_kaggle_notebook_cells_are_valid_python():
     import json
     from pathlib import Path
 
-    nb_path = Path("kaggle/midas_kaggle.ipynb")
-    if not nb_path.exists():
-        pytest.skip("notebook not generated")
+    paths = [p for p in (Path("kaggle/midas_kaggle.ipynb"),
+                         Path("kaggle/midas_sweep.ipynb")) if p.exists()]
+    if not paths:
+        pytest.skip("notebooks not generated")
 
     failures = []
-    for i, cell in enumerate(json.loads(nb_path.read_text())["cells"]):
+    for nb_path in paths:
+      for i, cell in enumerate(json.loads(nb_path.read_text())["cells"]):
         if cell["cell_type"] != "code":
             continue
         source = "".join(cell["source"])
@@ -326,7 +328,7 @@ def test_kaggle_notebook_cells_are_valid_python():
         try:
             ast.parse(cleaned)
         except SyntaxError as exc:
-            failures.append(f"cell {i}: {exc.msg} (line {exc.lineno})")
+            failures.append(f"{nb_path.name} cell {i}: {exc.msg} (line {exc.lineno})")
 
     assert not failures, failures
 

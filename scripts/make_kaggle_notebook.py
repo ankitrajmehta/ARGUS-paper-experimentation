@@ -511,9 +511,118 @@ def build() -> dict:
     }
 
 
+def build_sweep_only(prev_kernel: str) -> dict:
+    """A second notebook that only runs the defense sweep.
+
+    Extraction and fitting already happened in the main run, and both are
+    expensive. Attaching that kernel's output as a source means this notebook
+    starts straight at the sweep instead of spending an hour reproducing inputs
+    it could inherit.
+    """
+    global CELLS
+    saved, CELLS = CELLS, []
+
+    md(f"""
+# MIDAS — defense sweep on InternVL2.5-8B
+
+Runs only the activation-steering evaluation. The activations and the fitted
+defense are inherited from `{prev_kernel}`, attached as a kernel source, so
+nothing is recomputed.
+
+**Session:** GPU T4 x2, Internet on.
+
+The question: on the 2B the steering direction was decodable at 94.7% yet moving
+along it changed nothing the model output. The 8B probe reaches 100%, so if the
+feature is causal anywhere it should be here.
+""")
+
+    # Reuse the hardware, install and code-loading cells from the main notebook.
+    for kind, text in saved[1:8]:
+        CELLS.append((kind, text))
+
+    md(f"""
+## Inherit the fitted defense
+
+The previous kernel's `/kaggle/working` is mounted under `/kaggle/input`.
+""")
+
+    code('''
+import glob, shutil
+from pathlib import Path
+
+npz = glob.glob("/kaggle/input/**/defense/train_8b.npz", recursive=True)
+acts = glob.glob("/kaggle/input/**/activations/*.npz", recursive=True)
+assert npz, "fitted defense not found; is the previous kernel attached as a source?"
+print("defense artifact:", npz[0])
+print("activation sweeps:", [Path(a).name for a in acts])
+
+# Copy out of the read-only mount so the artifact's .json sits beside its .npz.
+dest = Path("/kaggle/working/results/defense")
+dest.mkdir(parents=True, exist_ok=True)
+for ext in (".npz", ".json"):
+    src = Path(npz[0]).with_suffix(ext)
+    shutil.copy2(src, dest / src.name)
+
+from midas.steering import DefenseArtifact
+art = DefenseArtifact.load(dest / "train_8b")
+print("")
+print(f"steering layers: {art.layer_indices}")
+print(f"gate layer     : {art.gate_layer}")
+''')
+
+    md("""
+## Run the sweep
+
+One and five layers, four strengths. `clean_keep` is the utility measure: the
+share of unattacked frames where the defended model still prefers what the
+undefended model preferred.
+""")
+
+    code(f'''
+!midas-sweep-defense /kaggle/working/results/defense/train_8b \\
+    --model {MODEL} --device-map auto --max-tiles 6 \\
+    --strengths 0 0.5 1 2 --top-layers 1 5 \\
+    --out /kaggle/working/results/defense/sweep_8b.json
+''')
+
+    code('''
+import json
+from pathlib import Path
+
+path = Path("/kaggle/working/results/defense/sweep_8b.json")
+assert path.exists(), "the sweep produced no output -- check the cell above"
+rows = json.loads(path.read_text())
+
+base = next(r["attack_rate"] for r in rows if r["strength"] == 0)
+print(f"{'configuration':24s} {'attack':>8s} {'vs none':>9s} {'utility':>9s}")
+for r in rows:
+    label = "no defense" if r["strength"] == 0 else (
+        f"{r.get('top_layers', 1)} layer(s) s={r['strength']:g}"
+    )
+    delta = "--" if r["strength"] == 0 else f"{r['attack_rate'] - base:+.1%}"
+    print(f"{label:24s} {r['attack_rate']:8.1%} {delta:>9s} {r['clean_keep']:8.1%}")
+
+n = rows[0]["n"]
+spread = max(r["attack_rate"] for r in rows) - min(r["attack_rate"] for r in rows)
+print("")
+print(f"spread: {spread:.1%} = {round(spread * n)} scenes of {n}")
+print("At n=15 the 95% interval is about +/-25 points, so a spread of one or two")
+print("scenes is indistinguishable from no effect.")
+''')
+
+    notebook = build()
+    CELLS = saved
+    return notebook
+
+
 if __name__ == "__main__":
     out = Path(__file__).resolve().parents[1] / "kaggle" / "midas_kaggle.ipynb"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(build(), indent=1))
     print(f"wrote {out}  ({len(CELLS)} cells)")
+
+    sweep_out = out.parent / "midas_sweep.ipynb"
+    sweep_nb = build_sweep_only("ankitpokhrel/midas-chai-attack-on-internvl2-5-8b")
+    sweep_out.write_text(json.dumps(sweep_nb, indent=1))
+    print(f"wrote {sweep_out}  ({len(sweep_nb['cells'])} cells)")
     print("\nDeploy with: python scripts/kaggle_deploy.py upload && ... run")
