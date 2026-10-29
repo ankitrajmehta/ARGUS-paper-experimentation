@@ -178,7 +178,14 @@ else:
 
 # Search recursively: a dataset may mount its payload one level deeper than
 # expected depending on how the archive was packed.
-candidates = glob.glob("/kaggle/input/**/pyproject.toml", recursive=True)
+# Datasets mount under /kaggle/input/datasets/<user>/<slug>; kernel outputs
+# mount under /kaggle/input/<kernel-slug>/. The sweep kernel attaches both, and
+# the main run saved its own working copy of this source tree as output -- so an
+# unqualified search finds that stale copy instead of the uploaded dataset.
+candidates = sorted(
+    glob.glob("/kaggle/input/**/pyproject.toml", recursive=True),
+    key=lambda p: (0 if "/kaggle/input/datasets/" in p else 1, p),
+)
 assert candidates, (
     "MIDAS source not found under /kaggle/input. Attach the dataset via "
     "Add Data -> Your Datasets, or re-run scripts/kaggle_deploy.py upload. "

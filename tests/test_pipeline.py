@@ -404,3 +404,26 @@ def test_kaggle_notebook_covers_the_whole_pipeline():
     for stage in ("midas-eval", "midas-activations", "midas-probes",
                   "midas-fit-defense", "midas-sweep-defense"):
         assert stage in joined, f"notebook never runs {stage}"
+
+
+def test_notebooks_prefer_the_dataset_over_stale_kernel_output():
+    """The sweep kernel attaches both a dataset and a previous kernel's output.
+
+    That previous run saved its own working copy of this source tree, so an
+    unqualified search under /kaggle/input finds stale code. One sweep ran to
+    completion against an old build because of exactly this, producing output in
+    a format the current code no longer emits.
+    """
+    import json
+    from pathlib import Path
+
+    nb_path = Path("kaggle/midas_sweep.ipynb")
+    if not nb_path.exists():
+        pytest.skip("sweep notebook not generated")
+
+    joined = "\n".join(
+        "".join(c["source"]) for c in json.loads(nb_path.read_text())["cells"]
+    )
+    assert "/kaggle/input/datasets/" in joined, (
+        "the sweep notebook must prefer the dataset mount over kernel output"
+    )
