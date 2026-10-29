@@ -17,9 +17,11 @@ git archive --format=tar.gz -o "$BUILD/code/argus_code.tar.gz" HEAD
 git rev-parse HEAD > "$BUILD/code/COMMIT"
 
 if kaggle datasets status "$DATASET" >/dev/null 2>&1; then
-  kaggle datasets version -p "$BUILD/code" -m "$(git log -1 --format='%h %s')"
+  MSG="$(git log -1 --format='%h %s')"
+  # The Windows CLI builds temp file names from -p, so upload from inside the folder.
+  (cd "$BUILD/code" && kaggle datasets version -p . -m "$MSG")
 else
-  kaggle datasets create -p "$BUILD/code"
+  (cd "$BUILD/code" && kaggle datasets create -p .)
 fi
 # The kernel must not start before the new dataset version is processed.
 until kaggle datasets status "$DATASET" 2>/dev/null | grep -qi ready; do sleep 10; done
@@ -31,5 +33,5 @@ if [ $# -ge 3 ]; then
          -e "s/^BEHAVIOR_N = .*/BEHAVIOR_N = $3/" "$BUILD/kernel/run_kaggle.py"
   grep -E "^(RUN_NAME|MAX_SAMPLES|BEHAVIOR_N) =" "$BUILD/kernel/run_kaggle.py"
 fi
-kaggle kernels push -p "$BUILD/kernel" --accelerator NvidiaTeslaT4
+(cd "$BUILD/kernel" && kaggle kernels push -p . --accelerator NvidiaTeslaT4)
 echo "Follow with: kaggle kernels status ankitrmehta/argus-e1"
