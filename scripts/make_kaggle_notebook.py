@@ -8,6 +8,9 @@ session limit. Two Turing properties shape every cell below:
   runs eager, so the full score matrix is materialised and memory scales with
   the square of the sequence length.
 
+The code arrives as an attached dataset rather than a git clone, so no GitHub
+repository is required.
+
 Written as a script so the notebook stays in version control and is regenerated
 rather than edited by hand.
 """
@@ -17,7 +20,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-REPO_URL = "https://github.com/YOUR_USERNAME/midas.git"  # edit before running
 MODEL = "OpenGVLab/InternVL2_5-8B"
 
 CELLS: list[tuple[str, str]] = []
@@ -114,41 +116,46 @@ print("accelerate   :", accelerate.__version__)
 ''')
 
 # ---------------------------------------------------------------- step 3
-md(f"""
-## 3. Fetch the code
+md("""
+## 3. Load the code
 
-Set `REPO_URL` to your own repository. For a private repo, store a GitHub token
-as a Kaggle Secret named `GITHUB_TOKEN` (Add-ons → Secrets) and the cell below
-will use it.
+The code and CHAI's released artefacts arrive as an attached Kaggle Dataset, not
+a git clone, so this notebook needs no GitHub repository and no access token.
+Upload it with `python scripts/kaggle_deploy.py upload`.
 
-`setup_vendor.sh` then clones CHAI's `drivelm` branch, which carries the 184
-camera frames, the phrase dictionary and the sign renderer.
+The dataset is read-only, so it is copied into the working directory before the
+editable install.
 """)
 
-code(f'''
-import os, subprocess
+code('''
+import os, shutil, subprocess, glob
 from pathlib import Path
 
-REPO_URL = "{REPO_URL}"
+candidates = glob.glob("/kaggle/input/*/pyproject.toml")
+assert candidates, (
+    "MIDAS source dataset not attached. Add it via Add Data -> Your Datasets, "
+    "or run scripts/kaggle_deploy.py upload first."
+)
+SOURCE = Path(candidates[0]).parent
 WORK = Path("/kaggle/working/midas")
+print("source dataset:", SOURCE)
 
-try:
-    from kaggle_secrets import UserSecretsClient
-    token = UserSecretsClient().get_secret("GITHUB_TOKEN")
-    REPO_URL = REPO_URL.replace("https://", f"https://{{token}}@")
-    print("using GITHUB_TOKEN for a private repository")
-except Exception:
-    print("no GITHUB_TOKEN secret found; assuming the repository is public")
-
-if not WORK.exists():
-    subprocess.run(["git", "clone", "--depth", "1", REPO_URL, str(WORK)], check=True)
+# /kaggle/input is read-only and pip install -e needs to write egg-info.
+if WORK.exists():
+    shutil.rmtree(WORK)
+shutil.copytree(SOURCE, WORK)
 os.chdir(WORK)
 
-subprocess.run(["bash", "scripts/setup_vendor.sh"], check=True)
+assert (WORK / "vendor" / "chai" / "training.json").exists(), (
+    "CHAI artefacts missing from the dataset; re-run the upload step"
+)
+frames = len(glob.glob(str(WORK / "vendor/chai/DriveLM_dataset/**/*.jpg"), recursive=True))
+print(f"CHAI frames present: {frames} (expect 184)")
+
 %pip install -q -e .
 
 import midas
-print("\\nmidas installed from", midas.__file__)
+print("midas installed from", midas.__file__)
 ''')
 
 # ---------------------------------------------------------------- step 4
@@ -397,4 +404,4 @@ if __name__ == "__main__":
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(build(), indent=1))
     print(f"wrote {out}  ({len(CELLS)} cells)")
-    print(f"\nEDIT BEFORE RUNNING: REPO_URL is currently {REPO_URL!r}")
+    print("\nDeploy with: python scripts/kaggle_deploy.py upload && ... run")

@@ -7,14 +7,39 @@ it by hand.
 
 ## What you need to do first
 
-1. **Push this repository to GitHub.** Kaggle fetches the code by cloning, so it
-   needs a URL. A public repository is simplest. For a private one, add a GitHub
-   token as a Kaggle Secret named `GITHUB_TOKEN` (Add-ons → Secrets).
-2. **Edit `REPO_URL`** at the top of `scripts/make_kaggle_notebook.py`, then
-   regenerate the notebook.
-3. **Verify your Kaggle phone number.** The Internet toggle is unavailable until
-   you do, and without internet the notebook cannot install packages or download
-   the model.
+Only two things, and neither involves GitHub.
+
+1. **Get a Kaggle API token.** kaggle.com → Settings → API → *Create New Token*.
+   Then:
+
+   ```bash
+   mkdir -p ~/.kaggle && mv ~/Downloads/kaggle.json ~/.kaggle/
+   chmod 600 ~/.kaggle/kaggle.json
+   ```
+
+2. **Verify your phone number on Kaggle.** The Internet toggle stays disabled
+   until you do, and the notebook needs internet to install the pinned packages
+   and download the model.
+
+## Deploying without GitHub
+
+The code travels as a private Kaggle Dataset. CHAI's released artefacts — the
+184 frames, the phrase dictionary, the sign renderer — ride along in the same
+dataset, so the run does not depend on their GitHub repository either.
+
+```bash
+python scripts/kaggle_deploy.py upload    # code + CHAI artefacts -> private dataset
+python scripts/kaggle_deploy.py run       # push the notebook and start it on T4 x2
+python scripts/kaggle_deploy.py status    # poll
+python scripts/kaggle_deploy.py fetch     # download results
+```
+
+`run` submits the notebook in save-and-run mode, so it executes on Kaggle's
+infrastructure and **keeps going after you close your laptop**. That suits a
+2–3 hour evaluation better than an interactive session.
+
+Re-running `upload` after a code change creates a new dataset version; the
+notebook always picks up the latest.
 
 ## Session settings
 
@@ -23,6 +48,9 @@ it by hand.
 | Accelerator | **GPU T4 x2** | 16 GB each; the 8B model needs ~16 GB and is sharded across both |
 | Internet | **On** | pip and the HuggingFace download |
 | Persistence | Variables and files | keeps `/kaggle/working` between sessions |
+
+`kaggle_deploy.py run` sets all three automatically through the kernel metadata;
+they only need setting by hand if you open the notebook in the web editor.
 
 Kaggle allows roughly 30 GPU-hours per week and 12 hours per session. Budget
 2–3 hours for the attack evaluation and a further 2–3 for the defense pipeline.
@@ -89,6 +117,7 @@ and attach it to later sessions. Point `HF_HOME` at the attached path and
 
 | Symptom | Cause |
 |---|---|
+| `MIDAS source dataset not attached` | run the `upload` step, and wait for Kaggle to finish processing it |
 | `'bool' object has no attribute 'convert_tokens_to_ids'` | `sentencepiece` is not 0.1.99; `AutoTokenizer` returned `False` instead of raising |
 | `FlashAttention only supports Ampere GPUs or newer` | something forced `use_flash_attn=True`; the capability check should prevent this |
 | `PreTrainedModel will NOT inherit from GenerationMixin` | `transformers` is 4.50 or newer |
