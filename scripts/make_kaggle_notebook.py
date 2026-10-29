@@ -110,6 +110,10 @@ Two pins are load-bearing and cost us hours to diagnose locally:
   no attribute 'convert_tokens_to_ids'`. 0.1.99 also works but has no Python 3.13
   wheel, and Kaggle now runs 3.13 — pinning it makes pip try a source build,
   which fails and aborts the whole install.
+- **No `numpy<2` pin.** Kaggle's preinstalled stack calls
+  `numpy.dtypes.StringDType`, which only exists in numpy 2.0+. Forcing numpy 1.x
+  makes `transformers` fail to import its model code with an error that names
+  llama rather than numpy.
 - **`transformers<4.50`.** InternVL2.5's remote code does not inherit from
   `GenerationMixin`, which 4.50 made mandatory. Kaggle ships 5.x, so this is a
   real downgrade and takes a minute.
@@ -121,7 +125,7 @@ reasons that look unrelated.
 
 code('''
 %pip install -q "transformers>=4.37,<4.50" "sentencepiece==0.2.1" protobuf \\
-    "accelerate>=0.26" timm einops "numpy<2" opencv-python-headless scikit-learn pytest
+    "accelerate>=0.26" timm einops opencv-python-headless scikit-learn pytest
 
 import importlib, sentencepiece, transformers, accelerate
 for mod in (transformers, sentencepiece, accelerate):
