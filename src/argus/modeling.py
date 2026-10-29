@@ -72,7 +72,50 @@ def vision_runner(config: dict[str, Any]) -> "VisionLanguageRunner":
         device=cfg_get(config, "run.device"),
         video_options=video_options(config),
         image_options=image_options(config),
+        quantization=cfg_get(config, "model.quantization"),
+        allow_offload=bool(cfg_get(config, "model.allow_offload", False)),
     )
+
+
+def vision_model_class(model_path: str | Path) -> Any:
+    from transformers import AutoConfig, Qwen2_5_VLForConditionalGeneration, Qwen2VLForConditionalGeneration
+
+    classes = {"qwen2_vl": Qwen2VLForConditionalGeneration, "qwen2_5_vl": Qwen2_5_VLForConditionalGeneration}
+    model_type = AutoConfig.from_pretrained(str(model_path)).model_type
+    if model_type not in classes:
+        raise ValueError(f"Unsupported vision model type {model_type!r}; expected one of {sorted(classes)}")
+    return classes[model_type]
+
+
+def quantization_config(mode: str | None, dtype: torch.dtype) -> Any | None:
+    if mode in (None, "", "none"):
+        return None
+    from transformers import BitsAndBytesConfig
+
+    # Text in the image is the attack channel, so the vision tower stays in full precision.
+    skip = ["visual", "lm_head"]
+    if mode == "4bit":
+        return BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=dtype,
+            bnb_4bit_use_double_quant=True,
+            llm_int8_skip_modules=skip,
+        )
+    if mode == "8bit":
+        return BitsAndBytesConfig(load_in_8bit=True, llm_int8_skip_modules=skip)
+    raise ValueError(f"model.quantization must be null, '4bit' or '8bit', got {mode!r}")
+
+
+def check_on_gpu(model: Any) -> None:
+    # device_map="auto" silently spills layers to CPU when VRAM runs out, which is ~10x slower.
+    device_map = getattr(model, "hf_device_map", None) or {}
+    offloaded = sorted(name for name, where in device_map.items() if str(where) in {"cpu", "disk"})
+    if offloaded:
+        raise RuntimeError(
+            f"{len(offloaded)} modules were offloaded off the GPU (e.g. {offloaded[:5]}). "
+            "Lower data.image_max_pixels, use model.quantization: 4bit, or set model.allow_offload: true."
+        )
 
 
 def silence_greedy_sampling_warnings(model: Any) -> None:
@@ -91,20 +134,25 @@ class VisionLanguageRunner:
         dtype: torch.dtype = torch.bfloat16,
         video_options: dict[str, Any] | None = None,
         image_options: dict[str, Any] | None = None,
+        quantization: str | None = None,
+        allow_offload: bool = False,
     ):
         set_cuda_device(device)
         from qwen_vl_utils import process_vision_info
-        from transformers import AutoProcessor, Qwen2VLForConditionalGeneration
+        from transformers import AutoProcessor
 
         self.process_vision_info = process_vision_info
         self.video_options = video_options or {}
         self.image_options = image_options or {}
         self.processor = AutoProcessor.from_pretrained(str(model_path))
-        self.model = Qwen2VLForConditionalGeneration.from_pretrained(
+        self.model = vision_model_class(model_path).from_pretrained(
             str(model_path),
             device_map="auto",
             torch_dtype=dtype,
+            quantization_config=quantization_config(quantization, dtype),
         ).eval()
+        if not allow_offload:
+            check_on_gpu(self.model)
         silence_greedy_sampling_warnings(self.model)
         if getattr(self.processor, "tokenizer", None) is not None:
             self.processor.tokenizer.padding_side = "left"
