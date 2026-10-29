@@ -81,6 +81,13 @@ def main(argv: list[str] | None = None) -> int:
         attacked, _ = signs.attack_scene(scene, images=list(clean), target=target)
         prepared.append((scene, target, clean, attacked))
 
+    # Undefended scores on the *attacked* frames, so the sweep can report how
+    # far steering moves the decision margin, not just whether it flips.
+    baseline_scores = {}
+    for scene, _, _, attacked in prepared:
+        baseline_scores[scene.index] = model.score_answers(attacked, ANSWERS)
+        model.free_cache()
+
     # What the undefended model prefers on clean frames; the utility reference.
     baseline_clean = {}
     for scene, _, clean, _ in prepared:
@@ -113,10 +120,21 @@ def main(argv: list[str] | None = None) -> int:
             )
 
         hits_attack, keeps_clean, gated = 0, 0, 0
+        steps, clipped, logprob_shift = 0, 0, []
         for scene, target, clean, attacked in prepared:
             s_att = model.score_answers(attacked, ANSWERS, steerer=steerer)
             if max(s_att, key=s_att.get) == target:
                 hits_attack += 1
+            if steerer is not None:
+                steps += steerer.n_steps_steered
+                clipped += steerer.n_steps_clipped
+                # How far the intervention actually moved the decision. Without
+                # this, "the defense had no effect" and "the hook never fired"
+                # look identical in the attack rate.
+                plain = baseline_scores[scene.index]
+                margin_before = plain["a)"] - plain["b)"]
+                margin_after = s_att["a)"] - s_att["b)"]
+                logprob_shift.append(abs(margin_after - margin_before))
             if steerer is not None and steerer.last_gate_score is not None:
                 gated += int(steerer.last_gate_score > steerer.config.gate_threshold)
 
@@ -132,14 +150,27 @@ def main(argv: list[str] | None = None) -> int:
             "attack_rate": hits_attack / n,
             "clean_keep": keeps_clean / n,
             "gate_fire_rate": gated / n if steerer is not None else None,
+            "steps_steered": steps,
+            "steps_clipped": clipped,
+            "mean_logprob_shift": (
+                float(np.mean(logprob_shift)) if logprob_shift else 0.0
+            ),
             "n": n,
         }
         rows.append(row)
         label = "no defense" if strength == 0 else f"L{top_k} strength {strength:g}"
-        gate = "" if row["gate_fire_rate"] is None else f"  gate fired {row['gate_fire_rate']:5.0%}"
+        if steerer is None:
+            extra = ""
+        else:
+            extra = (
+                f"  gate {row['gate_fire_rate']:4.0%}"
+                f"  steps {row['steps_steered']:>6d}"
+                f"  clipped {row['steps_clipped']:>6d}"
+                f"  dlogp {row['mean_logprob_shift']:.4f}"
+            )
         print(
-            f"  {label:16s} attack_rate={row['attack_rate']:6.1%}  "
-            f"clean_keep={row['clean_keep']:6.1%}{gate}",
+            f"  {label:18s} attack={row['attack_rate']:6.1%}  "
+            f"clean_keep={row['clean_keep']:6.1%}{extra}",
             flush=True,
         )
 

@@ -440,7 +440,7 @@ code(f'''
 # because a single-layer intervention left behaviour unchanged on the 2B.
 !midas-sweep-defense /kaggle/working/results/defense/train_8b \\
     --model {MODEL} --device-map auto --max-tiles 6 \\
-    --strengths 0 0.5 1 2 --top-layers 1 5 \\
+    --strengths 0 1 5 10 --top-layers 1 5 \\
     --out /kaggle/working/results/defense/sweep_8b.json
 ''')
 
@@ -576,12 +576,18 @@ print(f"gate layer     : {art.gate_layer}")
 One and five layers, four strengths. `clean_keep` is the utility measure: the
 share of unattacked frames where the defended model still prefers what the
 undefended model preferred.
+
+The strengths run further than on the 2B (up to 10) because the adaptive step is
+a smaller fraction of the activation norm here. The run also reports
+`steps` (how many activations were actually modified) and `dlogp` (how far the
+decision margin moved): without those, "the defense had no effect" and "the hook
+never fired" look identical in the attack rate.
 """)
 
     code(f'''
 !midas-sweep-defense /kaggle/working/results/defense/train_8b \\
     --model {MODEL} --device-map auto --max-tiles 6 \\
-    --strengths 0 0.5 1 2 --top-layers 1 5 \\
+    --strengths 0 1 5 10 --top-layers 1 5 \\
     --out /kaggle/working/results/defense/sweep_8b.json
 ''')
 
