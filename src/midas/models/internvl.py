@@ -40,6 +40,57 @@ def supports_flash_attention(device: str) -> bool:
     return major >= 8
 
 
+def build_device_map(model_id: str, n_gpus: int) -> dict[str, int]:
+    """Place InternVL's modules across GPUs without splitting co-dependent ones.
+
+    ``device_map="auto"`` shards purely by size and happily puts the vision
+    tower, the token embedding and the first decoder layers on different
+    devices. InternVL's forward then scatters vision features into the text
+    embeddings with a boolean mask, and the mask and the tensor land on
+    different GPUs: *"indices should be either on cpu or on the same device as
+    the indexed tensor"*.
+
+    This follows the split InternVL document for multi-GPU inference: the vision
+    tower, projector, embedding, norm and output head all go on GPU 0, and the
+    decoder layers are spread over the rest. GPU 0 is counted as half a GPU
+    because it also carries the vision tower.
+    """
+    import math
+
+    from transformers import AutoConfig
+
+    config = AutoConfig.from_pretrained(model_id, trust_remote_code=True)
+    n_layers = config.llm_config.num_hidden_layers
+
+    per_gpu = math.ceil(n_layers / (n_gpus - 0.5))
+    counts = [per_gpu] * n_gpus
+    counts[0] = math.ceil(per_gpu * 0.5)
+
+    device_map: dict[str, int] = {}
+    layer = 0
+    for gpu, count in enumerate(counts):
+        for _ in range(count):
+            if layer >= n_layers:
+                break
+            device_map[f"language_model.model.layers.{layer}"] = gpu
+            layer += 1
+
+    for module in (
+        "vision_model",
+        "mlp1",
+        "language_model.model.tok_embeddings",
+        "language_model.model.embed_tokens",
+        "language_model.model.norm",
+        "language_model.model.rotary_emb",
+        "language_model.output",
+        "language_model.lm_head",
+    ):
+        device_map[module] = 0
+    # The last decoder layer sits beside the output head it feeds.
+    device_map[f"language_model.model.layers.{n_layers - 1}"] = 0
+    return device_map
+
+
 def resolve_device(requested: str = "auto") -> str:
     """Pick a device, preferring CUDA then Apple Silicon then CPU."""
     if requested != "auto":
@@ -191,7 +242,15 @@ class InternVLDriveLM:
         elif device_map:
             # Shard across several GPUs, e.g. an 8B model over two 16 GB T4s.
             # accelerate places the layers, so the .to(device) below must not run.
-            kwargs["device_map"] = device_map
+            if device_map == "auto" and torch.cuda.device_count() > 1:
+                # "auto" splits by size alone and breaks InternVL's vision-to-text
+                # scatter; use the layout the model's own docs prescribe.
+                kwargs["device_map"] = build_device_map(
+                    model_id, torch.cuda.device_count()
+                )
+                print(f"  sharding across {torch.cuda.device_count()} GPUs (InternVL layout)")
+            else:
+                kwargs["device_map"] = device_map
 
         print(
             f"  device={self.device} dtype={self.dtype} "

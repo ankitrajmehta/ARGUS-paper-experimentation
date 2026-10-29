@@ -329,3 +329,34 @@ def test_kaggle_notebook_cells_are_valid_python():
             failures.append(f"cell {i}: {exc.msg} (line {exc.lineno})")
 
     assert not failures, failures
+
+
+def test_internvl_device_map_keeps_codependent_modules_together():
+    """device_map="auto" splits by size and breaks InternVL's forward.
+
+    The model scatters vision features into text embeddings with a boolean mask.
+    If the vision tower and the embedding land on different GPUs the scatter
+    fails with "indices should be either on cpu or on the same device as the
+    indexed tensor". These modules must therefore share GPU 0.
+    """
+    from unittest.mock import patch
+
+    from midas.models.internvl import build_device_map
+
+    class FakeConfig:
+        class llm_config:
+            num_hidden_layers = 32
+
+    with patch("transformers.AutoConfig.from_pretrained", return_value=FakeConfig):
+        device_map = build_device_map("fake/model", n_gpus=2)
+
+    for module in ("vision_model", "mlp1", "language_model.model.tok_embeddings",
+                   "language_model.output"):
+        assert device_map[module] == 0, f"{module} must sit on GPU 0"
+
+    # The final decoder layer feeds the output head, so it belongs beside it.
+    assert device_map["language_model.model.layers.31"] == 0
+
+    placed = [k for k in device_map if ".layers." in k]
+    assert len(placed) == 32, "every decoder layer must be placed"
+    assert set(device_map.values()) == {0, 1}, "both GPUs must be used"
