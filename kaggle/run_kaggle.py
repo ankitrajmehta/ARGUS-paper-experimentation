@@ -1,7 +1,7 @@
 """Kaggle kernel: set up ARGUS from the argus-code dataset, fetch pinned models/data, run E1 or E2.
 
 E2 runs as its own kernel that mounts the E1 kernel's output (for the transfer_e1 probe); E2b-only
-runs mount the E2 kernel's output too, reusing its activations.
+runs mount the E2 kernel's output too, reusing its activations; E2c also mounts E2b's.
 
 Everything heavy (code copy, data, models, HF cache) lives in /tmp/argus; only results and logs
 go to /kaggle/working, which Kaggle saves as the kernel output.
@@ -74,7 +74,7 @@ def fetch_data() -> None:
     from huggingface_hub import hf_hub_download, snapshot_download
 
     snapshot_download(MODEL_REPO, revision=MODEL_REV, local_dir=MODELS / MODEL_REPO.split("/")[1])
-    if EXPERIMENT in ("e2", "e2b"):
+    if EXPERIMENT in ("e2", "e2b", "e2c"):
         for name in THOR_FILES:
             hf_hub_download(THOR_REPO, name, repo_type="dataset", revision=THOR_REV, local_dir=DATA / "ai2thor")
         return
@@ -158,20 +158,41 @@ def main() -> None:
             scripts = CODE / "experiments/e2"
             run_logged([sys.executable, str(scripts / "collect_e2.py"), "--config", str(CODE / CONFIG), "--output-dir", str(e2_dir), "--behavior-n", str(BEHAVIOR_N)], env, log_path)
             run_logged([sys.executable, str(scripts / "analyze_e2.py"), "--output-dir", str(e2_dir), *e1_args], env, log_path)
-        else:
+        elif EXPERIMENT == "e2b":
             # E2b only: reuse a finished argus-e2 run's activations; rebuild its frames (cheap, seeded).
             e2_dir, e2b = ROOT / "e2", out
             build_e2_frames(e2_dir, env, log_path)
-            mounted = sorted(p.parent for p in Path("/kaggle/input").rglob("activations/e2_train.pt"))
-            if not mounted:
-                raise FileNotFoundError("no E2 activations under /kaggle/input; attach the argus-e2 output")
-            print(f"E2 activations: {mounted[0]}")
-            shutil.copytree(mounted[0], e2_dir / "activations")
+            copy_mounted("e2_train.pt", e2_dir)
+        else:
+            # E2c: reuse finished E2 and E2b runs; only the new varied-phrasing signs need the GPU.
+            e2_dir, e2b_dir, scripts = ROOT / "e2", ROOT / "e2b", CODE / "experiments/e2c"
+            build_e2_frames(e2_dir, env, log_path)
+            copy_mounted("e2_train.pt", e2_dir)
+            copy_mounted("e2b_test.pt", e2b_dir)
+            run_logged([sys.executable, str(scripts / "build_e2c.py"), "--e2-dir", str(e2_dir), "--output-dir", str(out)], env, log_path)
+            run_logged([sys.executable, str(scripts / "collect_e2c.py"), "--config", str(CODE / CONFIG), "--output-dir", str(out)], env, log_path)
+            run_logged([sys.executable, str(scripts / "analyze_e2c.py"), "--e2-dir", str(e2_dir), "--e2b-dir", str(e2b_dir), "--output-dir", str(out)], env, log_path)
+            shutil.rmtree(out / "data" / "train", ignore_errors=True)
+            shutil.rmtree(out / "data" / "test", ignore_errors=True)
+            step("done")
+            return
         run_e2b(e2_dir, e2b, e1_args, env, log_path)
         # Rendered frames are reproducible from the seed; keep the kernel output small.
         for folder in [out / "data" / "train", out / "data" / "test", e2b / "data" / "test"]:
             shutil.rmtree(folder, ignore_errors=True)
     step("done")
+
+
+def copy_mounted(marker: str, dest: Path) -> None:
+    # A mounted kernel output holds <run>/activations/<marker> and <run>/results/; copy both.
+    hits = sorted(Path("/kaggle/input").rglob(f"activations/{marker}"))
+    if not hits:
+        raise FileNotFoundError(f"no activations/{marker} under /kaggle/input; attach the kernel output that produced it")
+    run_dir = hits[0].parent.parent
+    print(f"reusing {run_dir}")
+    for name in ["activations", "results"]:
+        if (run_dir / name).exists():
+            shutil.copytree(run_dir / name, dest / name, dirs_exist_ok=True)
 
 
 def build_e2_frames(e2_dir: Path, env: dict, log_path: Path) -> None:
