@@ -1,6 +1,7 @@
 """Kaggle kernel: set up ARGUS from the argus-code dataset, fetch pinned models/data, run E1 or E2.
 
-E2 runs as its own kernel that mounts the E1 kernel's output (for the transfer_e1 probe).
+E2 runs as its own kernel that mounts the E1 kernel's output (for the transfer_e1 probe); E2b-only
+runs mount the E2 kernel's output too, reusing its activations.
 
 Everything heavy (code copy, data, models, HF cache) lives in /tmp/argus; only results and logs
 go to /kaggle/working, which Kaggle saves as the kernel output.
@@ -73,7 +74,7 @@ def fetch_data() -> None:
     from huggingface_hub import hf_hub_download, snapshot_download
 
     snapshot_download(MODEL_REPO, revision=MODEL_REV, local_dir=MODELS / MODEL_REPO.split("/")[1])
-    if EXPERIMENT == "e2":
+    if EXPERIMENT in ("e2", "e2b"):
         for name in THOR_FILES:
             hf_hub_download(THOR_REPO, name, repo_type="dataset", revision=THOR_REV, local_dir=DATA / "ai2thor")
         return
@@ -148,25 +149,43 @@ def main() -> None:
             "--behavior-n", str(BEHAVIOR_N),
         ], env, log_path)
     else:
-        scripts = CODE / "experiments/e2"
-        run_logged([sys.executable, str(scripts / "build_e2.py"), "--frames-dir", str(DATA / "ai2thor/data"), "--output-dir", str(out)], env, log_path)
-        check_e2_fingerprints(out)
-        run_logged([sys.executable, str(scripts / "collect_e2.py"), "--config", str(CODE / CONFIG), "--output-dir", str(out), "--behavior-n", str(BEHAVIOR_N)], env, log_path)
-        analyze = [sys.executable, str(scripts / "analyze_e2.py"), "--output-dir", str(out)]
         e1_dir = e1_output_dir()
         print(f"E1 probes for transfer_e1: {e1_dir}")
         e1_args = ["--e1-dir", str(e1_dir)] if e1_dir else []
-        run_logged(analyze + e1_args, env, log_path)
-
-        # E2b: same test frames with plain attack wording and legitimate imperative signs.
-        e2b, scripts_b = WORK / "outputs" / f"{RUN_NAME}_e2b", CODE / "experiments/e2b"
-        run_logged([sys.executable, str(scripts_b / "build_e2b.py"), "--e2-dir", str(out), "--output-dir", str(e2b)], env, log_path)
-        run_logged([sys.executable, str(scripts_b / "collect_e2b.py"), "--config", str(CODE / CONFIG), "--output-dir", str(e2b), "--behavior-n", str(BEHAVIOR_N)], env, log_path)
-        run_logged([sys.executable, str(scripts_b / "analyze_e2b.py"), "--e2-dir", str(out), "--output-dir", str(e2b), *e1_args], env, log_path)
+        if EXPERIMENT == "e2":
+            e2_dir, e2b = out, WORK / "outputs" / f"{RUN_NAME}_e2b"
+            build_e2_frames(e2_dir, env, log_path)
+            scripts = CODE / "experiments/e2"
+            run_logged([sys.executable, str(scripts / "collect_e2.py"), "--config", str(CODE / CONFIG), "--output-dir", str(e2_dir), "--behavior-n", str(BEHAVIOR_N)], env, log_path)
+            run_logged([sys.executable, str(scripts / "analyze_e2.py"), "--output-dir", str(e2_dir), *e1_args], env, log_path)
+        else:
+            # E2b only: reuse a finished argus-e2 run's activations; rebuild its frames (cheap, seeded).
+            e2_dir, e2b = ROOT / "e2", out
+            build_e2_frames(e2_dir, env, log_path)
+            mounted = sorted(p.parent for p in Path("/kaggle/input").rglob("activations/e2_train.pt"))
+            if not mounted:
+                raise FileNotFoundError("no E2 activations under /kaggle/input; attach the argus-e2 output")
+            print(f"E2 activations: {mounted[0]}")
+            shutil.copytree(mounted[0], e2_dir / "activations")
+        run_e2b(e2_dir, e2b, e1_args, env, log_path)
         # Rendered frames are reproducible from the seed; keep the kernel output small.
         for folder in [out / "data" / "train", out / "data" / "test", e2b / "data" / "test"]:
             shutil.rmtree(folder, ignore_errors=True)
     step("done")
+
+
+def build_e2_frames(e2_dir: Path, env: dict, log_path: Path) -> None:
+    script = CODE / "experiments/e2/build_e2.py"
+    run_logged([sys.executable, str(script), "--frames-dir", str(DATA / "ai2thor/data"), "--output-dir", str(e2_dir)], env, log_path)
+    check_e2_fingerprints(e2_dir)
+
+
+def run_e2b(e2_dir: Path, e2b: Path, e1_args: list[str], env: dict, log_path: Path) -> None:
+    # Same test frames with plain attack wording and legitimate imperative signs.
+    scripts = CODE / "experiments/e2b"
+    run_logged([sys.executable, str(scripts / "build_e2b.py"), "--e2-dir", str(e2_dir), "--output-dir", str(e2b)], env, log_path)
+    run_logged([sys.executable, str(scripts / "collect_e2b.py"), "--config", str(CODE / CONFIG), "--output-dir", str(e2b), "--behavior-n", str(BEHAVIOR_N)], env, log_path)
+    run_logged([sys.executable, str(scripts / "analyze_e2b.py"), "--e2-dir", str(e2_dir), "--output-dir", str(e2b), *e1_args], env, log_path)
 
 
 if __name__ == "__main__":

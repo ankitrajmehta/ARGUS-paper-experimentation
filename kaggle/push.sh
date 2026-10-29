@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Upload the committed HEAD as the private argus-code dataset, then (re)run the E1 kernel on T4.
+# Upload the committed HEAD as the private argus-code dataset, then (re)run a Kaggle kernel on T4.
 # Usage (Git Bash, from the repo root): [KERNEL=e1|e2] bash kaggle/push.sh [RUN_NAME MAX_SAMPLES BEHAVIOR_N]
-# KERNEL=e2 runs E2 in its own kernel, which mounts the latest finished argus-e1 output.
+# KERNEL=e2 runs E2 (+E2b) in its own kernel, mounting the latest finished argus-e1 output;
+# KERNEL=e2b runs only E2b, reusing the latest finished argus-e2 activations.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -28,13 +29,17 @@ fi
 until kaggle datasets status "$DATASET" 2>/dev/null | grep -qi ready; do sleep 10; done
 
 KERNEL=${KERNEL:-e1}
-if [ "$KERNEL" = e2 ]; then
-  cp kaggle/kernel-e2/kernel-metadata.json kaggle/run_kaggle.py "$BUILD/kernel/"
+case "$KERNEL" in
+  e1) META=kaggle/kernel ;;
+  e2|e2b) META=kaggle/kernel-$KERNEL ;;
+  *) echo "KERNEL must be e1, e2 or e2b" >&2; exit 1 ;;
+esac
+cp "$META/kernel-metadata.json" kaggle/run_kaggle.py "$BUILD/kernel/"
+case "$KERNEL" in
+  e1) ;;
   # E2 defaults: all 94 test frames for the attack-success check.
-  sed -i -e 's/^EXPERIMENT = .*/EXPERIMENT = "e2"/' -e 's/^RUN_NAME = .*/RUN_NAME = "e2_3b_fp16"/'          -e 's/^BEHAVIOR_N = .*/BEHAVIOR_N = 94/' "$BUILD/kernel/run_kaggle.py"
-else
-  cp kaggle/kernel/kernel-metadata.json kaggle/run_kaggle.py "$BUILD/kernel/"
-fi
+  e2|e2b) sed -i -e "s/^EXPERIMENT = .*/EXPERIMENT = \"$KERNEL\"/" -e "s/^RUN_NAME = .*/RUN_NAME = \"${KERNEL}_3b_fp16\"/"                  -e 's/^BEHAVIOR_N = .*/BEHAVIOR_N = 94/' "$BUILD/kernel/run_kaggle.py" ;;
+esac
 # Optional overrides for this push only, e.g. a smoke run: bash kaggle/push.sh e1_smoke 2 2
 if [ $# -ge 3 ]; then
   sed -i -e "s/^RUN_NAME = .*/RUN_NAME = \"$1\"/" -e "s/^MAX_SAMPLES = .*/MAX_SAMPLES = $2/" \
