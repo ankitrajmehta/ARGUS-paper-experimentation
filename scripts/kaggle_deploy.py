@@ -10,7 +10,8 @@ that repository staying reachable either.
     python scripts/kaggle_deploy.py status    # poll the running kernel
     python scripts/kaggle_deploy.py fetch     # download results when complete
 
-Requires ~/.kaggle/kaggle.json. Internet must be enabled on the Kaggle account
+Requires Kaggle credentials (~/.kaggle/kaggle.json or ~/.kaggle/access_token).
+Internet must be enabled on the Kaggle account
 (phone verification), because the notebook still installs pinned packages and
 downloads the model from HuggingFace.
 """
@@ -30,7 +31,12 @@ STAGING = ROOT / "kaggle" / "_staging"
 KERNEL_DIR = ROOT / "kaggle" / "_kernel"
 
 DATASET_SLUG = "midas-chai-source"
-KERNEL_SLUG = "midas-chai-8b"
+# Kaggle derives the kernel slug from the *title*, not from the id in the
+# metadata, and then serves the kernel at the title-derived URL. The two must
+# agree or `status` and `output` fail with a confusing permission error, so this
+# is the slugified title rather than a shorter name of our choosing.
+KERNEL_TITLE = "MIDAS: CHAI attack on InternVL2.5-8B"
+KERNEL_SLUG = "midas-chai-attack-on-internvl2-5-8b"
 
 # Everything the notebook needs at import time. vendor/chai is included so the
 # run does not depend on CHAI's GitHub repository being reachable.
@@ -47,18 +53,37 @@ def kaggle(*args: str, check: bool = True) -> subprocess.CompletedProcess:
 
 
 def require_credentials() -> str:
-    path = Path.home() / ".kaggle" / "kaggle.json"
-    if not path.exists():
+    """Return the Kaggle username, accepting either credential format.
+
+    Kaggle has two: the older ``kaggle.json`` carrying username and key, and the
+    newer ``access_token`` holding a bare ``KGAT_...`` string. The newer file has
+    no username in it, so that is read back from the CLI's own config.
+    """
+    home = Path.home() / ".kaggle"
+    legacy, modern = home / "kaggle.json", home / "access_token"
+
+    if legacy.exists():
+        if legacy.stat().st_mode & 0o077:
+            legacy.chmod(0o600)
+        return json.loads(legacy.read_text())["username"]
+
+    if not modern.exists():
         sys.exit(
-            "No ~/.kaggle/kaggle.json found.\n"
-            "Get one from kaggle.com -> Settings -> API -> Create New Token,\n"
-            "then: mkdir -p ~/.kaggle && mv ~/Downloads/kaggle.json ~/.kaggle/ "
-            "&& chmod 600 ~/.kaggle/kaggle.json"
+            "No Kaggle credentials found.\n"
+            "kaggle.com -> Settings -> API -> Create New Token, then either:\n"
+            "  mkdir -p ~/.kaggle && mv ~/Downloads/kaggle.json ~/.kaggle/\n"
+            "or, for the newer token format:\n"
+            "  mkdir -p ~/.kaggle && echo KGAT_... > ~/.kaggle/access_token\n"
+            "and chmod 600 the file either way."
         )
-    # The API refuses to run if the token is world-readable.
-    if path.stat().st_mode & 0o077:
-        path.chmod(0o600)
-    return json.loads(path.read_text())["username"]
+    if modern.stat().st_mode & 0o077:
+        modern.chmod(0o600)
+
+    config = kaggle("config", "view", check=False).stdout
+    for line in config.splitlines():
+        if "username:" in line:
+            return line.split("username:")[1].strip()
+    sys.exit("Could not determine the Kaggle username from `kaggle config view`.")
 
 
 def cmd_upload(args: argparse.Namespace) -> None:
@@ -139,7 +164,7 @@ def cmd_run(args: argparse.Namespace) -> None:
         json.dumps(
             {
                 "id": f"{user}/{KERNEL_SLUG}",
-                "title": "MIDAS: CHAI attack on InternVL2.5-8B",
+                "title": KERNEL_TITLE,
                 "code_file": "midas_kaggle.ipynb",
                 "language": "python",
                 "kernel_type": "notebook",
