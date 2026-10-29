@@ -354,9 +354,11 @@ def test_internvl_device_map_keeps_codependent_modules_together():
                    "language_model.output"):
         assert device_map[module] == 0, f"{module} must sit on GPU 0"
 
-    # The final decoder layer feeds the output head, so it belongs beside it.
-    assert device_map["language_model.model.layers.31"] == 0
-
     placed = [k for k in device_map if ".layers." in k]
     assert len(placed) == 32, "every decoder layer must be placed"
     assert set(device_map.values()) == {0, 1}, "both GPUs must be used"
+
+    # GPU 0 also holds the vision tower and output head, then needs room for the
+    # eager attention matrix, so it must take the smaller share of layers.
+    on_gpu0 = sum(1 for k in placed if device_map[k] == 0)
+    assert on_gpu0 < len(placed) / 2, f"GPU 0 given too many layers: {on_gpu0}/32"

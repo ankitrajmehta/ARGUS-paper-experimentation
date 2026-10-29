@@ -64,6 +64,10 @@ accelerator setting — everything below assumes this layout.
 """)
 
 code('''
+import os
+# Reduces fragmentation, which the first OOM on this hardware recommended.
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
 import subprocess, torch, sys
 
 print(subprocess.run(["nvidia-smi", "--query-gpu=name,memory.total,compute_cap",
@@ -322,6 +326,13 @@ md("""
 This is the headline result. It runs the model on clean frames, then on frames
 carrying CHAI's optimised sign, and prints the comparison.
 
+**Tile count.** These run at `--max-tiles 6`, not CHAI's 12. Without
+FlashAttention the eager attention matrix is 2.62 GB per layer at 12 tiles, and
+GPU 0 — which also carries the vision tower, embedding and output head — ran out
+of memory. 6 tiles needs 0.70 GB per layer. The sign is rendered at roughly half
+linear resolution, which should if anything *understate* attack success, so a
+positive result here is a lower bound. Raise it to 12 if cell 7 shows headroom.
+
 **What to expect, from CHAI's paper:** a no-attack rate near 29% and an attacked
 rate near 55% on the train (Known) split. Our 2B results were 26.7% and 73.3%.
 
@@ -331,13 +342,13 @@ keeps every scene it finished.
 
 code(f'''
 !midas-eval --split train --both \\
-    --model {MODEL} --device-map auto --max-tiles 12 --save-long \\
+    --model {MODEL} --device-map auto --max-tiles 6 --save-long \\
     --out /kaggle/working/results/runs_8b
 ''')
 
 code(f'''
 !midas-eval --split test --both \\
-    --model {MODEL} --device-map auto --max-tiles 12 --save-long \\
+    --model {MODEL} --device-map auto --max-tiles 6 --save-long \\
     --out /kaggle/working/results/runs_8b
 ''')
 
@@ -383,13 +394,13 @@ part.
 code(f'''
 # Attack and clean activations, plus benign-text controls
 !midas-activations --split train --phrases 5 --controls 5 \\
-    --model {MODEL} --device-map auto --max-tiles 12 \\
+    --model {MODEL} --device-map auto --max-tiles 6 \\
     --out /kaggle/working/results/activations
 
 # The gate must be fitted on the open-turn state it sees at inference,
 # not on an answer token that does not exist yet.
 !midas-activations --split train --prompt-only --phrases 5 --controls 5 \\
-    --model {MODEL} --device-map auto --max-tiles 12 \\
+    --model {MODEL} --device-map auto --max-tiles 6 \\
     --out /kaggle/working/results/activations
 ''')
 

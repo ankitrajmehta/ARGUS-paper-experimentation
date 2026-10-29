@@ -62,9 +62,14 @@ def build_device_map(model_id: str, n_gpus: int) -> dict[str, int]:
     config = AutoConfig.from_pretrained(model_id, trust_remote_code=True)
     n_layers = config.llm_config.num_hidden_layers
 
-    per_gpu = math.ceil(n_layers / (n_gpus - 0.5))
+    # GPU 0 also carries the vision tower, the embedding and the output head --
+    # together a few GB -- and then has to find room for the eager attention
+    # matrix on top. Giving it half a GPU's worth of layers still ran it out of
+    # memory on a T4, so weight it down further.
+    gpu0_weight = 0.35
+    per_gpu = math.ceil(n_layers / (n_gpus - (1 - gpu0_weight)))
     counts = [per_gpu] * n_gpus
-    counts[0] = math.ceil(per_gpu * 0.5)
+    counts[0] = math.floor(per_gpu * gpu0_weight)
 
     device_map: dict[str, int] = {}
     layer = 0
@@ -86,8 +91,10 @@ def build_device_map(model_id: str, n_gpus: int) -> dict[str, int]:
         "language_model.lm_head",
     ):
         device_map[module] = 0
-    # The last decoder layer sits beside the output head it feeds.
-    device_map[f"language_model.model.layers.{n_layers - 1}"] = 0
+    # Any layer the loop could not place (rounding) goes to the last GPU.
+    while layer < n_layers:
+        device_map[f"language_model.model.layers.{layer}"] = n_gpus - 1
+        layer += 1
     return device_map
 
 
