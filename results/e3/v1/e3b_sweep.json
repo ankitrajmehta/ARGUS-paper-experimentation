@@ -1,0 +1,40 @@
+{
+  "detect": {
+    "val_scenes": [
+      "FloorPlan220",
+      "FloorPlan7"
+    ],
+    "val_probe_norm": 5.417827129364014,
+    "scores": {
+      "impl": {
+        "mult": 1.0,
+        "valid_rate": 0.9945,
+        "consistency_attack": 0.6721,
+        "consistency_harmless": 0.8525,
+        "score": 0.7623
+      },
+      "paper_half": {
+        "mult": 2.708913564682007,
+        "valid_rate": 0.9945,
+        "consistency_attack": 0.6885,
+        "consistency_harmless": 0.8607,
+        "score": 0.7746
+      },
+      "paper": {
+        "mult": 5.417827129364014,
+        "valid_rate": 0.9945,
+        "consistency_attack": 0.6885,
+        "consistency_harmless": 0.8607,
+        "score": 0.7746
+      },
+      "paper_x2": {
+        "mult": 10.835654258728027,
+        "valid_rate": 0.9945,
+        "consistency_attack": 0.7049,
+        "consistency_harmless": 0.8607,
+        "score": 0.7828
+      }
+    },
+    "chosen": "paper_x2"
+  }
+}
