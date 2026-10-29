@@ -285,3 +285,47 @@ def test_bfloat16_gated_on_compute_capability_not_torch_helper():
     body = ast.unparse(fn)
     assert "is_bf16_supported" not in body, "must not trust the torch helper"
     assert "get_device_capability" in body and ">= 8" in body
+
+
+def test_kaggle_notebook_cells_are_valid_python():
+    """Every code cell must parse.
+
+    A syntax error here costs a whole Kaggle session to discover: papermill runs
+    the notebook headlessly and only reports the failure once the kernel exits.
+    One such break came from an escaping level lost while generating the
+    notebook, which turned a \\n inside a generated string into a real newline.
+    """
+    import ast
+    import json
+    from pathlib import Path
+
+    nb_path = Path("kaggle/midas_kaggle.ipynb")
+    if not nb_path.exists():
+        pytest.skip("notebook not generated")
+
+    failures = []
+    for i, cell in enumerate(json.loads(nb_path.read_text())["cells"]):
+        if cell["cell_type"] != "code":
+            continue
+        source = "".join(cell["source"])
+
+        # Rejoin backslash continuations, then blank IPython shell/magic lines:
+        # those are not Python and ast cannot parse them.
+        joined, pending = [], ""
+        for line in source.splitlines():
+            current = pending + line
+            if current.rstrip().endswith("\\"):
+                pending = current.rstrip()[:-1]
+                continue
+            pending = ""
+            joined.append(current)
+        cleaned = "\n".join(
+            "pass" if l.lstrip().startswith(("!", "%")) else l for l in joined
+        )
+
+        try:
+            ast.parse(cleaned)
+        except SyntaxError as exc:
+            failures.append(f"cell {i}: {exc.msg} (line {exc.lineno})")
+
+    assert not failures, failures

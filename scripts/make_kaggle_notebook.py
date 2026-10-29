@@ -79,9 +79,16 @@ for i in range(torch.cuda.device_count()):
     print(f"  gpu {i}: {torch.cuda.get_device_name(i)}  "
           f"sm_{major}{minor}  {total:.1f} GB")
 
-bf16 = torch.cuda.is_bf16_supported() if torch.cuda.is_available() else False
-fa2 = torch.cuda.is_available() and torch.cuda.get_device_capability()[0] >= 8
-print(f"\\nbfloat16 supported : {bf16}   -> dtype will be {'bfloat16' if bf16 else 'float16'}")
+# Gate on compute capability, as midas.models.internvl.resolve_dtype does.
+# torch.cuda.is_bf16_supported() reports True on a T4 because recent PyTorch
+# counts emulated bf16, but Turing has no bf16 tensor cores and the emulated
+# path is slower than float16.
+cc = torch.cuda.get_device_capability()[0] if torch.cuda.is_available() else 0
+torch_claim = torch.cuda.is_bf16_supported() if torch.cuda.is_available() else False
+bf16 = cc >= 8
+fa2 = bf16
+print(f"torch bf16 claim   : {torch_claim}  (counts emulation -- not what we use)")
+print(f"native bfloat16    : {bf16}   -> dtype will be {'bfloat16' if bf16 else 'float16'}")
 print(f"FlashAttention-2 ok: {fa2}   -> attention will run {'flash' if fa2 else 'eager'}")
 if not fa2:
     print("  (expected on T4: sm_75 is Turing, FA2 needs sm_80+. Eager attention")
@@ -133,7 +140,7 @@ assert sentencepiece.__version__ == "0.2.1", (
     f"sentencepiece {sentencepiece.__version__} installed, need 0.2.1. "
     "0.2.2 cannot read InternVL's tokenizer and fails confusingly later."
 )
-print("\nversion checks passed")
+print("version checks passed")
 ''')
 
 # ---------------------------------------------------------------- step 3
@@ -173,7 +180,7 @@ assert candidates, (
 )
 SOURCE = Path(candidates[0]).parent
 WORK = Path("/kaggle/working/midas")
-print("\nsource dataset:", SOURCE)
+print("source dataset:", SOURCE)
 
 # /kaggle/input is read-only and `pip install -e` needs to write egg-info.
 if WORK.exists():
