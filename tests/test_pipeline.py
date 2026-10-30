@@ -321,9 +321,14 @@ def test_kaggle_notebook_cells_are_valid_python():
                 continue
             pending = ""
             joined.append(current)
-        cleaned = "\n".join(
-            "pass" if l.lstrip().startswith(("!", "%")) else l for l in joined
-        )
+        # Keep the indentation when blanking a magic: a `!` line inside a for
+        # loop must still be an indented statement or the block looks empty.
+        def blank(line: str) -> str:
+            if not line.lstrip().startswith(("!", "%")):
+                return line
+            return " " * (len(line) - len(line.lstrip())) + "pass"
+
+        cleaned = "\n".join(blank(l) for l in joined)
 
         try:
             ast.parse(cleaned)
@@ -427,3 +432,31 @@ def test_notebooks_prefer_the_dataset_over_stale_kernel_output():
     assert "/kaggle/input/datasets/" in joined, (
         "the sweep notebook must prefer the dataset mount over kernel output"
     )
+
+
+def test_derived_labels_override_chai_and_change_the_target(tmp_path):
+    """Re-derived labels must flow through to the attack target.
+
+    The target is the opposite of the benign action, so a wrong label makes the
+    "attack target" something the model already prefers. That is what inflated
+    the Transferability baseline to 62.5%.
+    """
+    import json
+
+    base = data.load_scenes("test")
+    scene = base[0]
+    flipped = "a)" if scene.correct_internvl == "b)" else "b)"
+
+    label_file = tmp_path / "labels.json"
+    label_file.write_text(json.dumps({
+        "split": "test",
+        "model": "fake",
+        "labels": {str(scene.index): {"action": flipped, "chai_label": scene.correct_internvl}},
+    }))
+
+    overridden = data.load_scenes("test", labels=label_file)[0]
+    assert overridden.correct_internvl == flipped
+    # Scenes without an override keep CHAI's label.
+    assert overridden.index == scene.index
+    assert data.resolve_target(overridden, "auto") == scene.correct_internvl
+    assert data.resolve_target(overridden, "auto") != data.resolve_target(scene, "auto")

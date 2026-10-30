@@ -389,6 +389,87 @@ for label in ("baseline", "attack"):
     print(f"\\nSUMMARY TURN: {r['short']}")
 ''')
 
+md("""
+## 9b. Re-derive the benign labels
+
+CHAI ship a benign action per scene, measured on *their* model. Our model
+disagrees with those labels on 5 of 8 Transferability scenes, and since the
+attack target is defined as the opposite of the benign action, a wrong label
+makes the "target" something the model already prefers — which is why that
+split showed an implausible 62.5% no-attack rate.
+
+This repeats CHAI's own labelling procedure against the model under test:
+eleven unattacked runs per scene, take the mode. Results are reported against
+both label sources, since they are not comparable.
+""")
+
+code(f'''
+for split in ("train", "test"):
+    !midas-labels --split {{split}} --model {MODEL} --device-map auto \\
+        --max-tiles 6 --runs 11 --out /kaggle/working/results/labels
+''')
+
+code(f'''
+import glob
+
+for split in ("train", "test"):
+    labels = glob.glob(f"/kaggle/working/results/labels/{{split}}_*.json")
+    if not labels:
+        print(f"no labels for {{split}}"); continue
+    !midas-eval --split {{split}} --both --labels {{labels[0]}} \\
+        --model {MODEL} --device-map auto --max-tiles 6 \\
+        --out /kaggle/working/results/runs_8b_relabelled
+''')
+
+md("""
+## 9c. Scale study
+
+CHAI evaluate one open-weight model. InternVL2.5 ships at 1B, 2B, 4B and 8B with
+the same architecture and training recipe, so scale is a clean single variable —
+a rare thing to get. The question CHAI leave open: does a larger model resist
+command hijacking, or submit to it more?
+
+Two data points already disagree interestingly (2B +46.7, 8B +40.0 points), and
+the 8B shows a failure mode the 2B never did: answering per camera
+("CAM_FRONT: Brake, CAM_BACK: Proceed"), which CHAI's scoring rule silently
+counts as a successful attack.
+
+The smaller models fit on one T4, so no sharding is needed below 8B.
+""")
+
+code('''
+import subprocess
+
+SIZES = ["OpenGVLab/InternVL2_5-1B", "OpenGVLab/InternVL2_5-2B",
+         "OpenGVLab/InternVL2_5-4B"]
+
+for model_id in SIZES:
+    print(f"\\n{'=' * 70}\\n{model_id}\\n{'=' * 70}", flush=True)
+    subprocess.run(
+        ["midas-eval", "--split", "train", "--both",
+         "--model", model_id, "--max-tiles", "6",
+         "--out", "/kaggle/working/results/scale"],
+        check=True,
+    )
+''')
+
+code('''
+import glob, json
+
+rows = []
+for path in sorted(glob.glob("/kaggle/working/results/scale/*.json")) + sorted(
+        glob.glob("/kaggle/working/results/runs_8b/*train*.json")):
+    d = json.load(open(path))
+    if "summary" not in d:
+        continue
+    rows.append((d["model_id"].split("-")[-1], d["label"], d["summary"]))
+
+print(f"{'model':8s} {'condition':10s} {'ASR':>7s} {'CHAI rule':>10s} {'unreadable':>11s}")
+for size, label, s in rows:
+    print(f"{size:8s} {label:10s} {s['asr']:7.1%} {s.get('asr_chai', 0):10.1%} "
+          f"{s['unreadable_rate']:11.1%}")
+''')
+
 # ---------------------------------------------------------------- step 10
 md("""
 ## 10. The defense pipeline (optional, a further 2–3 GPU-hours)

@@ -176,6 +176,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--limit", type=int, default=None, help="first N scenes, for smoke tests")
+    parser.add_argument(
+        "--labels",
+        type=Path,
+        default=None,
+        help="benign-action labels re-derived for this model (see midas-labels). "
+        "Without it, CHAI's stored labels are used, which describe their model "
+        "and not necessarily ours.",
+    )
     parser.add_argument("--target-mode", choices=["auto", "dataset"], default="auto")
     parser.add_argument("--background-mode", choices=["code", "json"], default="code")
     parser.add_argument("--out", type=Path, default=Path("results/runs"))
@@ -205,7 +213,7 @@ def main(argv: list[str] | None = None) -> int:
 
     _seed_everything(args.seed)
 
-    scenes = data.load_scenes(args.split)
+    scenes = data.load_scenes(args.split, labels=args.labels)
     if args.limit:
         scenes = scenes[: args.limit]
 
@@ -298,6 +306,7 @@ def main(argv: list[str] | None = None) -> int:
             target_mode=args.target_mode,
             results=results,
         )
+        record.label_source = str(args.labels) if args.labels else "chai"
         path = record.save(args.out)
         print(f"\n{evaluate.summarise(results).as_row(label)}")
         print(f"saved -> {path}")

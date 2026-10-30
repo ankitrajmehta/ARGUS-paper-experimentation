@@ -8,6 +8,7 @@ dynamic = ["dependencies"]
 [project.scripts]
 midas-render = "midas.cli.render_signs:main"
 midas-eval = "midas.cli.run_eval:main"
+midas-labels = "midas.cli.derive_labels:main"
 midas-activations = "midas.cli.extract_activations:main"
 midas-probes = "midas.cli.train_probes:main"
 midas-fit-defense = "midas.cli.fit_defense:main"

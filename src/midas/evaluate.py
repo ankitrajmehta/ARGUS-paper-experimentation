@@ -115,6 +115,10 @@ class RunRecord:
     repeats: int
     background_mode: str | None
     target_mode: str
+    # Where the benign labels came from: "chai" or a derived label file. The two
+    # give materially different attack rates, so results are not comparable
+    # across sources.
+    label_source: str = "chai"
     results: list[SceneResult] = field(default_factory=list)
     started_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
