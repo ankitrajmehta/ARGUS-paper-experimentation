@@ -8,7 +8,7 @@ from tqdm import tqdm
 from argus.config import cfg_get, get_paths, load_config, resolve_input_path
 from argus.io_utils import load_json, save_json, seed_everything
 from argus.media import clean_media, ensure_image_argus_stage, poison_media, split_json_path
-from argus.modeling import VisionLanguageRunner, parse_json_object_detailed, vision_runner
+from argus.modeling import VisionLanguageRunner, parse_json_object_detailed
 from argus.prompts import AUGMENTATION_PROMPT
 
 
@@ -190,7 +190,10 @@ def main() -> None:
         print(f"skip existing {output_path}")
         return
 
-    runner = vision_runner(config)
+    runner = VisionLanguageRunner(
+        resolve_input_path(config, "model.path"),
+        device=cfg_get(config, "run.device"),
+    )
     max_new_tokens = int(cfg_get(config, "augmentation.max_new_tokens", max(512, int(cfg_get(config, "generation.max_new_tokens", 128)))))
     repair_max_new_tokens = int(cfg_get(config, "augmentation.repair_max_new_tokens", max_new_tokens))
     retries = int(cfg_get(config, "augmentation.retries", 2))

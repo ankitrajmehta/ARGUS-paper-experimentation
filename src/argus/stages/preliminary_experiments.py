@@ -10,7 +10,7 @@ from argus.config import cfg_get, get_paths, load_config, resolve_input_path
 from argus.eval_metrics import score_response, summarize_scores
 from argus.io_utils import load_json, save_json, seed_everything
 from argus.media import ensure_image_argus_stage, get_modality, poison_media, split_json_path
-from argus.modeling import VisionLanguageRunner, vision_runner
+from argus.modeling import VisionLanguageRunner
 from argus.preliminary import (
     MultiLayerSteeringController,
     SingleLayerSteeringController,
@@ -378,7 +378,10 @@ def main() -> None:
                 return
             except Exception:
                 print(f"rerun incomplete or invalid preliminary output: {output_path}")
-        runner = vision_runner(config)
+        runner = VisionLanguageRunner(
+            resolve_input_path(config, "model.path"),
+            device=cfg_get(config, "run.device"),
+        )
         run_one_condition(
             runner,
             data,
@@ -403,7 +406,10 @@ def main() -> None:
             print(f"skip existing {output_path}")
             return
 
-    runner = vision_runner(config)
+    runner = VisionLanguageRunner(
+        resolve_input_path(config, "model.path"),
+        device=cfg_get(config, "run.device"),
+    )
     modality = get_modality(config)
     layer_start = int(cfg_get(config, "preliminary.layer_start", 8))
     layer_end = int(cfg_get(config, "preliminary.layer_end", 18))

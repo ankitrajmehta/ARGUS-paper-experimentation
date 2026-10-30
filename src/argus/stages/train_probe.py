@@ -6,7 +6,6 @@ from argus.config import cfg_get, get_paths, load_config
 from argus.io_utils import seed_everything
 from argus.media import ensure_image_argus_stage
 from argus.probes import (
-    activation_layer_count,
     load_detection_xy,
     load_edit_eval_xy,
     load_edit_xy,
@@ -28,6 +27,7 @@ def main() -> None:
     seed_everything(int(cfg_get(config, "run.seed", 42)))
     ensure_image_argus_stage(config, "train_probe")
     paths = get_paths(config)
+    layer_count = 28
     ratio = float(cfg_get(config, "paper.probe_train_ratio", 0.8))
     out_dir = paths.probe_dir / args.kind
     metrics_path = out_dir / "mllm_metrics.json"
@@ -37,7 +37,6 @@ def main() -> None:
 
     train_path = paths.activation_dir / f"mllm_{args.kind}_train.pt"
     val_path = paths.activation_dir / f"mllm_{args.kind}_val.pt"
-    layer_count = activation_layer_count(train_path)
     metrics = []
     for layer in range(layer_count):
         # Detection separates clean/injected; edit separates user/attacker answers.

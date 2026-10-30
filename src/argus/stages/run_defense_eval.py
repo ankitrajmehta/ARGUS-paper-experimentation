@@ -10,7 +10,7 @@ from argus.defense import ImageDefenseController
 from argus.eval_metrics import score_response, summarize_scores
 from argus.io_utils import load_json, save_json, seed_everything
 from argus.media import clean_media, ensure_image_argus_stage, get_modality, poison_media, split_json_path
-from argus.modeling import VisionLanguageRunner, get_language_layers, vision_runner
+from argus.modeling import VisionLanguageRunner, get_language_layers
 
 
 def main() -> None:
@@ -41,7 +41,10 @@ def main() -> None:
         print(f"skip existing {output_path}")
         return
 
-    runner = vision_runner(config)
+    runner = VisionLanguageRunner(
+        resolve_input_path(config, "model.path"),
+        device=cfg_get(config, "run.device"),
+    )
     controller = ImageDefenseController(config, paths) if args.mode == "defense" else None
     handles = []
     if controller is not None:

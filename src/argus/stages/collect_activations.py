@@ -7,7 +7,7 @@ from argus.activations import collect_detection_activations, collect_edit_activa
 from argus.config import cfg_get, get_paths, load_config, resolve_input_path
 from argus.io_utils import seed_everything
 from argus.media import ensure_image_argus_stage, split_json_path
-from argus.modeling import VisionLanguageRunner, vision_runner
+from argus.modeling import VisionLanguageRunner
 
 
 def main() -> None:
@@ -44,7 +44,10 @@ def main() -> None:
         data_json = split_json_path(paths, config, "train", augmented=True)
     else:
         data_json = split_json_path(paths, config, args.split)
-    runner = vision_runner(config)
+    runner = VisionLanguageRunner(
+        resolve_input_path(config, "model.path"),
+        device=cfg_get(config, "run.device"),
+    )
     if args.mode == "detection":
         collect_detection_activations(runner, data_json, output_path, args.shard_index, args.num_shards, "image")
     else:
