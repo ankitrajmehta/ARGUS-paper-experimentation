@@ -14,7 +14,7 @@ from argus.config import cfg_get, get_paths, load_config, resolve_input_path
 from argus.eval_metrics import score_response, summarize_scores
 from argus.io_utils import load_json, save_json, seed_everything
 from argus.media import ensure_image_argus_stage, media_block, poison_media, split_json_path
-from argus.modeling import get_language_layers, set_cuda_device, silence_greedy_sampling_warnings
+from argus.modeling import default_dtype, get_language_layers, set_cuda_device, silence_greedy_sampling_warnings
 from argus.vector_utils import LayerMixtureEditor, load_basis_vectors
 
 
@@ -289,7 +289,7 @@ def main() -> None:
 
     model = Qwen2VLForConditionalGeneration.from_pretrained(
         str(resolve_input_path(config, "model.path")),
-        torch_dtype=torch.bfloat16,
+        torch_dtype=default_dtype(),
         device_map="auto",
     )
     silence_greedy_sampling_warnings(model)

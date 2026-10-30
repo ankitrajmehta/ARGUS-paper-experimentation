@@ -30,6 +30,8 @@ BEHAVIOR_N = 50
 MODEL_REPO, MODEL_REV = "Qwen/Qwen2.5-VL-3B-Instruct", "66285546d2b821cf421d4f5eb2576359d3770cd3"
 # E3: the paper's model. VTQA is left to upstream's own load_dataset("CalfKing/vtqa2023") (main = VTQA_REV on 2026-10-30).
 E3_MODEL_REPO, E3_MODEL_REV = "Qwen/Qwen2-VL-7B-Instruct", "eed13092ef92e448dd6875b2a00151bd3f7db0ac"
+# Upstream bf16 runs on T4 only by emulation (~10.9 s per VTQA answer for the 7B); "" keeps upstream bf16.
+E3_DTYPE = "float16"
 VTQA_REPO, VTQA_REV = "CalfKing/vtqa2023", "720e9e8053154c6e9fa80e6bb5784d41c365eb94"
 ALPACA_REPO, ALPACA_REV = "tatsu-lab/alpaca", "dce01c9b08f87459cf36a430d809084718273017"
 ALPACA_FILE = "data/train-00000-of-00001-a09b74b3ef9c3b56.parquet"
@@ -208,6 +210,9 @@ def run_e3(out: Path, env: dict, log_path: Path) -> None:
     with run_config.open("w", encoding="utf-8") as f:
         yaml.safe_dump(cfg, f, sort_keys=False)
     resume_from_mounted(out)
+    if E3_DTYPE:
+        env = {**env, "ARGUS_DTYPE": E3_DTYPE}
+    print(f"ARGUS_DTYPE={env.get('ARGUS_DTYPE', 'unset (bfloat16)')}")
     run_logged([sys.executable, str(CODE / "experiments/e3/run_e3.py"), "--config", str(run_config), "--output-dir", str(out)], env, log_path)
     # Rendered images are rebuilt from the seed; drop them only after a finished run so a later kernel can resume.
     for folder in (out / "data").rglob("*"):

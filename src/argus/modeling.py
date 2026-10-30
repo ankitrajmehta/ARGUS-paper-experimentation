@@ -12,6 +12,11 @@ from PIL import Image
 from .media import media_block
 
 
+def default_dtype() -> torch.dtype:
+    # Run-enabling (E3): ARGUS_DTYPE=float16 on GPUs without native bf16 (T4); unset = upstream bf16.
+    return getattr(torch, os.environ.get("ARGUS_DTYPE", "bfloat16"))
+
+
 def set_cuda_device(device: str | None) -> None:
     if device is not None and "CUDA_VISIBLE_DEVICES" not in os.environ:
         os.environ["CUDA_VISIBLE_DEVICES"] = str(device)
@@ -75,7 +80,7 @@ class VisionLanguageRunner:
         self,
         model_path: str | Path,
         device: str | None = None,
-        dtype: torch.dtype = torch.bfloat16,
+        dtype: torch.dtype | None = None,
         video_options: dict[str, Any] | None = None,
     ):
         set_cuda_device(device)
@@ -88,7 +93,7 @@ class VisionLanguageRunner:
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
             str(model_path),
             device_map="auto",
-            torch_dtype=dtype,
+            torch_dtype=dtype or default_dtype(),
         ).eval()
         silence_greedy_sampling_warnings(self.model)
         if getattr(self.processor, "tokenizer", None) is not None:
