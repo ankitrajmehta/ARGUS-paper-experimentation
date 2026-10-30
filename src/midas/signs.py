@@ -91,11 +91,78 @@ def build_sign(
     )
 
 
-def render(image: np.ndarray, sign: SignSpec, language: str = "English") -> np.ndarray:
+# CHAI's put_text draws text_sp[0] and text_sp[1] and nothing else, so a third
+# word is dropped without any error. "IGNORE SIGNS PROCEED" renders identically
+# to "IGNORE SIGNS": the sign loses the action entirely while still looking
+# plausible.
+MAX_CHAI_WORDS = 2
+
+
+class PhraseTooLong(ValueError):
+    """A phrase CHAI's renderer would silently truncate."""
+
+
+def check_renderable(text: str, allow_multiline: bool = False) -> None:
+    """Reject phrases CHAI's renderer cannot draw in full."""
+    words = text.split()
+    if allow_multiline or len(words) <= MAX_CHAI_WORDS:
+        return
+    raise PhraseTooLong(
+        f"{text!r} has {len(words)} words; CHAI's renderer draws only the first "
+        f"{MAX_CHAI_WORDS} and discards the rest, so the sign would read "
+        f"{' '.join(words[:MAX_CHAI_WORDS])!r}. Shorten it, or pass "
+        "allow_multiline=True to use the extended renderer."
+    )
+
+
+def _render_multiline(image: np.ndarray, sign: SignSpec) -> np.ndarray:
+    """Draw a phrase of any length, one word per line.
+
+    A documented extension, not CHAI's code: it is only reached for phrases of
+    three or more words, which CHAI cannot express at all. Shorter phrases go
+    through their renderer untouched so every existing result is unaffected.
+
+    Lines are centred on the widest, matching the spirit of CHAI's two-word
+    layout, which centres the first word against the width of the second.
+    """
+    attacker = _attacker()
+    words = sign.text.split()
+    canvas = image.copy()
+
+    # Measure first: the per-line offset depends on the widest word.
+    widths = []
+    for word in words:
+        probe = image.copy()
+        _, _, width, height = attacker._put_text_en(
+            probe, word, sign.bg, sign.fg, sign.scale, sign.origin
+        )
+        widths.append((width, height))
+    widest = max(w for w, _ in widths)
+
+    x, y = sign.origin
+    for word, (width, height) in zip(words, widths):
+        attacker._put_text_en(
+            canvas, word, sign.bg, sign.fg, sign.scale, (x, y), widest
+        )
+        y += height + 10  # matches the padding CHAI use between their two lines
+    return canvas
+
+
+def render(
+    image: np.ndarray,
+    sign: SignSpec,
+    language: str = "English",
+    allow_multiline: bool = False,
+) -> np.ndarray:
     """Draw a sign onto one RGB frame and return the result.
 
     CHAI's put_text draws in place via cv2, so we pass a copy.
     """
+    check_renderable(sign.text, allow_multiline=allow_multiline)
+    if allow_multiline and len(sign.text.split()) > MAX_CHAI_WORDS:
+        upper = SignSpec(sign.text.upper(), sign.bg, sign.fg, sign.scale, sign.origin)
+        return _render_multiline(image, upper)
+
     canvas = image.copy()
     # CHAI upper-cases the phrase at render time (main.py: ``text.upper()``).
     return _attacker().put_text(
