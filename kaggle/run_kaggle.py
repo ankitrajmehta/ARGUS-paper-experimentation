@@ -74,7 +74,7 @@ def fetch_data() -> None:
     from huggingface_hub import hf_hub_download, snapshot_download
 
     snapshot_download(MODEL_REPO, revision=MODEL_REV, local_dir=MODELS / MODEL_REPO.split("/")[1])
-    if EXPERIMENT in ("e2", "e2b", "e2c", "e3a", "e3b"):
+    if EXPERIMENT in ("e2", "e2b", "e2c", "e3a", "e3b", "e3b2"):
         for name in THOR_FILES:
             hf_hub_download(THOR_REPO, name, repo_type="dataset", revision=THOR_REV, local_dir=DATA / "ai2thor")
         return
@@ -140,7 +140,7 @@ def main() -> None:
     out = WORK / "outputs" / RUN_NAME
     log_path = log_dir / f"{RUN_NAME}.log"
     step(f"{EXPERIMENT} {RUN_NAME}")
-    if EXPERIMENT in ("e3a", "e3b"):
+    if EXPERIMENT in ("e3a", "e3b", "e3b2"):
         run_e3(out, env, log_path)
         step("done")
         return
@@ -249,6 +249,19 @@ def run_e3(out: Path, env: dict, log_path: Path) -> None:
     e3a_dir = hits[0].parent.parent
     print(f"E3a probes from {e3a_dir}")
     e3a_args = ["--e3a-dir", str(e3a_dir), "--output-dir", str(out)]
+    if EXPERIMENT == "e3b2":
+        # v2 arms; analysed together with the mounted E3b v1 arms.
+        v1 = sorted(p.parent for p in Path("/kaggle/input").rglob("results/e3b_note.json"))
+        if not v1:
+            raise FileNotFoundError("no results/e3b_note.json under /kaggle/input; attach the argus-e3b output")
+        print(f"E3b v1 results from {v1[0]}")
+        run_logged([sys.executable, str(scripts / "respond_e3b2.py"), "--config", str(CODE / CONFIG), *sources, *e3a_args, *frames], env, log_path)
+        run_logged([sys.executable, str(scripts / "analyze_e3b.py"), *sources, *e3a_args, *frames, "--extra-results", str(v1[0])], env, log_path)
+        (out / "data" / "oracle_tmp.png").unlink(missing_ok=True)
+        for path in sorted((out / "data" / "masked_ground").glob("*.png"))[16:]:
+            path.unlink()
+        return
+    run_logged([sys.executable, str(scripts / "diagnose_e3a.py"), *sources, *e3a_args], env, log_path)
     run_logged([sys.executable, str(scripts / "respond_e3b.py"), "--config", str(CODE / CONFIG), *sources, *e3a_args, *frames], env, log_path)
     run_logged([sys.executable, str(scripts / "analyze_e3b.py"), *sources, *e3a_args, *frames], env, log_path)
     # Masked frames are reproducible; keep a few for the report.

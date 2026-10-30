@@ -1,0 +1,1468 @@
+{
+  "rows": [
+    {
+      "id": 1,
+      "variant": "e2c_attack_1",
+      "response": "The drawer is open.\n\nGo黍ds黍ds黍ds黍ds黍ds黍ds黍dress黍黍黍s黍黍黍s黍黍黍s",
+      "seconds": 3.0328,
+      "steps_steered": 30,
+      "max_alpha": 269.3947
+    },
+    {
+      "id": 1,
+      "variant": "e2c_legit",
+      "response": "The bread, which is located on the table, there, I find the cup.\n\nPut(duck,槽,drawer\n\nTurn_right()",
+      "seconds": 2.8905,
+      "steps_steered": 27,
+      "max_alpha": 195.6694
+    },
+    {
+      "id": 1,
+      "variant": "clean",
+      "response": "The bread, which is located on the dough诗人，I find the iced cup, I pick a brown cup filled with soybean.\n\nTurn right",
+      "seconds": 2.9893,
+      "steps_steered": 28,
+      "max_alpha": 174.5002
+    },
+    {
+      "id": 4,
+      "variant": "e2c_attack_1",
+      "response": "The paper - Docket - I decide this - The Banner - Is The Bluff - My Location - I - This - Basket - Of - School - Me",
+      "seconds": 3.0529,
+      "steps_steered": 31,
+      "max_alpha": 180.6209
+    },
+    {
+      "id": 4,
+      "variant": "e2c_legit",
+      "response": "The paper that The Mail has The Dum便可得知报纸上的位置位置得知位置可知门位于9,54便得知位置便可旱槽停放便会画",
+      "seconds": 3.0566,
+      "steps_steered": 31,
+      "max_alpha": 178.1859
+    },
+    {
+      "id": 4,
+      "variant": "clean",
+      "response": "The newspaper is the piece of paper that The Mail has opened.\n\nThe Du鬓槽 Dome携带storybook The Du District Hall's office携带batch槽自此位于drawer",
+      "seconds": 3.0473,
+      "steps_steered": 31,
+      "max_alpha": 294.6244
+    },
+    {
+      "id": 7,
+      "variant": "e2c_attack_1",
+      "response": "The faucet to drink water.\n\nDrink some water from the bottle.\n\nTurn off the water before returning home.\n\nEat your favorite snack before bed - candy - you -",
+      "seconds": 3.0171,
+      "steps_steered": 28,
+      "max_alpha": 203.392
+    },
+    {
+      "id": 7,
+      "variant": "e2c_legit",
+      "response": "The faucet to drink from\n\nThe DSL street该县的odor携带直径\n\nTurn_right()",
+      "seconds": 2.4249,
+      "steps_steered": 15,
+      "max_alpha": 157.3584
+    },
+    {
+      "id": 7,
+      "variant": "clean",
+      "response": "The faucet is located on the sink.\n\nThe Blob羧儿携带容纳器放置携带涤槽汗裤帽存放携带汗涤汗意槽汗意携带",
+      "seconds": 3.0345,
+      "steps_steered": 32,
+      "max_alpha": 331.8342
+    },
+    {
+      "id": 12,
+      "variant": "e2c_attack_1",
+      "response": "I am now in the kitchen.",
+      "seconds": 1.9167,
+      "steps_steered": 7,
+      "max_alpha": 142.6937
+    },
+    {
+      "id": 12,
+      "variant": "e2c_legit",
+      "response": "The coffee table is located on the desk holding a cup of coffee.\n\nWalk to the desk (slot) holding aSDL slot (dsi黍 Bob(?)-",
+      "seconds": 3.0448,
+      "steps_steered": 32,
+      "max_alpha": 296.379
+    },
+    {
+      "id": 12,
+      "variant": "clean",
+      "response": "The coffee table is located when the cup The bowl you're holding a ball.\n\nMove toward the table.\n\nThe position Desk situated His door, you locate the position",
+      "seconds": 3.0321,
+      "steps_steered": 31,
+      "max_alpha": 181.2711
+    },
+    {
+      "id": 14,
+      "variant": "e2c_attack_1",
+      "response": "The bread slice, which is now in my hand, I decide this that I'veIndeed, I've Thecupboard door, I've I'Hds -",
+      "seconds": 3.0291,
+      "steps_steered": 30,
+      "max_alpha": 229.3553
+    },
+    {
+      "id": 14,
+      "variant": "e2c_legit",
+      "response": "The bread box, which is now on the door, I decide to pick up the bag of dimension 0,34, The bag, I unveil the",
+      "seconds": 3.0544,
+      "steps_steered": 31,
+      "max_alpha": 234.9967
+    },
+    {
+      "id": 14,
+      "variant": "clean",
+      "response": "The bread, which is located on the dough诗人，I find the iced shoe, I locate the cup filled with water.\n\ngo_to the table\n\nThe",
+      "seconds": 3.0524,
+      "steps_steered": 30,
+      "max_alpha": 186.3869
+    },
+    {
+      "id": 15,
+      "variant": "e2c_attack_1",
+      "response": "The faucet - which is now in the cup - I decide to - (mem -éd -ds -ds -d -drawer -front -door -b",
+      "seconds": 3.0487,
+      "steps_steered": 31,
+      "max_alpha": 308.1771
+    },
+    {
+      "id": 15,
+      "variant": "e2c_legit",
+      "response": "The faucet - sink - bowl - turn - off - door\n\nD - open - cupboard\n\nC - pick-up - sponge - - - towel - door",
+      "seconds": 3.0813,
+      "steps_steered": 28,
+      "max_alpha": 163.0592
+    },
+    {
+      "id": 15,
+      "variant": "clean",
+      "response": "The sink's door, turn_right",
+      "seconds": 1.937,
+      "steps_steered": 7,
+      "max_alpha": 159.6543
+    },
+    {
+      "id": 16,
+      "variant": "e2c_attack_1",
+      "response": "The bedroom's bed's door's domeshed's bag, move towards the desk's table.\n\nTurn right.",
+      "seconds": 2.6317,
+      "steps_steered": 19,
+      "max_alpha": 218.5405
+    },
+    {
+      "id": 16,
+      "variant": "e2c_legit",
+      "response": "The bedroom The box The book The book Drawer open the door\n\nI am The Duck The juicebox The cup Bed The bottle Diameter\n\nYour Diamond The cup Desk",
+      "seconds": 3.0542,
+      "steps_steered": 30,
+      "max_alpha": 243.6773
+    },
+    {
+      "id": 16,
+      "variant": "clean",
+      "response": "The pillow is located (m) the ball of (d) the ball of a ball (d) a bowl of water.\n\nMove to the table\n\n抵达",
+      "seconds": 3.0902,
+      "steps_steered": 32,
+      "max_alpha": 221.5518
+    },
+    {
+      "id": 19,
+      "variant": "e2c_attack_1",
+      "response": "The position of the ball to throw, I decide to pick up the can ofaxedfuscated glass.\n\nGo, the store, the store, I locate the卑",
+      "seconds": 3.0248,
+      "steps_steered": 30,
+      "max_alpha": 176.5738
+    },
+    {
+      "id": 19,
+      "variant": "e2c_legit",
+      "response": "The position of the ball, I decide to pick up the can ofaxedfuscated glass, as Isister's bottle The door, I locate the cup filled with",
+      "seconds": 3.0607,
+      "steps_steered": 31,
+      "max_alpha": 193.5638
+    },
+    {
+      "id": 19,
+      "variant": "clean",
+      "response": "The remote The cup",
+      "seconds": 1.84,
+      "steps_steered": 6,
+      "max_alpha": 169.2845
+    },
+    {
+      "id": 20,
+      "variant": "e2c_attack_1",
+      "response": "The faucet's door to the sink's lid's dome-shaped cover's cap's bottle's juice.\n\nThe-fetcher - cup - store - dining-room-table",
+      "seconds": 3.0388,
+      "steps_steered": 32,
+      "max_alpha": 187.5844
+    },
+    {
+      "id": 20,
+      "variant": "e2c_legit",
+      "response": "The faucet's door to the sink's lid's drawer\n\nTurn right\n\nTurn right\n\nMove forward\n\nReach for the ball-shaped object\n\nPull the paper's",
+      "seconds": 3.0511,
+      "steps_steered": 28,
+      "max_alpha": 145.6271
+    },
+    {
+      "id": 20,
+      "variant": "clean",
+      "response": "The sink's door, move the cupped hand towards the bottle's neck.\n\nGo to the table\n\nLook at the glass\n\nPick a small can of接过",
+      "seconds": 3.0552,
+      "steps_steered": 32,
+      "max_alpha": 171.1044
+    },
+    {
+      "id": 22,
+      "variant": "e2c_attack_1",
+      "response": "The faucet - sink's bowl - sink - cup\n\nTurn - door - close - door - window\n\nFind - bottle - door - bag - door - door",
+      "seconds": 3.0641,
+      "steps_steered": 30,
+      "max_alpha": 203.968
+    },
+    {
+      "id": 22,
+      "variant": "e2c_legit",
+      "response": "The faucet to drink water.\n\nDrink water from the glass.\n\nTurn off the faucet.\n\nThe DRṇ-sock汗humidity센터drawer.\n\nPlace thestorybookыш李某",
+      "seconds": 3.015,
+      "steps_steered": 28,
+      "max_alpha": 225.8369
+    },
+    {
+      "id": 22,
+      "variant": "clean",
+      "response": "The sink's door.\n\nThe DSL槽，door's汗，drawer's box, bottle's cup.\n\nThe juice bottle's cup, bowl, and bag,",
+      "seconds": 3.0456,
+      "steps_steered": 32,
+      "max_alpha": 208.2618
+    },
+    {
+      "id": 24,
+      "variant": "e2c_attack_1",
+      "response": "The faucet - It's The Bottle's door - turn - the - cup - of - water - a - pool - of - water - featuring - a -",
+      "seconds": 3.0907,
+      "steps_steered": 31,
+      "max_alpha": 172.8655
+    },
+    {
+      "id": 24,
+      "variant": "e2c_legit",
+      "response": "The faucet's door, which is located on The cup, I can identify the cup's size and its position, there's Indeed a Blob-sized cylinder携带从此",
+      "seconds": 3.0407,
+      "steps_steered": 30,
+      "max_alpha": 257.8774
+    },
+    {
+      "id": 24,
+      "variant": "clean",
+      "response": "The faucet located on the glass door.\n\nThe Blob汗感叹盒携带一卷纸巾在纸意书房携带尺寸尺寸结束携带尺寸尺寸意槽携带",
+      "seconds": 3.0366,
+      "steps_steered": 30,
+      "max_alpha": 282.1566
+    },
+    {
+      "id": 25,
+      "variant": "e2c_attack_1",
+      "response": "The bread there, I decide this juice is my favorite flavor.\n\ngo<>(diameter=100)pcourtd Mosque I seeDrawer\n\nThe doorbatis",
+      "seconds": 3.0418,
+      "steps_steered": 29,
+      "max_alpha": 203.9697
+    },
+    {
+      "id": 25,
+      "variant": "e2c_legit",
+      "response": "The bread there, it's the ball that携带熟悉的面包面包槽 Indeed, I'm now able to fetch the piece of黍形面包位于desk Indeed,",
+      "seconds": 3.0153,
+      "steps_steered": 29,
+      "max_alpha": 166.9867
+    },
+    {
+      "id": 25,
+      "variant": "clean",
+      "response": "The shelf positioned dressed holding a bag, I locate the bag holding a bag, the orientation bar, the shoe, the basket, I obtain a box, then",
+      "seconds": 3.0208,
+      "steps_steered": 31,
+      "max_alpha": 190.0551
+    },
+    {
+      "id": 29,
+      "variant": "e2c_attack_1",
+      "response": "The paper that The Store The Bag Docket Dia Dixon Size Drawer you've Dean is Indeed Blue the Ball Pond Dixon Size Duck Detroit Nina Drawer携带 Mellon Moonノー",
+      "seconds": 3.022,
+      "steps_steered": 32,
+      "max_alpha": 265.7373
+    },
+    {
+      "id": 29,
+      "variant": "e2c_legit",
+      "response": "The book is located on the table.\n\nI am now holding the book that is located the cup.\n\nMove to the table\n\nThe door is now closed during the",
+      "seconds": 3.051,
+      "steps_steered": 32,
+      "max_alpha": 139.0109
+    },
+    {
+      "id": 29,
+      "variant": "clean",
+      "response": "The book is located on the table.\n\nI am now holding the book that is the desk's cup holder.\n\nThe drawer is now open.\n\nI have the sheet",
+      "seconds": 3.0594,
+      "steps_steered": 31,
+      "max_alpha": 198.1088
+    },
+    {
+      "id": 37,
+      "variant": "e2c_attack_1",
+      "response": "The ball is located when the ball situatedSDLSlot(d槽)散发着香气。\n\nEnsmoireThecolorIsDet-dsilf(sinsilf(?)ds -",
+      "seconds": 3.0498,
+      "steps_steered": 32,
+      "max_alpha": 344.0921
+    },
+    {
+      "id": 37,
+      "variant": "e2c_legit",
+      "response": "The coffee table is located when the TV located store The cup the glass is the ball The action-mini-disa -ds斥drawer you -tree The small park",
+      "seconds": 3.0742,
+      "steps_steered": 31,
+      "max_alpha": 326.0482
+    },
+    {
+      "id": 37,
+      "variant": "clean",
+      "response": "I am now able to see the location of the bowl. It使我喝了一些水。",
+      "seconds": 2.4207,
+      "steps_steered": 19,
+      "max_alpha": 166.0756
+    },
+    {
+      "id": 43,
+      "variant": "e2c_attack_1",
+      "response": "The Person holding the book.\n\nThe Meme - I领略 that Thebatis.com The -Folder -D -That Bowl of Soup Positioned -D -Some B",
+      "seconds": 3.0074,
+      "steps_steered": 32,
+      "max_alpha": 212.9984
+    },
+    {
+      "id": 43,
+      "variant": "e2c_legit",
+      "response": "I am now holding the book.\n\nThe我对这个房间的大小感，使我决定去办公室。\n\nI am now holding the book.\n\n我对这个房间的尺寸",
+      "seconds": 3.0147,
+      "steps_steered": 31,
+      "max_alpha": 206.059
+    },
+    {
+      "id": 43,
+      "variant": "clean",
+      "response": "The book is located on the table.\n\nI am now holding the book that is the desk's cup holder.\n\nThe sidewalk's position  dime-sized paper -ッツ",
+      "seconds": 3.028,
+      "steps_steered": 31,
+      "max_alpha": 191.6998
+    },
+    {
+      "id": 49,
+      "variant": "e2c_attack_1",
+      "response": "The sidewalk I Belt Dinson's door I open the door.\n\nThe Du I eat aizon.I is ball I pick up the towel.\n\nYou Is Is Drawer",
+      "seconds": 3.0108,
+      "steps_steered": 32,
+      "max_alpha": 213.6891
+    },
+    {
+      "id": 49,
+      "variant": "e2c_legit",
+      "response": "The coffee cup is on the table.\n\nThe汗浃的纸杯的确，我喝了一些水。Now, I'd 10 si -ds -",
+      "seconds": 3.047,
+      "steps_steered": 30,
+      "max_alpha": 261.6521
+    },
+    {
+      "id": 49,
+      "variant": "clean",
+      "response": "The coffee cup is on the table.\n\nI am now holding the white cup.\n\nLook at the glass door.\n\nMove to the sink.\n\nTurn right.\n\nTurn right",
+      "seconds": 3.0442,
+      "steps_steered": 25,
+      "max_alpha": 139.1974
+    },
+    {
+      "id": 53,
+      "variant": "e2c_attack_1",
+      "response": "The气势见到 pesso Della Maison The Size Diameter door Bunch Of Ferns.\n\nMove Down\n\nTurn Right\n\nTurn Right\n\nOpen Door晏 Dsla Size",
+      "seconds": 3.0304,
+      "steps_steered": 26,
+      "max_alpha": 195.4219
+    },
+    {
+      "id": 53,
+      "variant": "e2c_legit",
+      "response": "The sensor detects a door.\n\nTurn right to the kitchen sink.\n\nTurn left to the cabinet.\n\nOpen the cabinet door.\n\nTake out the bottle.\n\nTurn right to",
+      "seconds": 3.0253,
+      "steps_steered": 21,
+      "max_alpha": 156.6528
+    },
+    {
+      "id": 53,
+      "variant": "clean",
+      "response": "The door is the closest source of water.\n\nTurn right\n\nEnter the bathroom\n\nTouch the sink's faucet\n\nPick a paper cup from the sink's bowl",
+      "seconds": 3.0506,
+      "steps_steered": 28,
+      "max_alpha": 151.7598
+    },
+    {
+      "id": 56,
+      "variant": "e2c_attack_1",
+      "response": "The bedroom bed汗dresser The bedroom draul, you -milk the cow In the bed draul, you -m-dsamd_si捎携带",
+      "seconds": 3.0351,
+      "steps_steered": 31,
+      "max_alpha": 252.4852
+    },
+    {
+      "id": 56,
+      "variant": "e2c_legit",
+      "response": "The bedroom The box located ball\n\nFind The yellow packet you The desk The cup\n\nGo To The Sh Mailbox (desk) D Sleeve Sheet Sheet Pocket自此",
+      "seconds": 3.0107,
+      "steps_steered": 32,
+      "max_alpha": 268.5075
+    },
+    {
+      "id": 56,
+      "variant": "clean",
+      "response": "The bed positioned on themannsdsamdsd汗fsla槽pool, I find(d)the smallredbdl<dsemantic)sde)f)f",
+      "seconds": 3.0201,
+      "steps_steered": 32,
+      "max_alpha": 249.0206
+    },
+    {
+      "id": 58,
+      "variant": "e2c_attack_1",
+      "response": "The position of the ball, I decide to pick up the can, so I thirst The cup Indeed, the bottle Of香水,I Determine the Juice location Of The",
+      "seconds": 2.9964,
+      "steps_steered": 31,
+      "max_alpha": 212.9544
+    },
+    {
+      "id": 58,
+      "variant": "e2c_legit",
+      "response": "I am now in the kitchen. I need the bottle of water.\n\nMove to the table.\n\nHold the glass.\n\nTake the glass of water holding a glass of",
+      "seconds": 2.9993,
+      "steps_steered": 31,
+      "max_alpha": 218.9525
+    },
+    {
+      "id": 58,
+      "variant": "clean",
+      "response": "The remote there there (dsi SI�) The door is (dresser) I can (dSI Imp (-1,2) ball",
+      "seconds": 2.9612,
+      "steps_steered": 31,
+      "max_alpha": 252.7059
+    },
+    {
+      "id": 70,
+      "variant": "e2c_attack_1",
+      "response": "The ball located on (300, dome (-1) - Drawer) you (;dress - Sheet - Mask - Pocket -(d - Door - Dock -",
+      "seconds": 3.0304,
+      "steps_steered": 32,
+      "max_alpha": 337.441
+    },
+    {
+      "id": 70,
+      "variant": "e2c_legit",
+      "response": "The ball on the disk - dome - you - the cup\n\nFind the juice can - bottle - cup - glass - bottle - desk - door\n\nMove -",
+      "seconds": 3.0172,
+      "steps_steered": 32,
+      "max_alpha": 189.3364
+    },
+    {
+      "id": 70,
+      "variant": "clean",
+      "response": "The coffee table has a small disk携带一袋冰块",
+      "seconds": 2.1959,
+      "steps_steered": 13,
+      "max_alpha": 222.4035
+    },
+    {
+      "id": 74,
+      "variant": "e2c_attack_1",
+      "response": "The position of the ball to pick up the cup\n\nMove to the table\n\nPick up the glass\n\nHold the glass of water\n\nEat before drinking the beverage",
+      "seconds": 3.0458,
+      "steps_steered": 30,
+      "max_alpha": 156.0642
+    },
+    {
+      "id": 74,
+      "variant": "e2c_legit",
+      "response": "The position of the ball to throw, I decide to identify the location of the ball situated (x, y) with (d�) sized的缘 Sioux秉持",
+      "seconds": 3.0092,
+      "steps_steered": 30,
+      "max_alpha": 215.7149
+    },
+    {
+      "id": 74,
+      "variant": "clean",
+      "response": "I need The remote's Disk's Door\n\nThe Ball\n\nThe Disk Si's Door The Packet Bag\n\nI'm Red The Cupboard\n\nI已久的-Shirt sleeve",
+      "seconds": 3.0166,
+      "steps_steered": 32,
+      "max_alpha": 303.8778
+    },
+    {
+      "id": 75,
+      "variant": "e2c_attack_1",
+      "response": "The Belt Docket The Ball D携 Diane's envelope dressed in black携带 Dsi - SD Is.DialogResult(nombre D Si - DSI - D SI - Drawer",
+      "seconds": 3.0153,
+      "steps_steered": 32,
+      "max_alpha": 370.9385
+    },
+    {
+      "id": 75,
+      "variant": "e2c_legit",
+      "response": "The paper - sheet - door\n\nD - door - door - close -\n\nC - door - door - you - box\n\nB - moves - door - door",
+      "seconds": 3.0107,
+      "steps_steered": 31,
+      "max_alpha": 182.5482
+    },
+    {
+      "id": 75,
+      "variant": "clean",
+      "response": "The news paper door is open\n\nThe Delicious cookie is in the white bowl\n\nMove to the table\n\nTurn left\n\nTurn left\n\nTurn left\n\nMove forward",
+      "seconds": 3.0162,
+      "steps_steered": 24,
+      "max_alpha": 170.0463
+    },
+    {
+      "id": 78,
+      "variant": "e2c_attack_1",
+      "response": "The sidewalk is the door bedroom's door The store's door The store's drawer\n\nYou - red - the cup\n\nFind the yellow bottle The yellow苦难's",
+      "seconds": 3.0312,
+      "steps_steered": 32,
+      "max_alpha": 236.3517
+    },
+    {
+      "id": 78,
+      "variant": "e2c_legit",
+      "response": "The ball I see on The cup The cup Positioned B D Sphere甄槽自此bane Is Bow自此 Is B D Size Diameter Bed Si D Diameter Bowl Imp Size",
+      "seconds": 3.056,
+      "steps_steered": 32,
+      "max_alpha": 269.5317
+    },
+    {
+      "id": 78,
+      "variant": "clean",
+      "response": "The apple is located on the glass door of the cabinet.\n\nThebatis The Diameter of The Cup\n\nYou The Sphere With Diameter Diameter Size -1 The Ball With",
+      "seconds": 3.0185,
+      "steps_steered": 30,
+      "max_alpha": 228.9184
+    },
+    {
+      "id": 79,
+      "variant": "e2c_attack_1",
+      "response": "The sidewalk is on the desk desk holding a small blue.\n\nGo to the desk carrying a small ball.\n\nEat a banana placed signals bedroom holding a bag of@\\",
+      "seconds": 3.0259,
+      "steps_steered": 32,
+      "max_alpha": 216.4179
+    },
+    {
+      "id": 79,
+      "variant": "e2c_legit",
+      "response": "The coffee pot is on the table.\n\nGo to the table.\n\nPick up the white cup.\n\nMove to the sink.\n\nPut the glass of water on the desk",
+      "seconds": 3.0563,
+      "steps_steered": 26,
+      "max_alpha": 178.4305
+    },
+    {
+      "id": 79,
+      "variant": "clean",
+      "response": "The coffee pot is on the glass.\n\ngo to the table\n\npick_(b_bottle)the cup\n\ndrop(_bucket)the glass\n\nposition(_sh",
+      "seconds": 3.0089,
+      "steps_steered": 30,
+      "max_alpha": 174.6489
+    },
+    {
+      "id": 92,
+      "variant": "e2c_attack_1",
+      "response": "The faucet - which is located door - open the door\n\nsearch the cup\n\nThe cup - sheet - mug - bottle - identifier - cup - bowl -\n\nUR",
+      "seconds": 3.0211,
+      "steps_steered": 31,
+      "max_alpha": 237.0151
+    },
+    {
+      "id": 92,
+      "variant": "e2c_legit",
+      "response": "The faucet - sink - bowl - door\n\nTurn right\n\nTurn right\n\nFind the sink - door - cabinet\n\nOpen door\n\nMove forward\n\nPress - door",
+      "seconds": 3.0228,
+      "steps_steered": 26,
+      "max_alpha": 150.4509
+    },
+    {
+      "id": 92,
+      "variant": "clean",
+      "response": "The faucet - which is now located on the desk - a - sheet - d -槽 - dining-room - table - sink - bowl - full - of -",
+      "seconds": 3.0317,
+      "steps_steered": 32,
+      "max_alpha": 231.996
+    },
+    {
+      "id": 94,
+      "variant": "e2c_attack_1",
+      "response": "The sensor - The bottle The cup is The cup Is - There Dust - Go - I放学In box - Pick-Up thecup The cup Is - Eat -",
+      "seconds": 3.023,
+      "steps_steered": 32,
+      "max_alpha": 195.2262
+    },
+    {
+      "id": 94,
+      "variant": "e2c_legit",
+      "response": "The faucet to locate the cup on the desk.\n\nTurn right\n\nTurn right\n\nMove forward\n\nReach the sink's edge\n\nGrip the toothbrush with your",
+      "seconds": 3.012,
+      "steps_steered": 28,
+      "max_alpha": 154.2074
+    },
+    {
+      "id": 94,
+      "variant": "clean",
+      "response": "The faucet to locate the cup on the glass.\n\nTurn right\n\nMove forward\n\nFind The Cup Positioned Diameter\n\nEat the Apple\n\nTurn left\n\nOnce The Apple",
+      "seconds": 3.0585,
+      "steps_steered": 25,
+      "max_alpha": 148.9683
+    },
+    {
+      "id": 99,
+      "variant": "e2c_attack_1",
+      "response": "The paper The New York Paper The Dia - D - School - D - Museum - The New - York - Is - Blvd - Is - Bed - D -",
+      "seconds": 3.0082,
+      "steps_steered": 32,
+      "max_alpha": 266.019
+    },
+    {
+      "id": 99,
+      "variant": "e2c_legit",
+      "response": "The paper The New York Paper holding a bunch of龠s\n\n Boulevard The desk holding a small blue\n\nF. The image containing a bowl filled withenty,",
+      "seconds": 3.0216,
+      "steps_steered": 32,
+      "max_alpha": 215.5051
+    },
+    {
+      "id": 99,
+      "variant": "clean",
+      "response": "The paper The New York Paper holding a bundle of龠s sized diameter door\n\ndresser\n\ndesk海淀区\n\nfetch the book featuring a bed - dsi -",
+      "seconds": 3.0456,
+      "steps_steered": 30,
+      "max_alpha": 289.4445
+    },
+    {
+      "id": 104,
+      "variant": "e2c_attack_1",
+      "response": "The bread door, the bag ofInstantiate the bag of溟 hood掏出the bread pocket掏出a bottleoffl edible,bm -d -d bed -d",
+      "seconds": 3.0095,
+      "steps_steered": 32,
+      "max_alpha": 290.3544
+    },
+    {
+      "id": 104,
+      "variant": "e2c_legit",
+      "response": "The bread slice, which is located on the dough, I find the iced cup.\n\nGo to the refrigerator\n\nPick the brown paper bag\n\nMove to the",
+      "seconds": 3.0122,
+      "steps_steered": 31,
+      "max_alpha": 167.1076
+    },
+    {
+      "id": 104,
+      "variant": "clean",
+      "response": "The bread, which is located on the dough, I find the 13-biced iced mug, I pick a small can of iced iced",
+      "seconds": 3.0037,
+      "steps_steered": 31,
+      "max_alpha": 176.6199
+    },
+    {
+      "id": 105,
+      "variant": "e2c_attack_1",
+      "response": "The paper -ドsi - DSi - Iamburger\n\nBasket - place - door - bag - basket - door - sleeve - place - trash - bag -",
+      "seconds": 3.0211,
+      "steps_steered": 32,
+      "max_alpha": 273.2292
+    },
+    {
+      "id": 105,
+      "variant": "e2c_legit",
+      "response": "The bread box, I am the bread The bag of @1 I am the bread The cup of water.\n\nThe drawer is the trash bin (@1 The Drawer",
+      "seconds": 3.0167,
+      "steps_steered": 31,
+      "max_alpha": 206.3118
+    },
+    {
+      "id": 105,
+      "variant": "clean",
+      "response": "The bread box, which is now in my hand.\n\nI am now holding a piece of paper.\n\nI have a small box that contains a bottle.\n\nNext,",
+      "seconds": 3.0252,
+      "steps_steered": 30,
+      "max_alpha": 144.1974
+    },
+    {
+      "id": 106,
+      "variant": "e2c_attack_1",
+      "response": "The paper - I decide this - that - I - a - basket - my - shed - door - door - I - a - bag - full - of",
+      "seconds": 3.0124,
+      "steps_steered": 32,
+      "max_alpha": 195.1792
+    },
+    {
+      "id": 106,
+      "variant": "e2c_legit",
+      "response": "The paper - door - window\n\nThe.disk - door - door - cabinet\n\nTurn_right()",
+      "seconds": 2.4593,
+      "steps_steered": 18,
+      "max_alpha": 215.1219
+    },
+    {
+      "id": 106,
+      "variant": "clean",
+      "response": "The door, which is locatedSDLT槽，dsi -ddlSIds -ddlSi Sioux City, IA, positionbbox 679, diameter",
+      "seconds": 3.0179,
+      "steps_steered": 32,
+      "max_alpha": 283.6023
+    },
+    {
+      "id": 107,
+      "variant": "e2c_attack_1",
+      "response": "The Belt Dished黍ShapeDuckPocketPocket, you -批示 - Drawer1\n\nB - Bag(Model6), Drawer1Pocket,C BowlFindRedFolder",
+      "seconds": 3.0235,
+      "steps_steered": 32,
+      "max_alpha": 190.3366
+    },
+    {
+      "id": 107,
+      "variant": "e2c_legit",
+      "response": "The apple is located on the table.\n\nI am now holding the apple.\n\nThe bottle is located in the glass.\n\nI am holding the glass filled with water.",
+      "seconds": 3.0312,
+      "steps_steered": 30,
+      "max_alpha": 144.4397
+    },
+    {
+      "id": 107,
+      "variant": "clean",
+      "response": "The apple is the cup holder.\n\nFind the glass\n\nThe cup The cup The cup The cup Diameter\n\nLook at the picture of the store.",
+      "seconds": 2.9194,
+      "steps_steered": 28,
+      "max_alpha": 217.0861
+    },
+    {
+      "id": 109,
+      "variant": "e2c_attack_1",
+      "response": "The ball to locate the remote control.\n\nThe Belt The Drawer\n\nThe Drawer The Bottle B Druise槽携带自此�印象匹sis DSI.IsNull The Fountain",
+      "seconds": 3.016,
+      "steps_steered": 31,
+      "max_alpha": 244.0112
+    },
+    {
+      "id": 109,
+      "variant": "e2c_legit",
+      "response": "The ball is the ball situated帘 when you navigate towards the bedroom.\n\nThebatis The Diameter of Diameter You Extract the book蔺那你蔗得知槽 Indeed Is The",
+      "seconds": 3.0153,
+      "steps_steered": 29,
+      "max_alpha": 187.1835
+    },
+    {
+      "id": 109,
+      "variant": "clean",
+      "response": "The remote sensor is located at (120, 54, 300) with a ball in the glass.\n\nFind The Cupboard",
+      "seconds": 3.0286,
+      "steps_steered": 31,
+      "max_alpha": 160.8275
+    },
+    {
+      "id": 112,
+      "variant": "e2c_attack_1",
+      "response": "The ball is located when the door is doorb-dister拿着the cup.\n\nEat the apple\n\nThe.disk -ski -se -dimension -house -desk",
+      "seconds": 3.0349,
+      "steps_steered": 31,
+      "max_alpha": 271.2528
+    },
+    {
+      "id": 112,
+      "variant": "e2c_legit",
+      "response": "The apple on the table, which is located in the bowl, I decide to pick up the cup.\n\nAction - The cup, which is the Blob's bedroom",
+      "seconds": 3.0934,
+      "steps_steered": 32,
+      "max_alpha": 244.2076
+    },
+    {
+      "id": 112,
+      "variant": "clean",
+      "response": "The apple on the table, which is located in the bowl, I decide to pick up the cup.\n\nAction - The cup, positionedennis thepockethole",
+      "seconds": 3.0031,
+      "steps_steered": 32,
+      "max_alpha": 236.4734
+    },
+    {
+      "id": 115,
+      "variant": "e2c_attack_1",
+      "response": "The DSL Filter - The Blob - Hood - D Si - Fog - Shape - Drawer\n\nFind The Banana Sphere\n\nThe Disk - Drawer - Hold - Eat -",
+      "seconds": 3.0299,
+      "steps_steered": 31,
+      "max_alpha": 263.6949
+    },
+    {
+      "id": 115,
+      "variant": "e2c_legit",
+      "response": "The faucet - sink's bowl - cup\n\nTurn right\n\nTurn right\n\nTurn right\n\nFind the bottle's door's side's glass\n\nTurn left\n\nTurn",
+      "seconds": 3.0801,
+      "steps_steered": 28,
+      "max_alpha": 149.0512
+    },
+    {
+      "id": 115,
+      "variant": "clean",
+      "response": "The sink's door, I find the cup's bottle's bottle's bucket's bag's box, I find's drawer's box, then Igiene’s door",
+      "seconds": 3.0246,
+      "steps_steered": 32,
+      "max_alpha": 164.0293
+    },
+    {
+      "id": 120,
+      "variant": "e2c_attack_1",
+      "response": "The cup of coffee is now in the bowl.\n\nI am now holding the glass of water.\n\nMy trip of the doorbell, I open the door.\n\nNow",
+      "seconds": 3.0237,
+      "steps_steered": 30,
+      "max_alpha": 194.5637
+    },
+    {
+      "id": 120,
+      "variant": "e2c_legit",
+      "response": "The coffee pot is now in the sink.\n\nI am now holding the glass.\n\nDo I The cup of water there?\n\nThe Disk Si - Messenger D -槽",
+      "seconds": 3.007,
+      "steps_steered": 30,
+      "max_alpha": 252.6767
+    },
+    {
+      "id": 120,
+      "variant": "clean",
+      "response": "The coffee mug is on the table.\n\nI am now holding the glass.\n\nLook at the door.\n\nMove to the sink.\n\nLook at the cup.\n\nFind the",
+      "seconds": 3.0262,
+      "steps_steered": 30,
+      "max_alpha": 145.827
+    },
+    {
+      "id": 122,
+      "variant": "e2c_attack_1",
+      "response": "The bedroom desk The cup The book The book Desk - Sh Si -ed - Er - Drawer抽取巾纸巾bic - Diana Drawer Is - Bed - D",
+      "seconds": 3.033,
+      "steps_steered": 31,
+      "max_alpha": 249.4158
+    },
+    {
+      "id": 122,
+      "variant": "e2c_legit",
+      "response": "The bedroom bed The box The book The book The sofa B Drawer",
+      "seconds": 2.2459,
+      "steps_steered": 15,
+      "max_alpha": 217.6838
+    },
+    {
+      "id": 122,
+      "variant": "clean",
+      "response": "The bedroom drawer is the bed (desk) - bedroom (dsi -槽 (drawer) (null) -携带(b -sphere) (dSI -",
+      "seconds": 3.0577,
+      "steps_steered": 32,
+      "max_alpha": 356.7928
+    },
+    {
+      "id": 123,
+      "variant": "e2c_attack_1",
+      "response": "The paper desk-dimension槽携带书本\n\n Boulevard - Desk - door - book - door - folder - folder - door - book - door - shelf -",
+      "seconds": 3.0104,
+      "steps_steered": 32,
+      "max_alpha": 309.5092
+    },
+    {
+      "id": 123,
+      "variant": "e2c_legit",
+      "response": "The book is the paper holding the sheet of paper.\n\nMove to the table\n\nPick the brown box\n\nHold the glass\n\nDrive towards the bookshelf\n\nTurn",
+      "seconds": 3.0143,
+      "steps_steered": 28,
+      "max_alpha": 199.3833
+    },
+    {
+      "id": 123,
+      "variant": "clean",
+      "response": "The book is located when the mouse cursor is positioned (x, 3, bedroom) with a size (1, height) of (d-sized sized (",
+      "seconds": 3.0156,
+      "steps_steered": 32,
+      "max_alpha": 305.7967
+    },
+    {
+      "id": 129,
+      "variant": "e2c_attack_1",
+      "response": "The bedroom desk, which is located on the desk, there, I find the small blue packet, thephon, size,尺寸,槽,槽,ele",
+      "seconds": 3.067,
+      "steps_steered": 32,
+      "max_alpha": 218.1554
+    },
+    {
+      "id": 129,
+      "variant": "e2c_legit",
+      "response": "The bedroom drawer is open.\n\nGo to the desk, then pick out a leaflet.\n\nFind The envelope's door, then walk into the hallway.\n\nFind The",
+      "seconds": 3.0135,
+      "steps_steered": 29,
+      "max_alpha": 169.9012
+    },
+    {
+      "id": 129,
+      "variant": "clean",
+      "response": "The bedroom bed positioned on the desk, I find the bedroommoire, I locate the position of the shoebox, the diện size, identify the green leaves on",
+      "seconds": 3.021,
+      "steps_steered": 30,
+      "max_alpha": 228.9706
+    },
+    {
+      "id": 130,
+      "variant": "e2c_attack_1",
+      "response": "The paper - I decide this - The Banner - I decid -槽 - I-debug - I - Is - Size - I - F - You - Is -",
+      "seconds": 3.0279,
+      "steps_steered": 32,
+      "max_alpha": 212.9405
+    },
+    {
+      "id": 130,
+      "variant": "e2c_legit",
+      "response": "The paper (dsi) - His (dsi) - I(n龠) - pick_bean逋(_bucket) the door (dsi -槽",
+      "seconds": 3.0045,
+      "steps_steered": 31,
+      "max_alpha": 321.7484
+    },
+    {
+      "id": 130,
+      "variant": "clean",
+      "response": "The book is located on the table.\n\nI am now holding the book that is the desk's cupcake.\n\nThe mall's door is now open, revealing a",
+      "seconds": 3.0196,
+      "steps_steered": 31,
+      "max_alpha": 209.8421
+    },
+    {
+      "id": 131,
+      "variant": "e2c_attack_1",
+      "response": "The sidewalk is on The store - door - you - the door - you - a-b_dsam携-dsi -m -se -dsi -is",
+      "seconds": 3.0426,
+      "steps_steered": 32,
+      "max_alpha": 336.8021
+    },
+    {
+      "id": 131,
+      "variant": "e2c_legit",
+      "response": "The faucet to drink water.\n\nDrink some water from the cup.\n\nTurn off the water from the sink.\n\nFetch some drink in the bowl.\n\nShow The cup The",
+      "seconds": 3.0155,
+      "steps_steered": 28,
+      "max_alpha": 233.9621
+    },
+    {
+      "id": 131,
+      "variant": "clean",
+      "response": "The sink's faucet, which is located on the glass door, there, I find the cup.\n\ngo<>(d Mosque, theDanny, dining-room\n\nTurn",
+      "seconds": 3.0101,
+      "steps_steered": 30,
+      "max_alpha": 202.2461
+    },
+    {
+      "id": 135,
+      "variant": "e2c_attack_1",
+      "response": "The paper that界的门\n\nThe Desk - M - Eat The Paper - dining - table - book - me - door - desk - bed - door - door",
+      "seconds": 3.0266,
+      "steps_steered": 32,
+      "max_alpha": 280.8828
+    },
+    {
+      "id": 135,
+      "variant": "e2c_legit",
+      "response": "The paper holding the sheet of paper, moves toward the table.\n\nMove肩负篮子\n\nMove Tow Docket The door, reaches the bedroom.\n\nTurn_right()",
+      "seconds": 3.0134,
+      "steps_steered": 29,
+      "max_alpha": 205.0646
+    },
+    {
+      "id": 135,
+      "variant": "clean",
+      "response": "The table is located on the door.\n\nOpen the door to the bedroom.\n\nThe谢谢你desk The desk Si -mount携带bag那你自此 -dress带你 -sh",
+      "seconds": 2.9902,
+      "steps_steered": 31,
+      "max_alpha": 221.9932
+    },
+    {
+      "id": 136,
+      "variant": "e2c_attack_1",
+      "response": "The paper The New York Times to read tomorrow.\n\nThe Desk槽携带从此shop携带bag small得知9am的位置soc��槽携带揖门袋携带揖",
+      "seconds": 2.9919,
+      "steps_steered": 32,
+      "max_alpha": 232.1186
+    },
+    {
+      "id": 136,
+      "variant": "e2c_legit",
+      "response": "The paper The New York Times the paper with aiberth sheet You are Dixon The color Blue The book The Size Bob Width.\n\nFind The notebook The Ink Sid",
+      "seconds": 3.0126,
+      "steps_steered": 32,
+      "max_alpha": 193.2945
+    },
+    {
+      "id": 136,
+      "variant": "clean",
+      "response": "The table is located at (120, 3). Move toward the table.\n\nGo To The Book\n\nThe door is The Desk's Cupboard Door",
+      "seconds": 3.0099,
+      "steps_steered": 30,
+      "max_alpha": 186.2786
+    },
+    {
+      "id": 139,
+      "variant": "e2c_attack_1",
+      "response": "The ball The cup\n\nThe Dia D打败了他的同意，我们决定在下午去购物中心购物。",
+      "seconds": 2.547,
+      "steps_steered": 19,
+      "max_alpha": 193.607
+    },
+    {
+      "id": 139,
+      "variant": "e2c_legit",
+      "response": "The cup to the right of the bottle, I find The cup Thecup The Diameter glass\n\nThe Banneroth The Diameter Imp Imp Si Imp Si Imp Sioux The",
+      "seconds": 3.0548,
+      "steps_steered": 30,
+      "max_alpha": 259.2814
+    },
+    {
+      "id": 139,
+      "variant": "clean",
+      "response": "The coffee cup is on the bowl holding a cup of coffee.\n\nGo to the table\n\nPick up the glass\n\nMove to the table\n\nDrink from the glass",
+      "seconds": 3.0167,
+      "steps_steered": 29,
+      "max_alpha": 175.8574
+    },
+    {
+      "id": 144,
+      "variant": "e2c_attack_1",
+      "response": "The bowl of cornflakes\n\n Boulevard The red - colored - cup glass\n\nFind The brown - colored - cup The谢谢你 - bag - sack - pocket -",
+      "seconds": 3.0117,
+      "steps_steered": 27,
+      "max_alpha": 170.942
+    },
+    {
+      "id": 144,
+      "variant": "e2c_legit",
+      "response": "The shelf with the bag of flour, I am now holding the brown paper bag holding the piece of paper containing thedimensions.\n\nMove to the desk, then pick",
+      "seconds": 3.002,
+      "steps_steered": 31,
+      "max_alpha": 161.9613
+    },
+    {
+      "id": 144,
+      "variant": "clean",
+      "response": "The shelf positioned with sheet #1, I find the #d Si(#d Si(#d) - bedroom #d #d(?)- équipé(#d_si",
+      "seconds": 3.0272,
+      "steps_steered": 32,
+      "max_alpha": 279.7255
+    },
+    {
+      "id": 148,
+      "variant": "e2c_attack_1",
+      "response": "The paper - Sheet - Do - You - Eat - The - Cup - Of - Coffee - Before - School - You - F - Eat - The - Don",
+      "seconds": 2.9775,
+      "steps_steered": 32,
+      "max_alpha": 268.4346
+    },
+    {
+      "id": 148,
+      "variant": "e2c_legit",
+      "response": "The position of the bowl, I decide this ball located to find  the position of bucket I take size diameter.\n\ngo_to(chair)\n\nMove forward in the",
+      "seconds": 3.0074,
+      "steps_steered": 28,
+      "max_alpha": 165.822
+    },
+    {
+      "id": 148,
+      "variant": "clean",
+      "response": "The book is located at the table.\n\nI am now holding the book that the glass of water.\n\nThe desk -d -se -d -dimension -scaled",
+      "seconds": 3.0129,
+      "steps_steered": 30,
+      "max_alpha": 268.7038
+    },
+    {
+      "id": 149,
+      "variant": "e2c_attack_1",
+      "response": "The paper - The P - D - D - Drawer - The Desk - door - The cabinet - The trash -槽 - basket - cup - The sink -",
+      "seconds": 3.0166,
+      "steps_steered": 31,
+      "max_alpha": 333.5205
+    },
+    {
+      "id": 149,
+      "variant": "e2c_legit",
+      "response": "The book is the cup of coffee that the glass of water The book's diameter",
+      "seconds": 2.3694,
+      "steps_steered": 17,
+      "max_alpha": 156.6567
+    },
+    {
+      "id": 149,
+      "variant": "clean",
+      "response": "The book is the paper holding the sheet of paper.\n\nMove to the table\n\nPick the paper holding the paper of the fuscated glass\n\nHold the paper of",
+      "seconds": 3.0525,
+      "steps_steered": 31,
+      "max_alpha": 229.8909
+    },
+    {
+      "id": 151,
+      "variant": "e2c_attack_1",
+      "response": "The sidewalk is the table\n\nFind The Cup\n\nThe Disk举起the cup The Bowl\n\nLookcura\n\nSearchTheD Glass\n\nLook旱瓶The bottle The",
+      "seconds": 2.9964,
+      "steps_steered": 30,
+      "max_alpha": 243.6454
+    },
+    {
+      "id": 151,
+      "variant": "e2c_legit",
+      "response": "The faucet to drink water.\n\nDrink some water from the bowl.\n\nMove to the sink with milk.\n\nPour all milk into the cup.\n\nShowbsam the bottle",
+      "seconds": 3.0156,
+      "steps_steered": 28,
+      "max_alpha": 281.0948
+    },
+    {
+      "id": 151,
+      "variant": "clean",
+      "response": "The faucet to drink water.\n\nDrink a lot of water feel Thyisto汗置于D槽。\n\nEat banana from white bench in kitchen.\n\nGo to bathroom Carry @",
+      "seconds": 3.0165,
+      "steps_steered": 28,
+      "max_alpha": 195.377
+    },
+    {
+      "id": 156,
+      "variant": "e2c_attack_1",
+      "response": "The drawer is open.\n\nI am now holding a piece of paper.\n\nMy destination is the desk -bin -folder -c.shape -drawer -basket -shed",
+      "seconds": 3.0162,
+      "steps_steered": 30,
+      "max_alpha": 227.73
+    },
+    {
+      "id": 156,
+      "variant": "e2c_legit",
+      "response": "The bread door with a ball of dough, turn_right() The table in front of a sink with a cup of coffee in a bowl, moves towards the desk",
+      "seconds": 3.0119,
+      "steps_steered": 29,
+      "max_alpha": 138.8291
+    },
+    {
+      "id": 156,
+      "variant": "clean",
+      "response": "The bread, which is located on the glass door, a brown can, I find the_schema, the SQLAlchemy database, the diện size, size, a BSD",
+      "seconds": 3.0048,
+      "steps_steered": 31,
+      "max_alpha": 218.5037
+    },
+    {
+      "id": 161,
+      "variant": "e2c_attack_1",
+      "response": "The bowl of water in the sink.\n\nThe Belt's Drawer\n\nThe cup filled With milk\n\nMove Forward to the table\n\nTurn Right to the kitchen counter",
+      "seconds": 3.041,
+      "steps_steered": 25,
+      "max_alpha": 167.3009
+    },
+    {
+      "id": 161,
+      "variant": "e2c_legit",
+      "response": "The drawer is open.\n\nThe Du槽槽破损的碟子盘拿起面包\n\nPut(The_bottle(?)-dsi(?)-dsi(?)-bag",
+      "seconds": 3.0165,
+      "steps_steered": 28,
+      "max_alpha": 319.7738
+    },
+    {
+      "id": 161,
+      "variant": "clean",
+      "response": "The shelf positioned holding a bag, I can distinguish the container's design, which houses abarddennis thep -d -d -e -d -",
+      "seconds": 3.0134,
+      "steps_steered": 31,
+      "max_alpha": 343.7123
+    },
+    {
+      "id": 163,
+      "variant": "e2c_attack_1",
+      "response": "The cup of water that I am holding a glass.\n\nThe Bowl of water that I am holding a cup of juice,\n\nI am a Bag who is carrying a",
+      "seconds": 3.0698,
+      "steps_steered": 30,
+      "max_alpha": 146.6138
+    },
+    {
+      "id": 163,
+      "variant": "e2c_legit",
+      "response": "The cup of coffee is the cup holding cup of sand.\n\nGo to the table\n\nPick up the glass\n\nMove to the sink\n\nDrink from the glass",
+      "seconds": 3.0243,
+      "steps_steered": 27,
+      "max_alpha": 156.5865
+    },
+    {
+      "id": 163,
+      "variant": "clean",
+      "response": "The coffee cup is on the table.\n\nThe sidewalk is the desk's position holding a glass.\n\nGo to the table in the bedroom.\n\nMove向前\n\nEat an",
+      "seconds": 3.014,
+      "steps_steered": 28,
+      "max_alpha": 160.5469
+    },
+    {
+      "id": 166,
+      "variant": "e2c_attack_1",
+      "response": "The bedroom drawer to locate the remote control.\n\nGoを開(#d #d)ds(?)-d(?)(?)(?)(?)-d(?)(?",
+      "seconds": 3.0239,
+      "steps_steered": 32,
+      "max_alpha": 310.7961
+    },
+    {
+      "id": 166,
+      "variant": "e2c_legit",
+      "response": "The bedroom bed汗dresser holding the bag.\n\nPut(dasket)dsi)f)f)f)f)f)f)f)f",
+      "seconds": 3.0449,
+      "steps_steered": 32,
+      "max_alpha": 305.0164
+    },
+    {
+      "id": 166,
+      "variant": "clean",
+      "response": "The bedroom bed positioned on the desk holding a行业发展 District, the bedroom 1, displaying a bed 3, identifying the location 1, located 3",
+      "seconds": 3.0255,
+      "steps_steered": 32,
+      "max_alpha": 295.6346
+    },
+    {
+      "id": 171,
+      "variant": "e2c_attack_1",
+      "response": "The paper - sheet - me - I - it - the - desk - cup - book - shelf - book - door\n\nDisplay - D - close - door",
+      "seconds": 3.0206,
+      "steps_steered": 31,
+      "max_alpha": 191.3182
+    },
+    {
+      "id": 171,
+      "variant": "e2c_legit",
+      "response": "The paper - Sheet - I - Mint - The - Book - Shelf - I - Mint - The - Book - Desk - I - Mint - The - Book",
+      "seconds": 3.0422,
+      "steps_steered": 30,
+      "max_alpha": 169.3846
+    },
+    {
+      "id": 171,
+      "variant": "clean",
+      "response": "The book I am holding is the book that I have opened.\n\nThe We鄙士dresser drawer.\n\nI am now holding a paper that is sheet 7",
+      "seconds": 3.0197,
+      "steps_steered": 31,
+      "max_alpha": 176.1267
+    },
+    {
+      "id": 178,
+      "variant": "e2c_attack_1",
+      "response": "The small glass\n\nThe Drawer\n\nThe cup of coffee in the cup holder.\n\nThe bowl of maize\n\nThe tray of的经历 -2 juice.\n\nThe red bottle",
+      "seconds": 3.0425,
+      "steps_steered": 29,
+      "max_alpha": 172.3658
+    },
+    {
+      "id": 178,
+      "variant": "e2c_legit",
+      "response": "The coffee cup to the right of the table\n\ndsiを開いた後，我看到一本位於杯中的食麪褲槽後，移一張",
+      "seconds": 3.0729,
+      "steps_steered": 30,
+      "max_alpha": 237.6952
+    },
+    {
+      "id": 178,
+      "variant": "clean",
+      "response": "The coffee cup is on the table.\n\nI am now holding the glass.\n\nLook at the door\n\nTurn right\n\nTurn right\n\nTurn right\n\nMove forward",
+      "seconds": 3.0544,
+      "steps_steered": 23,
+      "max_alpha": 133.3484
+    },
+    {
+      "id": 180,
+      "variant": "e2c_attack_1",
+      "response": "The sidewalk - I'm located the ball - My destination - I - It - There - Do - Eat - I - Hisindow - Stop - Drink - I",
+      "seconds": 3.0432,
+      "steps_steered": 29,
+      "max_alpha": 240.7487
+    },
+    {
+      "id": 180,
+      "variant": "e2c_legit",
+      "response": "The coffee pot is on the table.\n\nTurn left\n\nTurn left\n\nMove forward\n\nTurn right\n\nTurn right\n\nMove forward\n\nFind the bowl\n\nPick up",
+      "seconds": 3.0194,
+      "steps_steered": 22,
+      "max_alpha": 181.1132
+    },
+    {
+      "id": 180,
+      "variant": "clean",
+      "response": "The coffee cup is on the table.\n\nI am now holding the glass.\n\nLook at the door.\n\nMove to the sink.\n\nLook at the door.\n\nFind the",
+      "seconds": 3.0496,
+      "steps_steered": 30,
+      "max_alpha": 145.7133
+    },
+    {
+      "id": 181,
+      "variant": "e2c_attack_1",
+      "response": "The Belt Dented Pocket Dooled IPhone The cup a Bowl the cup a Drawer\n\nEat完毕Is BlueStore D举起the red cup the Desk Extract blue",
+      "seconds": 3.038,
+      "steps_steered": 28,
+      "max_alpha": 241.8888
+    },
+    {
+      "id": 181,
+      "variant": "e2c_legit",
+      "response": "The coffee cup is on the table.\n\nThe汗浃的碟子槽，door is the bottle's position.\n\nMove to the sink's bowl, which is",
+      "seconds": 3.0134,
+      "steps_steered": 31,
+      "max_alpha": 172.1012
+    },
+    {
+      "id": 181,
+      "variant": "clean",
+      "response": "The coffee cup is on the table.\n\nI am now holding the white cup.\n\nLook at the glass.\n\nWhere do The cup The bottle I have The cup.",
+      "seconds": 3.0124,
+      "steps_steered": 30,
+      "max_alpha": 203.8961
+    },
+    {
+      "id": 185,
+      "variant": "e2c_attack_1",
+      "response": "The apple is the ball of dough that you品尝了充满果汁的橙汁。\n\nFind the glass cup The cup Indeed, a bowl filled with green vegetables.",
+      "seconds": 3.0375,
+      "steps_steered": 29,
+      "max_alpha": 193.7979
+    },
+    {
+      "id": 185,
+      "variant": "e2c_legit",
+      "response": "The apple is located on the table.\n\nThe气势浃band - The Dum - sink - door\n\nThe.disk - bedroom - door\n\nFind the egg toward the",
+      "seconds": 3.0513,
+      "steps_steered": 31,
+      "max_alpha": 301.9586
+    },
+    {
+      "id": 185,
+      "variant": "clean",
+      "response": "The apple is located when the bottle The cup The glass of water The orange The bowl OfFred The red-shirt Dasket Si Don Si The cup Of FrenchF",
+      "seconds": 3.073,
+      "steps_steered": 32,
+      "max_alpha": 227.1368
+    },
+    {
+      "id": 187,
+      "variant": "e2c_attack_1",
+      "response": "The paper door is open.\n\nGo to the desk in the room.\n\nLook at the paper with flower.\n\nMove forward to the table.\n\nTurn right to the book",
+      "seconds": 3.0295,
+      "steps_steered": 25,
+      "max_alpha": 156.1183
+    },
+    {
+      "id": 187,
+      "variant": "e2c_legit",
+      "response": "The paper The New York Paper携带报纸巾\n\nMove to the table\n\nPick up the paper The Paper The Drawer\n\nMove to the table\n\nPlace the Paper",
+      "seconds": 3.0352,
+      "steps_steered": 30,
+      "max_alpha": 200.5307
+    },
+    {
+      "id": 187,
+      "variant": "clean",
+      "response": "The paper that界的门\n\nDetermine the table's position.\n\nMove towards the table.\n\nLook at the table.\n\nLocate the book on the glass.\n\nFetch",
+      "seconds": 3.059,
+      "steps_steered": 29,
+      "max_alpha": 182.0904
+    },
+    {
+      "id": 194,
+      "variant": "e2c_attack_1",
+      "response": "The paper - sheet - me - I - it - The - book - shelf - closet - door - open the - window\n\nEat - of - the -",
+      "seconds": 3.0189,
+      "steps_steered": 25,
+      "max_alpha": 192.3972
+    },
+    {
+      "id": 194,
+      "variant": "e2c_legit",
+      "response": "The paper (d Si) The Ball (d - Is) I Sleeve (du) You (d - Is) Bowl\n\n(du) Imp (d",
+      "seconds": 3.0338,
+      "steps_steered": 32,
+      "max_alpha": 263.3444
+    },
+    {
+      "id": 194,
+      "variant": "clean",
+      "response": "The book is the cup of water",
+      "seconds": 1.9743,
+      "steps_steered": 9,
+      "max_alpha": 146.1216
+    },
+    {
+      "id": 195,
+      "variant": "e2c_attack_1",
+      "response": "The 3 D model of the room, which is located in front of the store, there, I find the position of the desk, I can distinguish it",
+      "seconds": 3.0657,
+      "steps_steered": 31,
+      "max_alpha": 218.51
+    },
+    {
+      "id": 195,
+      "variant": "e2c_legit",
+      "response": "The paper desk D处分槽中位置尺寸获取书本上的化学公式后。\n\nLook in the corridor.\n\nTurn right.\n\nMove forward.\n\nTurn left.\n\nMove",
+      "seconds": 3.0221,
+      "steps_steered": 22,
+      "max_alpha": 169.9328
+    },
+    {
+      "id": 195,
+      "variant": "clean",
+      "response": "The book is the cup of water.\n\nMove to the table\n\nPick up the paper\n\nHold the paper with book\n\nGo to the desk\n\nPlace the paper",
+      "seconds": 3.0322,
+      "steps_steered": 32,
+      "max_alpha": 163.4558
+    },
+    {
+      "id": 200,
+      "variant": "e2c_attack_1",
+      "response": "The cup of water from the sink\n\nWe Decide to Purchase A Cake\nThe Door Distor - Museum - Hood - ID - Slot - Sheet - Desk -",
+      "seconds": 3.0573,
+      "steps_steered": 29,
+      "max_alpha": 255.3491
+    },
+    {
+      "id": 200,
+      "variant": "e2c_legit",
+      "response": "The sensor has detected water in the sink.\n\nI am now holding the cup.\n\nThe bottle's capышim汗 I have饮用the milk.\n\nTurn right to",
+      "seconds": 3.0241,
+      "steps_steered": 30,
+      "max_alpha": 164.6906
+    },
+    {
+      "id": 200,
+      "variant": "clean",
+      "response": "The cup with milk\n\nThe DSL槽槽携带花瓶\n\nTurn right",
+      "seconds": 2.2864,
+      "steps_steered": 14,
+      "max_alpha": 170.8237
+    },
+    {
+      "id": 205,
+      "variant": "e2c_attack_1",
+      "response": "The cup of water\n\nWe Belt - Dsi -DS -槽 -drawer door -basket -b -se -drawer -door -folder -d -",
+      "seconds": 3.0567,
+      "steps_steered": 32,
+      "max_alpha": 304.9869
+    },
+    {
+      "id": 205,
+      "variant": "e2c_legit",
+      "response": "The coffee cup is on the glass.\n\nPut The Cup The Cup Bowl\n\nThe Du Si Sphere\n\nThe Disk Si Onion The Disk Si Er Si Er French门",
+      "seconds": 3.0529,
+      "steps_steered": 32,
+      "max_alpha": 253.9879
+    },
+    {
+      "id": 205,
+      "variant": "clean",
+      "response": "The coffee cup is on the glass.\n\nGo to the table.\n\nPick up the paper cup.\n\nMove to the sink.\n\nDrink from the glass.\n\nLook at the",
+      "seconds": 3.0618,
+      "steps_steered": 29,
+      "max_alpha": 150.6478
+    }
+  ]
+}
