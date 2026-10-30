@@ -1,4 +1,6 @@
-"""Kaggle kernel: set up ARGUS from the argus-code dataset, fetch pinned models/data, run E1 or E2.
+"""Kaggle kernel: set up ARGUS from the argus-code dataset, fetch pinned models/data, run E1, E2 or E3.
+
+E3 runs the ARGUS pipeline as released (scripts/run_all.py) on Qwen2-VL-7B, split over both T4s.
 
 E2 runs as its own kernel that mounts the E1 kernel's output (for the transfer_e1 probe); E2b-only
 runs mount the E2 kernel's output too, reusing its activations; E2c also mounts E2b's.
@@ -26,6 +28,8 @@ BEHAVIOR_N = 50
 
 # Pinned so a Kaggle run sees exactly the data the laptop used.
 MODEL_REPO, MODEL_REV = "Qwen/Qwen2.5-VL-3B-Instruct", "66285546d2b821cf421d4f5eb2576359d3770cd3"
+# E3: the paper's model. VTQA is left to upstream's own load_dataset("CalfKing/vtqa2023") (main = VTQA_REV on 2026-10-30).
+E3_MODEL_REPO, E3_MODEL_REV = "Qwen/Qwen2-VL-7B-Instruct", "eed13092ef92e448dd6875b2a00151bd3f7db0ac"
 VTQA_REPO, VTQA_REV = "CalfKing/vtqa2023", "720e9e8053154c6e9fa80e6bb5784d41c365eb94"
 ALPACA_REPO, ALPACA_REV = "tatsu-lab/alpaca", "dce01c9b08f87459cf36a430d809084718273017"
 ALPACA_FILE = "data/train-00000-of-00001-a09b74b3ef9c3b56.parquet"
@@ -34,7 +38,7 @@ THOR_REPO, THOR_REV = "weikaih/ai2thor-random-views-20k", "895f146d5a7c006fc6db3
 THOR_FILES = ["data/train-00000-of-00043.parquet", "data/train-00021-of-00043.parquet"]
 # sha256[:16] of the laptop e2_{split}.json with image paths dropped; a rebuild should match.
 E2_FINGERPRINTS = {"train": "97875269dcb104e2", "test": "0c5b71aac458cbca"}
-PACKAGES =["transformers==4.51.3", "datasets==3.6.0", "huggingface_hub==0.36.2", "qwen-vl-utils==0.0.14"]
+PACKAGES = ["transformers==4.51.3", "datasets==3.6.0", "huggingface_hub==0.36.2", "qwen-vl-utils==0.0.14"]
 
 ROOT = Path("/tmp/argus")
 CODE = ROOT / "ARGUS"
@@ -73,6 +77,10 @@ def extract_code() -> None:
 def fetch_data() -> None:
     from huggingface_hub import hf_hub_download, snapshot_download
 
+    if EXPERIMENT == "e3":
+        snapshot_download(E3_MODEL_REPO, revision=E3_MODEL_REV, local_dir=MODELS / E3_MODEL_REPO.split("/")[1])
+        hf_hub_download(ALPACA_REPO, ALPACA_FILE, repo_type="dataset", revision=ALPACA_REV, local_dir=DATA / "alpaca")
+        return
     snapshot_download(MODEL_REPO, revision=MODEL_REV, local_dir=MODELS / MODEL_REPO.split("/")[1])
     if EXPERIMENT in ("e2", "e2b", "e2c"):
         for name in THOR_FILES:
@@ -135,11 +143,16 @@ def main() -> None:
     env = {**os.environ, "PYTHONPATH": str(CODE / "src")}
     step("fit check")
     print(f"python: {sys.executable}")
-    sh([sys.executable, "-c", "import torch, transformers; print(torch.__version__, transformers.__version__, torch.cuda.get_device_name(0))"], env=env)
+    sh([sys.executable, "-c", "import torch, transformers; print(torch.__version__, transformers.__version__, torch.cuda.get_device_name(0), "
+        "'gpus', torch.cuda.device_count(), 'bf16 supported', torch.cuda.is_bf16_supported())"], env=env)
 
     out = WORK / "outputs" / RUN_NAME
     log_path = log_dir / f"{RUN_NAME}.log"
     step(f"{EXPERIMENT} {RUN_NAME}")
+    if EXPERIMENT == "e3":
+        run_e3(out, env, log_path)
+        step("done")
+        return
     if EXPERIMENT == "e1":
         run_logged([
             sys.executable, str(CODE / "experiments/e1/run_e1.py"),
@@ -181,6 +194,33 @@ def main() -> None:
         for folder in [out / "data" / "train", out / "data" / "test", e2b / "data" / "test"]:
             shutil.rmtree(folder, ignore_errors=True)
     step("done")
+
+
+def run_e3(out: Path, env: dict, log_path: Path) -> None:
+    import yaml
+
+    # MAX_SAMPLES is ARGUS's own debug.max_samples (train = val = test = preliminary size).
+    config = CODE / CONFIG
+    with config.open("r", encoding="utf-8") as f:
+        cfg = yaml.safe_load(f)
+    cfg["debug"]["max_samples"] = MAX_SAMPLES
+    run_config = config.with_name(f"{RUN_NAME}.yaml")
+    with run_config.open("w", encoding="utf-8") as f:
+        yaml.safe_dump(cfg, f, sort_keys=False)
+    resume_from_mounted(out)
+    run_logged([sys.executable, str(CODE / "experiments/e3/run_e3.py"), "--config", str(run_config), "--output-dir", str(out)], env, log_path)
+    # Rendered images are rebuilt from the seed; drop them only after a finished run so a later kernel can resume.
+    for folder in (out / "data").rglob("*"):
+        if folder.is_dir() and folder.name in ("images", "image"):
+            shutil.rmtree(folder, ignore_errors=True)
+
+
+def resume_from_mounted(out: Path) -> None:
+    # A previous argus-e3 run that hit the 12 h limit: continue from its outputs (stages skip what exists).
+    hits = sorted(p.parent for p in Path("/kaggle/input").rglob(f"outputs/{RUN_NAME}/data") if p.is_dir())
+    if hits and not out.exists():
+        print(f"resuming from {hits[0]}")
+        shutil.copytree(hits[0], out)
 
 
 def copy_mounted(marker: str, dest: Path) -> None:

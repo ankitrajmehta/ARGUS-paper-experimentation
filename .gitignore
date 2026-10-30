@@ -3,3 +3,6 @@ outputs*/
 __pycache__/
 *.pyc
 kaggle/.build/
+
+# written by experiments/e3/run_e3.py at run time
+configs/*_steer_only.yaml
