@@ -34,10 +34,11 @@ def text_generate(runner, text: str, max_new_tokens: int = 4) -> str:
     return runner.processor.batch_decode(output[:, inputs.input_ids.shape[1]:], skip_special_tokens=True)[0].strip()
 
 
-def all_answers(dirs: dict[str, Path], e3a_dir: Path | None, e3b_dir: Path | None) -> dict[str, dict[tuple[str, int], str]]:
-    """Final answer per arm -> (variant, frame id). Only 'none' when E3 outputs are missing."""
-    if e3a_dir and e3b_dir and (e3b_dir / "results").exists():
-        answer, arm_names, *_ = load_arms(dirs, e3a_dir, e3b_dir / "results")
+def all_answers(dirs: dict[str, Path], e3a_dir: Path | None, e3b_results: list[Path]) -> dict[str, dict[tuple[str, int], str]]:
+    """Final answer per arm -> (variant, frame id). Only 'none' when E3 outputs are missing.
+    e3b_results: E3b result dirs holding e3b_<arm>.json (v1 and v2 are merged)."""
+    if e3a_dir and e3b_results:
+        answer, arm_names, *_ = load_arms(dirs, e3a_dir, e3b_results)
         frames = load_frames(dirs, "test")
         return {arm: {(v, i): answer(arm, v, i) for v in TEST_VARIANTS for i in frames} for arm in arm_names}
     base = baseline_responses(dirs)
@@ -50,13 +51,13 @@ def main() -> None:
     parser.add_argument("--e2-dir", required=True)
     parser.add_argument("--e2b-dir", required=True)
     parser.add_argument("--e2c-dir", required=True)
-    parser.add_argument("--e3a-dir")
-    parser.add_argument("--e3b-dir")
+    parser.add_argument("--e3a-dir", help="E3a output dir (needs results/e3a_detect_flags.json).")
+    parser.add_argument("--e3b-results", nargs="*", default=[], help="E3b result dirs (e.g. results/e3/v1 results/e3/v2).")
     parser.add_argument("--output-dir", required=True)
     args = parser.parse_args()
 
     dirs = {"e2": Path(args.e2_dir), "e2b": Path(args.e2b_dir), "e2c": Path(args.e2c_dir)}
-    e3a, e3b = (Path(p) if p else None for p in (args.e3a_dir, args.e3b_dir))
+    e3a, e3b = (Path(args.e3a_dir) if args.e3a_dir else None), [Path(p) for p in args.e3b_results]
     out = Path(args.output_dir) / "results"
     out.mkdir(parents=True, exist_ok=True)
     frames = load_frames(dirs, "test")

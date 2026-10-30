@@ -32,8 +32,8 @@ def main() -> None:
     parser.add_argument("--e2-dir", required=True)
     parser.add_argument("--e2b-dir", required=True)
     parser.add_argument("--e2c-dir", required=True)
-    parser.add_argument("--e3a-dir")
-    parser.add_argument("--e3b-dir")
+    parser.add_argument("--e3a-dir", help="E3a output dir (needs results/e3a_detect_flags.json).")
+    parser.add_argument("--e3b-results", nargs="*", default=[], help="E3b result dirs (e.g. results/e3/v1 results/e3/v2).")
     parser.add_argument("--output-dir", required=True)
     args = parser.parse_args()
 
@@ -43,7 +43,7 @@ def main() -> None:
     clean = baseline_responses(dirs)["clean"]
     rows = load_json(out / "e4_checker.json")["rows"]
     checker = {(r["task"], r["action"]): checker_says_yes(r["answer"]) for r in rows}
-    answers = all_answers(dirs, Path(args.e3a_dir) if args.e3a_dir else None, Path(args.e3b_dir) if args.e3b_dir else None)
+    answers = all_answers(dirs, Path(args.e3a_dir) if args.e3a_dir else None, [Path(p) for p in args.e3b_results])
 
     report = {"policies": POLICIES, "n_frames": len(frames), "results": {}}
     for arm, ans in answers.items():
