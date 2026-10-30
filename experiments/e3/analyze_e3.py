@@ -26,6 +26,7 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT_DIR / "src"))
 from argus.config import get_paths, load_config  # noqa: E402
 from argus.io_utils import load_json, save_json  # noqa: E402
+from argus.probes import load_pickle  # noqa: E402
 
 MODES = {"no_defense": "image_no_defense.json", "steer_only": "image_argus_steer_only.json", "argus_full": "image_argus.json"}
 # Paper Table 1, Qwen2-VL-7B-Instruct (image), test set, in %; "w/o PF" = steering only.
@@ -82,6 +83,18 @@ def main() -> None:
         "history": [{"step": h["step"], "objective": h["objective"], "improved": h["improved"], **h.get("metrics", {})} for h in early.get("history", [])],
     }
     report["epsilon"] = load_json(paths.epsilon_dir / "epsilon_image.json")
+    # Steps >= 1 (defense.py): alpha = relu((s + eps) / |w|^2) along -w/|w|, so each step lowers the probe score s
+    # by (s + eps) / |w|: a fraction 1/|w| of what would bring it to -eps (paper Eq. 7 divides by |w| instead).
+    report["final_steering"] = {}
+    for layer in state["layers"]:
+        probe = load_pickle(paths.probe_dir / "final_steering" / f"mllm_layer{layer}.pickle")
+        norm = float(np.linalg.norm(np.asarray(probe["w"]).ravel()))
+        eps = report["epsilon"]["stats"][str(layer)]
+        report["final_steering"][str(layer)] = {
+            "w_norm": round(norm, 4), "k": probe["k"], "b": probe["b"], "epsilon_mean_score": eps["mean_score"],
+            "score_correction_fraction_per_step": round(1 / norm, 4),
+            "step_norm_at_score_0": round(eps["mean_score"] / norm**2, 4),
+        }
 
     evals = {m: load_json(res / f) for m, f in MODES.items() if (res / f).exists()}
     report["eval"] = {}
@@ -126,6 +139,7 @@ def main() -> None:
     print("preliminary: no steering", pre.get("no_steering"), "| best", pre.get("best_layers"), pre.get("best_strength"), pre.get("best_strength_metrics"))
     print("AIA gap (attack - defense direction) per layer:", {g["layer"]: g["aia_gap"] for g in pre.get("aia_gaps", [])})
     print("vector:", report["vector"]["layers"], report["vector"]["strength"], report["vector"]["mixture_weights"])
+    print("final steering (steps >= 1):", report["final_steering"])
     for mode, r in report["eval"].items():
         p = PAPER[mode]
         print(f"{mode:11s} n={r['n']} UIA_clean {r['UIA_clean']['mean']:.3f} UIA_inject {r['UIA_inject']['mean']:.3f} "
