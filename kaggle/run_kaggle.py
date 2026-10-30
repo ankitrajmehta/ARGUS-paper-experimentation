@@ -144,6 +144,20 @@ def main() -> None:
         run_e3(out, env, log_path)
         step("done")
         return
+    if EXPERIMENT == "e1s":
+        # Full ARGUS pipeline on VTQA (E1 stages + steering stages + defense eval); see experiments/e1s.
+        run_logged([
+            sys.executable, str(CODE / "experiments/e1s/run_e1s.py"),
+            "--config", str(CODE / "configs/kaggle_e1s_3b.yaml"),
+            "--output-dir", str(out),
+            "--max-samples", str(MAX_SAMPLES),
+            "--behavior-n", str(BEHAVIOR_N),
+        ], env, log_path)
+        # Rendered VTQA images are reproducible from the seed; keep the kernel output small.
+        for folder in (out / "data").glob("*/images"):
+            shutil.rmtree(folder, ignore_errors=True)
+        step("done")
+        return
     if EXPERIMENT == "e1":
         run_logged([
             sys.executable, str(CODE / "experiments/e1/run_e1.py"),

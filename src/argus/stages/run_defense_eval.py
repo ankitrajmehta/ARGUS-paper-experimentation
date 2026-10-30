@@ -22,6 +22,7 @@ def main() -> None:
     parser.add_argument("--shard-index", type=int, default=0)
     parser.add_argument("--num-shards", type=int, default=1)
     parser.add_argument("--shard-output")
+    parser.add_argument("--tag", default="", help="Suffix for the output file (e.g. steer_only).")
     args = parser.parse_args()
     if args.num_shards < 1:
         raise ValueError("--num-shards must be at least 1")
@@ -34,6 +35,8 @@ def main() -> None:
     paths = get_paths(config)
     modality = get_modality(config)
     output_name = f"{modality}_no_defense.json" if args.mode == "no_defense" else f"{modality}_argus.json"
+    if args.tag:
+        output_name = output_name.replace(".json", f"_{args.tag}.json")
     output_path = paths.result_dir / output_name
     if args.num_shards > 1:
         output_path = Path(args.shard_output) if args.shard_output else paths.result_dir / "eval_shards" / f"{args.mode}_{args.shard_index}.json"

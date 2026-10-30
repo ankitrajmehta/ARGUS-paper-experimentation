@@ -1138,7 +1138,7 @@ def build_datasets(config: dict[str, Any], output_dir: Path, force: bool = False
         max_samples = int(max_samples)
         train_source = train_source[:max_samples]
         val_source = val_source[:max_samples]
-        test_source = test_source[:max_samples]
+        test_source = test_source[: int(cfg_get(config, "debug.max_test_samples", max_samples))]
 
     triggers = read_lines(resolve_input_path(config, "data.trigger_path")) if any(split in needed_splits for split in ["train", "val"]) else []
     train_trigger_count = int(cfg_get(config, "paper.train_trigger_count", 442))

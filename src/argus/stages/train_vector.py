@@ -14,7 +14,7 @@ from argus.config import cfg_get, get_paths, load_config, resolve_input_path
 from argus.eval_metrics import score_response, summarize_scores
 from argus.io_utils import load_json, save_json, seed_everything
 from argus.media import ensure_image_argus_stage, media_block, poison_media, split_json_path
-from argus.modeling import get_language_layers, set_cuda_device, silence_greedy_sampling_warnings
+from argus.modeling import get_language_layers, set_cuda_device, silence_greedy_sampling_warnings, vision_runner
 from argus.vector_utils import LayerMixtureEditor, load_basis_vectors
 
 
@@ -71,7 +71,12 @@ def make_collate(processor: Any):
             labels[i, :completion_start] = -100
             edit_start = max(padding_len + prompt_len - 1, 0)
             edit_mask[i, edit_start : padding_len + total_len] = True
-        return {"input_ids": inputs.input_ids, "attention_mask": inputs.attention_mask, "labels": labels, "edit_mask": edit_mask}
+        batch = {"input_ids": inputs.input_ids, "attention_mask": inputs.attention_mask, "labels": labels, "edit_mask": edit_mask}
+        # Released code dropped these, so the vector was trained without the (poisoned) image; the injection lives there.
+        for key in ("pixel_values", "image_grid_thw"):
+            if key in inputs:
+                batch[key] = inputs[key]
+        return batch
 
     return collate
 
@@ -284,16 +289,13 @@ def main() -> None:
         print(f"skip existing {final_path}")
         return
 
-    from transformers import AutoProcessor, Qwen2VLForConditionalGeneration
     from qwen_vl_utils import process_vision_info
 
-    model = Qwen2VLForConditionalGeneration.from_pretrained(
-        str(resolve_input_path(config, "model.path")),
-        torch_dtype=torch.bfloat16,
-        device_map="auto",
-    )
+    # Shared loader: picks Qwen2-VL / Qwen2.5-VL from config.json and honours model.dtype / vision_dtype
+    # (the released code hard-coded Qwen2VLForConditionalGeneration in bfloat16).
+    runner = vision_runner(config)
+    model, processor = runner.model, runner.processor
     silence_greedy_sampling_warnings(model)
-    processor = AutoProcessor.from_pretrained(str(resolve_input_path(config, "model.path")))
     processor.tokenizer.padding_side = "left"
     if processor.tokenizer.pad_token is None:
         processor.tokenizer.pad_token = processor.tokenizer.eos_token
@@ -387,21 +389,21 @@ def main() -> None:
         return stale_evals >= patience
 
     model.train()
+    # fp16 activations (T4): scale the loss so small gradients do not underflow; skip steps with inf/NaN grads.
+    scaler = torch.cuda.amp.GradScaler(enabled=next(model.parameters()).dtype == torch.float16)
     epochs = int(cfg_get(config, "paper.vector_epochs", 2))
     should_stop = False
     for epoch in range(epochs):
         for batch in tqdm(loader, desc=f"vector epoch {epoch + 1}/{epochs}"):
             optimizer.zero_grad()
             multi.edit_mask = batch["edit_mask"].to(next(model.parameters()).device)
-            outputs = model(
-                input_ids=batch["input_ids"].to(next(model.parameters()).device),
-                attention_mask=batch["attention_mask"].to(next(model.parameters()).device),
-                labels=batch["labels"].to(next(model.parameters()).device),
-            )
+            device = next(model.parameters()).device
+            outputs = model(**{k: v.to(device) for k, v in batch.items() if k != "edit_mask"})
             loss = outputs.loss
             multi.edit_mask = None
-            loss.backward()
-            optimizer.step()
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
             global_step += 1
             if global_step % eval_interval == 0:
                 should_stop = run_early_stop_eval(global_step)

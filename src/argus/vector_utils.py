@@ -22,14 +22,14 @@ def load_basis_vectors(layer: int, edit_probe_dir: Path, auxiliary_dir: Path, au
             vectors.append(-coef)
         else:
             vectors.append(normalized_probe_vector(aux))
-    return torch.tensor(np.stack(vectors), dtype=torch.bfloat16)
+    return torch.tensor(np.stack(vectors), dtype=torch.float32)
 
 
 class LayerMixtureEditor(nn.Module):
     def __init__(self, basis_vectors: torch.Tensor, strength: float):
         super().__init__()
         self.register_buffer("basis_vectors", basis_vectors)
-        init = torch.zeros(basis_vectors.shape[0], dtype=torch.bfloat16)
+        init = torch.zeros(basis_vectors.shape[0], dtype=torch.float32)
         init[0] = 6
         self.a = nn.Parameter(init)
         self.strength = float(strength)

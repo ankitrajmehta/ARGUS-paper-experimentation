@@ -316,7 +316,7 @@ def build_summary(config: dict[str, Any], force: bool = False) -> dict:
 
 def load_validation_data(config: dict[str, Any], paths) -> list[dict]:
     data = load_json(split_json_path(paths, config, "val"))
-    max_samples = cfg_get(config, "debug.max_samples")
+    max_samples = cfg_get(config, "preliminary.max_samples", cfg_get(config, "debug.max_samples"))
     if max_samples is not None:
         data = data[: int(max_samples)]
     return data

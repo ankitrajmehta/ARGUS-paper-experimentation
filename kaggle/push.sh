@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Upload the committed HEAD as the private argus-code dataset, then (re)run a Kaggle kernel on T4.
-# Usage (Git Bash, from the repo root): [KERNEL=e1|e2|e2b|e2c|e3a|e3b|e3b2] bash kaggle/push.sh [RUN_NAME MAX_SAMPLES BEHAVIOR_N]
+# Usage (Git Bash, from the repo root): [KERNEL=e1|e1s|e2|e2b|e2c|e3a|e3b|e3b2] bash kaggle/push.sh [RUN_NAME MAX_SAMPLES BEHAVIOR_N]
+# KERNEL=e1s runs the full ARGUS pipeline on VTQA (E1-S, steering test);
 # KERNEL=e2 runs E2 (+E2b) in its own kernel, mounting the latest finished argus-e1 output;
 # KERNEL=e2b runs only E2b, reusing the latest finished argus-e2 activations;
 # KERNEL=e2c runs only E2c, reusing argus-e2 and argus-e2b activations.
@@ -34,12 +35,14 @@ until kaggle datasets status "$DATASET" 2>/dev/null | grep -qi ready; do sleep 1
 KERNEL=${KERNEL:-e1}
 case "$KERNEL" in
   e1) META=kaggle/kernel ;;
-  e2|e2b|e2c|e3a|e3b|e3b2) META=kaggle/kernel-$KERNEL ;;
-  *) echo "KERNEL must be e1, e2, e2b, e2c, e3a, e3b or e3b2" >&2; exit 1 ;;
+  e1s|e2|e2b|e2c|e3a|e3b|e3b2) META=kaggle/kernel-$KERNEL ;;
+  *) echo "KERNEL must be e1, e1s, e2, e2b, e2c, e3a, e3b or e3b2" >&2; exit 1 ;;
 esac
 cp "$META/kernel-metadata.json" kaggle/run_kaggle.py "$BUILD/kernel/"
 case "$KERNEL" in
   e1) ;;
+  # E1-S: full ARGUS pipeline on VTQA, same 100 train/val items as E1.
+  e1s) sed -i -e 's/^EXPERIMENT = .*/EXPERIMENT = "e1s"/' -e 's/^RUN_NAME = .*/RUN_NAME = "e1s_3b_fp16"/' "$BUILD/kernel/run_kaggle.py" ;;
   # E2 defaults: all 94 test frames for the attack-success check.
   e2|e2b|e2c|e3a|e3b|e3b2) sed -i -e "s/^EXPERIMENT = .*/EXPERIMENT = \"$KERNEL\"/" -e "s/^RUN_NAME = .*/RUN_NAME = \"${KERNEL}_3b_fp16\"/"                  -e 's/^BEHAVIOR_N = .*/BEHAVIOR_N = 94/' "$BUILD/kernel/run_kaggle.py" ;;
 esac
