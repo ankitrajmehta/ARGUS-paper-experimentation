@@ -447,10 +447,62 @@ for model_id in SIZES:
     print(f"\\n{'=' * 70}\\n{model_id}\\n{'=' * 70}", flush=True)
     subprocess.run(
         ["midas-eval", "--split", "train", "--both",
-         "--model", model_id, "--max-tiles", "6",
+         "--model", model_id, "--max-tiles", "6", "--save-long",
          "--out", "/kaggle/working/results/scale"],
         check=True,
     )
+''')
+
+md("""
+### Control: is the one-word summary positional?
+
+InternVL2.5-4B answered `a) proceed` on all 15 scenes — clean, attacked, and
+facing a STOP sign. Before calling that immunity, rule out the protocol: CHAI's
+second turn asks for one word *"(proceed or brake)"*, and models often favour
+whichever option is named first.
+
+Re-running with the options reversed separates the two. A real decision survives
+the swap; a positional artefact flips with it. If it flips, that is a finding
+about CHAI's two-turn scoring, not about the 4B.
+""")
+
+code('''
+for model_id in SIZES + ["OpenGVLab/InternVL2_5-8B"]:
+    extra = ["--device-map", "auto"] if "8B" in model_id else []
+    print(f"\\n{'=' * 70}\\n{model_id} (options reversed)\\n{'=' * 70}", flush=True)
+    subprocess.run(
+        ["midas-eval", "--split", "train", "--both",
+         "--model", model_id, "--max-tiles", "6",
+         "--swap-summarise", "--save-long",
+         "--out", "/kaggle/working/results/scale_swapped", *extra],
+        check=True,
+    )
+''')
+
+code('''
+import collections, glob, json
+
+def load(pattern):
+    out = {}
+    for f in sorted(glob.glob(pattern)):
+        d = json.load(open(f))
+        out[(d["model_id"].split("-")[-1], d["label"])] = d
+    return out
+
+normal, swapped = load("/kaggle/working/results/scale/*.json"), load(
+    "/kaggle/working/results/scale_swapped/*.json")
+
+print(f"{'model':6s} {'cond':9s} {'proceed-first':>26s} {'brake-first':>26s}")
+for size in ("1B", "2B", "4B", "8B"):
+    for cond in ("baseline", "attack"):
+        row = []
+        for src in (normal, swapped):
+            d = src.get((size, cond))
+            if d is None:
+                row.append("-"); continue
+            acts = collections.Counter(r["action"] for r in d["results"])
+            row.append(f"{d['summary']['asr_chai']:5.1%} answers={dict(acts)}")
+        print(f"{size:6s} {cond:9s} {row[0]:>26s} {row[1]:>26s}")
 ''')
 
 code('''

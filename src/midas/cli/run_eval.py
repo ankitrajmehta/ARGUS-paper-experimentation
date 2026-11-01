@@ -160,6 +160,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--max-new-tokens", type=int, default=1250)
     parser.add_argument(
+        "--swap-summarise",
+        action="store_true",
+        help="offer the two actions in the reverse order on the second turn, as a "
+        "control for positional bias",
+    )
+    parser.add_argument(
         "--max-tiles",
         type=int,
         default=12,
@@ -242,6 +248,7 @@ def main(argv: list[str] | None = None) -> int:
             max_new_tokens=args.max_new_tokens,
             do_sample=args.sample,
             max_tiles=args.max_tiles,
+            swap_summarise_options=args.swap_summarise,
         )
 
     steerer = None

@@ -220,11 +220,14 @@ class InternVLDriveLM:
         max_new_tokens: int = 1250,
         do_sample: bool = False,
         max_tiles: int = 12,
+        swap_summarise_options: bool = False,
     ) -> None:
         # CHAI use max_num=12 with a thumbnail (util/internvl_image_loader.py).
         # On a 1600x900 frame that is 9 tiles per image, 18 across the two
         # cameras, ~4600 image tokens. Lowering it trades fidelity for speed.
         self.max_tiles = max_tiles
+        # Control for positional bias in CHAI's second turn; see drivelm.
+        self.swap_summarise_options = swap_summarise_options
         self.device = resolve_device(device)
         self.dtype = resolve_dtype(dtype, self.device)
         self.max_new_tokens = max_new_tokens
@@ -560,7 +563,7 @@ class InternVLDriveLM:
             short, _ = self.model.chat(
                 self.tokenizer,
                 pixel_values,
-                drivelm.build_summarise_prompt(long),
+                drivelm.build_summarise_prompt(long, swap_options=self.swap_summarise_options),
                 gen_cfg,
                 num_patches_list=num_patches_list,
                 history=history,
