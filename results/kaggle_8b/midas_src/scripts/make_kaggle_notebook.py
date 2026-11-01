@@ -178,7 +178,14 @@ else:
 
 # Search recursively: a dataset may mount its payload one level deeper than
 # expected depending on how the archive was packed.
-candidates = glob.glob("/kaggle/input/**/pyproject.toml", recursive=True)
+# Datasets mount under /kaggle/input/datasets/<user>/<slug>; kernel outputs
+# mount under /kaggle/input/<kernel-slug>/. The sweep kernel attaches both, and
+# the main run saved its own working copy of this source tree as output -- so an
+# unqualified search finds that stale copy instead of the uploaded dataset.
+candidates = sorted(
+    glob.glob("/kaggle/input/**/pyproject.toml", recursive=True),
+    key=lambda p: (0 if "/kaggle/input/datasets/" in p else 1, p),
+)
 assert candidates, (
     "MIDAS source not found under /kaggle/input. Attach the dataset via "
     "Add Data -> Your Datasets, or re-run scripts/kaggle_deploy.py upload. "
@@ -382,6 +389,87 @@ for label in ("baseline", "attack"):
     print(f"\\nSUMMARY TURN: {r['short']}")
 ''')
 
+md("""
+## 9b. Re-derive the benign labels
+
+CHAI ship a benign action per scene, measured on *their* model. Our model
+disagrees with those labels on 5 of 8 Transferability scenes, and since the
+attack target is defined as the opposite of the benign action, a wrong label
+makes the "target" something the model already prefers — which is why that
+split showed an implausible 62.5% no-attack rate.
+
+This repeats CHAI's own labelling procedure against the model under test:
+eleven unattacked runs per scene, take the mode. Results are reported against
+both label sources, since they are not comparable.
+""")
+
+code(f'''
+for split in ("train", "test"):
+    !midas-labels --split {{split}} --model {MODEL} --device-map auto \\
+        --max-tiles 6 --runs 11 --out /kaggle/working/results/labels
+''')
+
+code(f'''
+import glob
+
+for split in ("train", "test"):
+    labels = glob.glob(f"/kaggle/working/results/labels/{{split}}_*.json")
+    if not labels:
+        print(f"no labels for {{split}}"); continue
+    !midas-eval --split {{split}} --both --labels {{labels[0]}} \\
+        --model {MODEL} --device-map auto --max-tiles 6 \\
+        --out /kaggle/working/results/runs_8b_relabelled
+''')
+
+md("""
+## 9c. Scale study
+
+CHAI evaluate one open-weight model. InternVL2.5 ships at 1B, 2B, 4B and 8B with
+the same architecture and training recipe, so scale is a clean single variable —
+a rare thing to get. The question CHAI leave open: does a larger model resist
+command hijacking, or submit to it more?
+
+Two data points already disagree interestingly (2B +46.7, 8B +40.0 points), and
+the 8B shows a failure mode the 2B never did: answering per camera
+("CAM_FRONT: Brake, CAM_BACK: Proceed"), which CHAI's scoring rule silently
+counts as a successful attack.
+
+The smaller models fit on one T4, so no sharding is needed below 8B.
+""")
+
+code('''
+import subprocess
+
+SIZES = ["OpenGVLab/InternVL2_5-1B", "OpenGVLab/InternVL2_5-2B",
+         "OpenGVLab/InternVL2_5-4B"]
+
+for model_id in SIZES:
+    print(f"\\n{'=' * 70}\\n{model_id}\\n{'=' * 70}", flush=True)
+    subprocess.run(
+        ["midas-eval", "--split", "train", "--both",
+         "--model", model_id, "--max-tiles", "6",
+         "--out", "/kaggle/working/results/scale"],
+        check=True,
+    )
+''')
+
+code('''
+import glob, json
+
+rows = []
+for path in sorted(glob.glob("/kaggle/working/results/scale/*.json")) + sorted(
+        glob.glob("/kaggle/working/results/runs_8b/*train*.json")):
+    d = json.load(open(path))
+    if "summary" not in d:
+        continue
+    rows.append((d["model_id"].split("-")[-1], d["label"], d["summary"]))
+
+print(f"{'model':8s} {'condition':10s} {'ASR':>7s} {'CHAI rule':>10s} {'unreadable':>11s}")
+for size, label, s in rows:
+    print(f"{size:8s} {label:10s} {s['asr']:7.1%} {s.get('asr_chai', 0):10.1%} "
+          f"{s['unreadable_rate']:11.1%}")
+''')
+
 # ---------------------------------------------------------------- step 10
 md("""
 ## 10. The defense pipeline (optional, a further 2–3 GPU-hours)
@@ -434,6 +522,38 @@ subprocess.run(
 )
 ''')
 
+code(f'''
+# The sweep is the expensive half: it scores both candidate answers for every
+# scene under each configuration. Steering one layer and five is compared,
+# because a single-layer intervention left behaviour unchanged on the 2B.
+!midas-sweep-defense /kaggle/working/results/defense/train_8b \\
+    --model {MODEL} --device-map auto --max-tiles 6 \\
+    --strengths 0 5 10 --top-layers 5 --max-step-ratio 0.25 0.5 1.0 \\
+    --out /kaggle/working/results/defense/sweep_8b.json
+''')
+
+code('''
+import json
+from pathlib import Path
+
+path = Path("/kaggle/working/results/defense/sweep_8b.json")
+assert path.exists(), "the sweep produced no output -- check the cell above"
+
+rows = json.loads(path.read_text())
+base = next(r["attack_rate"] for r in rows if r["strength"] == 0)
+print(f"{'configuration':22s} {'attack':>8s} {'vs none':>9s} {'utility':>9s}")
+for r in rows:
+    label = "no defense" if r["strength"] == 0 else (
+        f"{r.get('top_layers', 1)} layer(s) s={r['strength']:g}"
+    )
+    delta = "--" if r["strength"] == 0 else f"{r['attack_rate'] - base:+.1%}"
+    print(f"{label:22s} {r['attack_rate']:8.1%} {delta:>9s} {r['clean_keep']:8.1%}")
+
+spread = max(r["attack_rate"] for r in rows) - min(r["attack_rate"] for r in rows)
+print(f"\\nspread across configurations: {spread:.1%} "
+      f"({round(spread * rows[0]['n'])} scenes of {rows[0]['n']})")
+''')
+
 # ---------------------------------------------------------------- step 11
 md("""
 ## 11. Package the results
@@ -479,9 +599,131 @@ def build() -> dict:
     }
 
 
+def build_sweep_only(prev_kernel: str) -> dict:
+    """A second notebook that only runs the defense sweep.
+
+    Extraction and fitting already happened in the main run, and both are
+    expensive. Attaching that kernel's output as a source means this notebook
+    starts straight at the sweep instead of spending an hour reproducing inputs
+    it could inherit.
+    """
+    global CELLS
+    saved, CELLS = CELLS, []
+
+    md(f"""
+# MIDAS — defense sweep on InternVL2.5-8B
+
+Runs only the activation-steering evaluation. The activations and the fitted
+defense are inherited from `{prev_kernel}`, attached as a kernel source, so
+nothing is recomputed.
+
+**Session:** GPU T4 x2, Internet on.
+
+The question: on the 2B the steering direction was decodable at 94.7% yet moving
+along it changed nothing the model output. The 8B probe reaches 100%, so if the
+feature is causal anywhere it should be here.
+""")
+
+    # Reuse the hardware, install and code-loading cells from the main notebook.
+    for kind, text in saved[1:8]:
+        CELLS.append((kind, text))
+
+    md(f"""
+## Inherit the fitted defense
+
+The previous kernel's `/kaggle/working` is mounted under `/kaggle/input`.
+""")
+
+    code('''
+import glob, shutil
+from pathlib import Path
+
+npz = glob.glob("/kaggle/input/**/defense/train_8b.npz", recursive=True)
+acts = glob.glob("/kaggle/input/**/activations/*.npz", recursive=True)
+assert npz, "fitted defense not found; is the previous kernel attached as a source?"
+print("defense artifact:", npz[0])
+print("activation sweeps:", [Path(a).name for a in acts])
+
+# Copy out of the read-only mount so the artifact's .json sits beside its .npz.
+dest = Path("/kaggle/working/results/defense")
+dest.mkdir(parents=True, exist_ok=True)
+for ext in (".npz", ".json"):
+    src = Path(npz[0]).with_suffix(ext)
+    shutil.copy2(src, dest / src.name)
+
+from midas.steering import DefenseArtifact
+art = DefenseArtifact.load(dest / "train_8b")
+print("")
+print(f"steering layers: {art.layer_indices}")
+print(f"gate layer     : {art.gate_layer}")
+''')
+
+    md("""
+## Run the sweep
+
+One and five layers, four strengths. `clean_keep` is the utility measure: the
+share of unattacked frames where the defended model still prefers what the
+undefended model preferred.
+
+This run sweeps the **step cap** as well. The previous sweep showed the
+intervention firing (136,725 activations modified) and moving the decision
+margin by 1.45 nats, yet not flipping a single scene — but at strength 10 about
+half the steps hit the 25%-of-norm safety cap, so the realised push was smaller
+than requested. Raising the cap separates two very different conclusions:
+
+* the direction is **inert** — the model's decision does not depend on it; or
+* it needs a push **larger than is safe** — which is a different claim, and a
+  weaker defense.
+
+The cap exists because an unbounded step once reduced the model to word salad,
+so `clean_keep` is the thing to watch: if it falls, the cap was load-bearing.
+""")
+
+    code(f'''
+!midas-sweep-defense /kaggle/working/results/defense/train_8b \\
+    --model {MODEL} --device-map auto --max-tiles 6 \\
+    --strengths 0 5 10 --top-layers 5 --max-step-ratio 0.25 0.5 1.0 \\
+    --out /kaggle/working/results/defense/sweep_8b.json
+''')
+
+    code('''
+import json
+from pathlib import Path
+
+path = Path("/kaggle/working/results/defense/sweep_8b.json")
+assert path.exists(), "the sweep produced no output -- check the cell above"
+rows = json.loads(path.read_text())
+
+base = next(r["attack_rate"] for r in rows if r["strength"] == 0)
+print(f"{'configuration':24s} {'attack':>8s} {'vs none':>9s} {'utility':>9s}")
+for r in rows:
+    label = "no defense" if r["strength"] == 0 else (
+        f"{r.get('top_layers', 1)} layer(s) s={r['strength']:g}"
+    )
+    delta = "--" if r["strength"] == 0 else f"{r['attack_rate'] - base:+.1%}"
+    print(f"{label:24s} {r['attack_rate']:8.1%} {delta:>9s} {r['clean_keep']:8.1%}")
+
+n = rows[0]["n"]
+spread = max(r["attack_rate"] for r in rows) - min(r["attack_rate"] for r in rows)
+print("")
+print(f"spread: {spread:.1%} = {round(spread * n)} scenes of {n}")
+print("At n=15 the 95% interval is about +/-25 points, so a spread of one or two")
+print("scenes is indistinguishable from no effect.")
+''')
+
+    notebook = build()
+    CELLS = saved
+    return notebook
+
+
 if __name__ == "__main__":
     out = Path(__file__).resolve().parents[1] / "kaggle" / "midas_kaggle.ipynb"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(build(), indent=1))
     print(f"wrote {out}  ({len(CELLS)} cells)")
+
+    sweep_out = out.parent / "midas_sweep.ipynb"
+    sweep_nb = build_sweep_only("ankitpokhrel/midas-chai-attack-on-internvl2-5-8b")
+    sweep_out.write_text(json.dumps(sweep_nb, indent=1))
+    print(f"wrote {sweep_out}  ({len(sweep_nb['cells'])} cells)")
     print("\nDeploy with: python scripts/kaggle_deploy.py upload && ... run")

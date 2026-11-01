@@ -299,12 +299,14 @@ def test_kaggle_notebook_cells_are_valid_python():
     import json
     from pathlib import Path
 
-    nb_path = Path("kaggle/midas_kaggle.ipynb")
-    if not nb_path.exists():
-        pytest.skip("notebook not generated")
+    paths = [p for p in (Path("kaggle/midas_kaggle.ipynb"),
+                         Path("kaggle/midas_sweep.ipynb")) if p.exists()]
+    if not paths:
+        pytest.skip("notebooks not generated")
 
     failures = []
-    for i, cell in enumerate(json.loads(nb_path.read_text())["cells"]):
+    for nb_path in paths:
+      for i, cell in enumerate(json.loads(nb_path.read_text())["cells"]):
         if cell["cell_type"] != "code":
             continue
         source = "".join(cell["source"])
@@ -319,14 +321,19 @@ def test_kaggle_notebook_cells_are_valid_python():
                 continue
             pending = ""
             joined.append(current)
-        cleaned = "\n".join(
-            "pass" if l.lstrip().startswith(("!", "%")) else l for l in joined
-        )
+        # Keep the indentation when blanking a magic: a `!` line inside a for
+        # loop must still be an indented statement or the block looks empty.
+        def blank(line: str) -> str:
+            if not line.lstrip().startswith(("!", "%")):
+                return line
+            return " " * (len(line) - len(line.lstrip())) + "pass"
+
+        cleaned = "\n".join(blank(l) for l in joined)
 
         try:
             ast.parse(cleaned)
         except SyntaxError as exc:
-            failures.append(f"cell {i}: {exc.msg} (line {exc.lineno})")
+            failures.append(f"{nb_path.name} cell {i}: {exc.msg} (line {exc.lineno})")
 
     assert not failures, failures
 
@@ -362,3 +369,94 @@ def test_internvl_device_map_keeps_codependent_modules_together():
     # eager attention matrix, so it must take the smaller share of layers.
     on_gpu0 = sum(1 for k in placed if device_map[k] == 0)
     assert on_gpu0 < len(placed) / 2, f"GPU 0 given too many layers: {on_gpu0}/32"
+
+
+def test_chai_rule_counts_replies_naming_both_actions():
+    """InternVL2.5-8B often answers per camera, naming both actions.
+
+    Our strict parser records that as unreadable; CHAI's rule credits it to
+    whichever target it is tested against. Both must be reported, or our numbers
+    cannot be compared with the paper's.
+    """
+    both = "**CAM_FRONT**: Brake\n**CAM_BACK**: Proceed"
+    assert drivelm.parse_action(both) is None
+    assert drivelm.chai_counts_as_hit(both, "a)") is True
+    assert drivelm.chai_counts_as_hit(both, "b)") is True
+
+    clear = "Proceed"
+    assert drivelm.parse_action(clear) == "a)"
+    assert drivelm.chai_counts_as_hit(clear, "a)") is True
+    assert drivelm.chai_counts_as_hit(clear, "b)") is False
+
+
+def test_kaggle_notebook_covers_the_whole_pipeline():
+    """Every stage must appear, or a GPU session silently skips one.
+
+    An edit once replaced a span of the generator that happened to contain the
+    sweep cell; the run completed "successfully" having never run the defense
+    evaluation, and the gap only showed up when its output file was missing.
+    """
+    import json
+    from pathlib import Path
+
+    nb_path = Path("kaggle/midas_kaggle.ipynb")
+    if not nb_path.exists():
+        pytest.skip("notebook not generated")
+
+    joined = "\n".join(
+        "".join(c["source"]) for c in json.loads(nb_path.read_text())["cells"]
+    )
+    for stage in ("midas-eval", "midas-activations", "midas-probes",
+                  "midas-fit-defense", "midas-sweep-defense"):
+        assert stage in joined, f"notebook never runs {stage}"
+
+
+def test_notebooks_prefer_the_dataset_over_stale_kernel_output():
+    """The sweep kernel attaches both a dataset and a previous kernel's output.
+
+    That previous run saved its own working copy of this source tree, so an
+    unqualified search under /kaggle/input finds stale code. One sweep ran to
+    completion against an old build because of exactly this, producing output in
+    a format the current code no longer emits.
+    """
+    import json
+    from pathlib import Path
+
+    nb_path = Path("kaggle/midas_sweep.ipynb")
+    if not nb_path.exists():
+        pytest.skip("sweep notebook not generated")
+
+    joined = "\n".join(
+        "".join(c["source"]) for c in json.loads(nb_path.read_text())["cells"]
+    )
+    assert "/kaggle/input/datasets/" in joined, (
+        "the sweep notebook must prefer the dataset mount over kernel output"
+    )
+
+
+def test_derived_labels_override_chai_and_change_the_target(tmp_path):
+    """Re-derived labels must flow through to the attack target.
+
+    The target is the opposite of the benign action, so a wrong label makes the
+    "attack target" something the model already prefers. That is what inflated
+    the Transferability baseline to 62.5%.
+    """
+    import json
+
+    base = data.load_scenes("test")
+    scene = base[0]
+    flipped = "a)" if scene.correct_internvl == "b)" else "b)"
+
+    label_file = tmp_path / "labels.json"
+    label_file.write_text(json.dumps({
+        "split": "test",
+        "model": "fake",
+        "labels": {str(scene.index): {"action": flipped, "chai_label": scene.correct_internvl}},
+    }))
+
+    overridden = data.load_scenes("test", labels=label_file)[0]
+    assert overridden.correct_internvl == flipped
+    # Scenes without an override keep CHAI's label.
+    assert overridden.index == scene.index
+    assert data.resolve_target(overridden, "auto") == scene.correct_internvl
+    assert data.resolve_target(overridden, "auto") != data.resolve_target(scene, "auto")

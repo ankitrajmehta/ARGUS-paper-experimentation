@@ -38,6 +38,11 @@ DATASET_SLUG = "midas-chai-source"
 KERNEL_TITLE = "MIDAS: CHAI attack on InternVL2.5-8B"
 KERNEL_SLUG = "midas-chai-attack-on-internvl2-5-8b"
 
+# A second, sweep-only kernel. It inherits the first kernel's output rather than
+# recomputing activations, which take about an hour of GPU time.
+SWEEP_TITLE = "MIDAS: defense sweep on InternVL2.5-8B"
+SWEEP_SLUG = "midas-defense-sweep-on-internvl2-5-8b"
+
 # Everything the notebook needs at import time. vendor/chai is included so the
 # run does not depend on CHAI's GitHub repository being reachable.
 INCLUDE = ["src", "tests", "scripts", "pyproject.toml", "requirements.txt",
@@ -194,9 +199,51 @@ def cmd_run(args: argparse.Namespace) -> None:
           f"  python scripts/kaggle_deploy.py status")
 
 
+def cmd_sweep(args: argparse.Namespace) -> None:
+    user = require_credentials()
+
+    notebook = ROOT / "kaggle" / "midas_sweep.ipynb"
+    if not notebook.exists():
+        sys.exit("Sweep notebook missing. Run: python scripts/make_kaggle_notebook.py")
+
+    folder = ROOT / "kaggle" / "_kernel_sweep"
+    if folder.exists():
+        shutil.rmtree(folder)
+    folder.mkdir(parents=True)
+    shutil.copy2(notebook, folder / "midas_sweep.ipynb")
+
+    (folder / "kernel-metadata.json").write_text(
+        json.dumps(
+            {
+                "id": f"{user}/{SWEEP_SLUG}",
+                "title": SWEEP_TITLE,
+                "code_file": "midas_sweep.ipynb",
+                "language": "python",
+                "kernel_type": "notebook",
+                "is_private": True,
+                "enable_gpu": True,
+                "enable_internet": True,
+                "dataset_sources": [f"{user}/{DATASET_SLUG}"],
+                # Inherit the main run's activations and fitted defense.
+                "kernel_sources": [f"{user}/{KERNEL_SLUG}"],
+                "competition_sources": [],
+            },
+            indent=2,
+        )
+    )
+
+    print(f"pushing sweep kernel {user}/{SWEEP_SLUG} ...")
+    result = kaggle("kernels", "push", "-p", str(folder),
+                    "--accelerator", "NvidiaTeslaT4", check=False)
+    print(result.stdout or result.stderr)
+    if result.returncode != 0:
+        sys.exit("push failed")
+    print(f"\nPoll with: python scripts/kaggle_deploy.py status --sweep")
+
+
 def cmd_status(args: argparse.Namespace) -> None:
     user = require_credentials()
-    ref = f"{user}/{KERNEL_SLUG}"
+    ref = f"{user}/{SWEEP_SLUG if args.sweep else KERNEL_SLUG}"
     print(kaggle("kernels", "status", ref, check=False).stdout.strip())
     if args.logs:
         print("\n--- logs (tail) ---")
@@ -206,9 +253,10 @@ def cmd_status(args: argparse.Namespace) -> None:
 
 def cmd_fetch(args: argparse.Namespace) -> None:
     user = require_credentials()
-    out = ROOT / "results" / "kaggle_8b"
+    slug = SWEEP_SLUG if args.sweep else KERNEL_SLUG
+    out = ROOT / "results" / ("kaggle_8b_sweep" if args.sweep else "kaggle_8b")
     out.mkdir(parents=True, exist_ok=True)
-    result = kaggle("kernels", "output", f"{user}/{KERNEL_SLUG}", "-p", str(out), check=False)
+    result = kaggle("kernels", "output", f"{user}/{slug}", "-p", str(out), check=False)
     print(result.stdout or result.stderr)
     files = sorted(p.name for p in out.rglob("*") if p.is_file())
     print(f"\n{len(files)} files in {out}")
@@ -230,11 +278,16 @@ def main(argv: list[str] | None = None) -> int:
     run.add_argument("--no-run", action="store_true", help="save without executing")
     run.set_defaults(func=cmd_run)
 
+    sw = sub.add_parser("sweep", help="push the sweep-only kernel (inherits the main run)")
+    sw.set_defaults(func=cmd_sweep)
+
     st = sub.add_parser("status", help="poll the kernel")
     st.add_argument("--logs", action="store_true")
+    st.add_argument("--sweep", action="store_true", help="poll the sweep kernel instead")
     st.set_defaults(func=cmd_status)
 
     fe = sub.add_parser("fetch", help="download kernel output")
+    fe.add_argument("--sweep", action="store_true", help="fetch the sweep kernel instead")
     fe.set_defaults(func=cmd_fetch)
 
     args = parser.parse_args(argv)

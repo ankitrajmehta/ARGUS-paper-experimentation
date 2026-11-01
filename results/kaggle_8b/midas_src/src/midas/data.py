@@ -81,8 +81,22 @@ class Scene:
         return images
 
 
-def load_scenes(split: str = "train") -> list[Scene]:
-    """Load the Known (train) or Transferability (test) split."""
+def load_labels(path: Path) -> dict[int, str]:
+    """Benign actions re-derived for the model under test.
+
+    See midas.cli.derive_labels for why CHAI's stored labels cannot simply be
+    reused for a different model.
+    """
+    payload = json.loads(Path(path).read_text())
+    return {int(k): v["action"] for k, v in payload["labels"].items()}
+
+
+def load_scenes(split: str = "train", labels: Path | None = None) -> list[Scene]:
+    """Load the Known (train) or Transferability (test) split.
+
+    ``labels`` optionally replaces CHAI's stored benign action with one derived
+    from the model under test.
+    """
     if split == "train":
         json_path = config.CHAI_TRAIN_JSON
     elif split == "test":
@@ -96,6 +110,7 @@ def load_scenes(split: str = "train") -> list[Scene]:
         )
 
     records = json.loads(json_path.read_text())
+    overrides = load_labels(labels) if labels else {}
     scenes = []
     for i, rec in enumerate(records):
         # Paths in the JSON are relative to the CHAI repo root.
@@ -105,7 +120,7 @@ def load_scenes(split: str = "train") -> list[Scene]:
                 index=i,
                 split=split,
                 image_paths=paths,
-                correct_internvl=rec["correct_internvl"],
+                correct_internvl=overrides.get(i, rec["correct_internvl"]),
                 correct_gpt=rec["correct_gpt"],
                 target=rec["target"],
                 _position=rec["position"],
