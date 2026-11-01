@@ -1,6 +1,0 @@
-# Core: data loading, sign rendering, evaluation. CPU-only, runs on any laptop.
-# numpy 2.x is required on Kaggle: its stack calls numpy.dtypes.StringDType,
-# added in 2.0. Nothing here needs 1.x, so leave it unpinned.
-numpy
-opencv-python-headless>=4.9
-pillow>=10

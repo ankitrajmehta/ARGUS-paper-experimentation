@@ -19,7 +19,13 @@ harmful in itself, only effective at hijacking the decision.
 | DriveLM prompt, verified byte-identical to upstream | done |
 | Scoring: ASR, benign accuracy, unreadable rate | done |
 | Dry-run pipeline check (no GPU) | done |
-| InternVL2.5-8B inference | written, **not yet run — needs the GPU box** |
+| InternVL2.5-8B inference | done — run on Kaggle 2x T4 |
+| Attack reproduced (8B, Known split) | done — 26.7% -> 66.7% under CHAI's scoring |
+| Internal signature: probe, gate, subspace | done — see PROJECT_RECORD.md §7 |
+| Scale study 1B/2B/4B/8B | done — §9.1 |
+| Benign-label re-derivation | done — §9.2 |
+
+Full results and methodology: **`PROJECT_RECORD.md`**.
 
 ## Setup
 
