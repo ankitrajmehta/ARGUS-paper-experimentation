@@ -266,10 +266,29 @@ def cmd_status(args: argparse.Namespace) -> None:
 def cmd_fetch(args: argparse.Namespace) -> None:
     user = require_credentials()
     slug = SWEEP_SLUG if args.sweep else KERNEL_SLUG
-    out = ROOT / "results" / ("kaggle_8b_sweep" if args.sweep else "kaggle_8b")
+    default = "kaggle_8b_sweep" if args.sweep else "kaggle_8b"
+    out = Path(args.out) if args.out else ROOT / "results" / default
+
+    # Kaggle's output includes a full copy of the attached source dataset --
+    # several hundred MB of vendored nuScenes frames -- and overwrites the
+    # results archive of whatever run was fetched here last. Refuse to write
+    # into a directory that already holds a run, so each one keeps its own.
+    if out.exists() and any(out.iterdir()) and not args.force:
+        sys.exit(
+            f"{out} already holds a fetched run. Pass --out <dir> for this one, "
+            f"or --force to overwrite it."
+        )
+
     out.mkdir(parents=True, exist_ok=True)
     result = kaggle("kernels", "output", f"{user}/{slug}", "-p", str(out), check=False)
     print(result.stdout or result.stderr)
+
+    # The source copy is the attached dataset, already in version control.
+    source_copy = out / "midas_src"
+    if source_copy.exists():
+        shutil.rmtree(source_copy)
+        print("removed midas_src/ (a copy of the attached dataset)")
+
     files = sorted(p.name for p in out.rglob("*") if p.is_file())
     print(f"\n{len(files)} files in {out}")
     for name in files[:20]:
@@ -306,6 +325,8 @@ def main(argv: list[str] | None = None) -> int:
 
     fe = sub.add_parser("fetch", help="download kernel output")
     fe.add_argument("--sweep", action="store_true", help="fetch the sweep kernel instead")
+    fe.add_argument("--out", default=None, help="where to write it (default: results/kaggle_8b)")
+    fe.add_argument("--force", action="store_true", help="overwrite a run already fetched there")
     fe.set_defaults(func=cmd_fetch)
 
     args = parser.parse_args(argv)
