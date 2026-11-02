@@ -43,76 +43,55 @@ def build_sign(
     cfg: AttackConfig | None = None,
     style: str | None = None,
 ) -> SignSpec:
-    """Build the released CHAI sign for one scene.
+    """Build CHAI's sign for one scene.
 
-    Uses the phrase and colours from ``optimal_attacks/optimal.json`` and the
-    phrase dictionary in ``attack_dicts_internvl.json``.
+    Sign appearance comes from ``cfg.param_source`` -- by default the values
+    CHAI's own InternVL path uses (see ``config.CHAI_UNIVERSAL_INTERNVL``). The
+    wording comes from ``attack_dicts_internvl.json``, or from an injection
+    style when ``style`` is given.
     """
     cfg = cfg or AttackConfig()
     # Defaults to the opposite of the benign action rather than the stored
     # target field; see Scene.internvl_target.
     target = target or scene.internvl_target
 
-    optimal = data.load_optimal_attack()
-    dictionary = data.load_attack_dictionary()
+    params = cfg.resolve()
+    bg = tuple(int(c) for c in params["background"])
+    fg = tuple(int(c) for c in params["letter"])
+    x, y = scene.sign_origin
+    dx, dy = params["position_offset"]
+    scale = scene.size * params["size_multiplier"]
 
     if style is not None:
-        # Same colours, scale and position as CHAI's optimised sign; only the
-        # wording changes, so any difference is attributable to the phrasing.
+        # Same colours, scale and position as CHAI's sign; only the wording
+        # changes, so any difference is attributable to the phrasing.
         from midas import styles
 
-        text = styles.phrase_for(style, target)
-        fg = (int(optimal["r_letter"]), int(optimal["g_letter"]), int(optimal["b_letter"]))
-        bg = (
-            (255, 0, int(optimal["b_background"]))
-            if cfg.background_mode == "code"
-            else (
-                int(optimal["r_background"]),
-                int(optimal["g_background"]),
-                int(optimal["b_background"]),
-            )
-        )
-        x, y = scene.sign_origin
-        dx, dy = cfg.position_offset
         return SignSpec(
-            text=text, bg=bg, fg=fg,
-            scale=scene.size * cfg.size_multiplier,
-            origin=(x + dx, y + dy),
+            text=styles.phrase_for(style, target),
+            bg=bg, fg=fg, scale=scale, origin=(x + dx, y + dy),
         )
 
+    dictionary = data.load_attack_dictionary()
     if target not in dictionary:
         raise KeyError(f"no phrases for target {target!r}; have {sorted(dictionary)}")
-
-    # optimal.json indexes the dictionary per target: "a)" -> optimal_a, etc.
-    key = f"optimal_{target.rstrip(')')}"
-    phrase_index = int(optimal.get(key, 0))
     phrases = dictionary[target]
+
+    phrase_index = params["phrase_index"]
+    if phrase_index is None:
+        # optimal.json indexes the dictionary per target: "a)" -> optimal_a.
+        optimal = data.load_optimal_attack()
+        phrase_index = int(optimal.get(f"optimal_{target.rstrip(')')}", 0))
+    phrase_index = int(phrase_index)
     if not 0 <= phrase_index < len(phrases):
         raise IndexError(
-            f"{key}={phrase_index} is out of range for {len(phrases)} phrases on target {target!r}"
+            f"phrase index {phrase_index} is out of range for {len(phrases)} "
+            f"phrases on target {target!r}"
         )
-
-    fg = (int(optimal["r_letter"]), int(optimal["g_letter"]), int(optimal["b_letter"]))
-    if cfg.background_mode == "code":
-        # Reproduces main.py.get_score, which discards the optimised red and
-        # green channels. See AttackConfig for why this is the default.
-        bg = (255, 0, int(optimal["b_background"]))
-    else:
-        bg = (
-            int(optimal["r_background"]),
-            int(optimal["g_background"]),
-            int(optimal["b_background"]),
-        )
-
-    x, y = scene.sign_origin
-    dx, dy = cfg.position_offset
 
     return SignSpec(
         text=phrases[phrase_index],
-        bg=bg,
-        fg=fg,
-        scale=scene.size * cfg.size_multiplier,
-        origin=(x + dx, y + dy),
+        bg=bg, fg=fg, scale=scale, origin=(x + dx, y + dy),
     )
 
 

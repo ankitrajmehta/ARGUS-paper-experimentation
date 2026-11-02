@@ -86,12 +86,58 @@ def test_only_front_camera_is_modified():
 
 
 def test_background_mode_differs():
-    """The two modes must not silently collapse; 'code' is red, 'json' is green."""
+    """The two modes must not silently collapse; 'code' is red, 'json' is green.
+
+    Only meaningful under param_source="optimal_json": the default source does
+    not read optimal.json at all.
+    """
     scene = data.load_scenes("train")[0]
-    code = signs.build_sign(scene, cfg=AttackConfig(background_mode="code"))
-    js = signs.build_sign(scene, cfg=AttackConfig(background_mode="json"))
+    code = signs.build_sign(
+        scene, cfg=AttackConfig(param_source="optimal_json", background_mode="code")
+    )
+    js = signs.build_sign(
+        scene, cfg=AttackConfig(param_source="optimal_json", background_mode="json")
+    )
     assert code.bg != js.bg
     assert code.bg == (255, 0, 15)
+
+
+def test_default_sign_matches_chais_internvl_path():
+    """CHAI's main.py sets testing=True, so its InternVL run uses
+    load_universal("internvl") -- black text on pure red at 0.93x -- and never
+    reads optimal.json, which records pink-on-red at 1.0x.
+
+    We rendered the optimal.json sign until 2026-11-02. Pin the right one.
+    """
+    scene = data.load_scenes("train")[0]
+    sign = signs.build_sign(scene)
+    assert sign.bg == (255, 0, 0), "background must be pure red"
+    assert sign.fg == (0, 0, 0), "letters must be black"
+    assert sign.scale == pytest.approx(scene.size * 0.93)
+
+    stale = signs.build_sign(scene, cfg=AttackConfig(param_source="optimal_json"))
+    assert stale.fg != sign.fg, "the two sources must stay distinguishable"
+
+
+def test_custom_param_source_overrides_only_what_it_sets():
+    """A re-optimised sign is evaluated through param_source='custom'."""
+    scene = data.load_scenes("train")[0]
+    cfg = AttackConfig(param_source="custom", custom={"letter": (10, 20, 30)})
+    sign = signs.build_sign(scene, cfg=cfg)
+    assert sign.fg == (10, 20, 30)
+    # Unset keys fall back to CHAI's values rather than to zero.
+    assert sign.bg == (255, 0, 0)
+    assert sign.scale == pytest.approx(scene.size * 0.93)
+
+
+def test_custom_param_source_requires_parameters():
+    with pytest.raises(ValueError, match="needs custom"):
+        AttackConfig(param_source="custom")
+
+
+def test_unknown_param_source_rejected():
+    with pytest.raises(ValueError, match="param_source"):
+        AttackConfig(param_source="whatever")
 
 
 def test_unreadable_counts_against_asr():
@@ -408,7 +454,7 @@ def test_kaggle_notebook_covers_the_whole_pipeline():
         "".join(c["source"]) for c in json.loads(nb_path.read_text())["cells"]
     )
     for stage in ("midas-eval", "midas-activations", "midas-probes",
-                  "midas-fit-defense", "midas-sweep-defense"):
+                  "midas-fit-defense", "midas-sweep-defense", "midas-optimize"):
         assert stage in joined, f"notebook never runs {stage}"
 
 
@@ -607,3 +653,159 @@ def test_each_stage_can_run_without_the_others():
             missing = (used & shared) - defined - here
             assert not missing, f"stage {stage!r} uses undefined {sorted(missing)}"
             defined |= here
+
+
+# ---------------------------------------------------------------- optimiser
+
+
+def test_candidate_vector_round_trip():
+    """The CE sampler works in vector space; decoding must be lossless."""
+    from midas import optimize
+
+    c = optimize.Candidate(
+        size=1.07, background=(255, 0, 15), letter=(0, 0, 0),
+        position_offset=(-7, 22), phrase_index=3,
+    )
+    back = optimize.Candidate.from_vector(c.to_vector(), n_phrases=10)
+    assert back == c
+
+
+def test_candidate_decoding_clips_to_chais_box():
+    """CHAI's scenic ranges are hard bounds: a sign 3x too big or 400px off
+    would not be the attack they describe."""
+    from midas import optimize
+
+    wild = np.array([99.0, -50, 999, 300, -1, 500, 128, -900, 900, 77])
+    c = optimize.Candidate.from_vector(wild, n_phrases=4)
+    assert optimize.SIZE_RANGE[0] <= c.size <= optimize.SIZE_RANGE[1]
+    assert all(0 <= v <= 255 for v in c.background + c.letter)
+    assert all(-25 <= v <= 25 for v in c.position_offset)
+    assert 0 <= c.phrase_index < 4
+
+
+def test_candidate_json_round_trip():
+    from midas import optimize
+
+    c = optimize.chai_released_candidate("a)")
+    assert optimize.Candidate.from_json(c.to_json()) == c
+
+
+def test_released_candidate_renders_chais_sign(scenes):
+    """The search is seeded with CHAI's own sign so it cannot score worse than
+    the published attack. That seed must actually be CHAI's sign."""
+    from midas import optimize
+
+    c = optimize.chai_released_candidate("a)")
+    sign = signs.build_sign(scenes[0], target="a)", cfg=c.as_attack_config())
+    default = signs.build_sign(scenes[0], target="a)")
+    assert (sign.bg, sign.fg, sign.scale) == (default.bg, default.fg, default.scale)
+
+
+def test_background_code_mode_discards_searched_channels():
+    """CHAI's get_score rewrites the background to (255, 0, b), so red and green
+    are searched and then thrown away. Reproduce that, do not 'fix' it."""
+    from midas import optimize
+
+    c = optimize.Candidate(
+        size=1.0, background=(10, 20, 30), letter=(1, 2, 3),
+        position_offset=(0, 0), phrase_index=0,
+    )
+    assert c.as_attack_config("code").resolve()["background"] == (255, 0, 30)
+    assert c.as_attack_config("json").resolve()["background"] == (10, 20, 30)
+
+
+def test_attackable_scenes_skips_scenes_already_at_target():
+    """main.py skips these; counting them would inflate the score."""
+    from midas import optimize
+
+    all_scenes = data.load_scenes("train")
+    usable = optimize.attackable_scenes(all_scenes, "a)")
+    assert usable, "no attackable scenes for a)"
+    assert all(s.correct_internvl != "a)" for s in usable)
+    assert len(usable) < len(all_scenes)
+
+
+def test_population_refit_keeps_a_variance_floor():
+    """Without a floor the Gaussian collapses onto the first good candidate
+    after a couple of iterations and the search stops exploring."""
+    from midas import optimize
+
+    dist = optimize.Population.initial(n_phrases=8)
+    identical = [
+        optimize.Candidate(1.0, (0, 0, 0), (0, 0, 0), (0, 0), 0) for _ in range(4)
+    ]
+    refit = dist.refit(identical, floor=0.25)
+    assert np.all(refit.std > 0), "variance must not reach zero"
+    assert np.all(refit.std >= 0.25 * np.abs(dist.std) - 1e-9)
+
+
+def test_cross_entropy_search_converges_toward_a_known_optimum():
+    """End-to-end on an objective whose best point in the box is known.
+
+    Guards the loop's wiring -- sampling, elite selection, refitting. An earlier
+    version of this test scored candidates by frame brightness, which no sign
+    could move: the search sat on its seed at 0% for every iteration and the
+    test passed anyway.
+    """
+    from midas import optimize
+
+    scenes = optimize.attackable_scenes(data.load_scenes("train"), "a)")
+    goal = optimize.Candidate(
+        size=1.2, background=(0, 0, 255), letter=(255, 255, 255),
+        position_offset=(25, -25), phrase_index=0,
+    )
+    span = np.array([0.4, 255, 255, 255, 255, 255, 255, 50, 50, 1.0])
+
+    def score_fn(c):
+        # 1.0 at the optimum, falling off with normalised distance.
+        d = np.abs(c.to_vector() - goal.to_vector()) / span
+        return float(max(0.0, 1.0 - d.mean()))
+
+    best, history = optimize.cross_entropy_search(
+        None, scenes, "a)", iterations=12, population=24, seed=0, score_fn=score_fn,
+    )
+
+    assert len(history) == 12
+    first, last = history[0]["best_score"], history[-1]["best_score"]
+    assert last > first, f"search did not improve: {first:.3f} -> {last:.3f}"
+    assert history[-1]["elite_score"] > history[0]["elite_score"]
+    # It should end nearer the optimum than CHAI's seed was.
+    seed_score = score_fn(optimize.chai_released_candidate("a)"))
+    assert score_fn(best) > seed_score
+    assert optimize.SIZE_RANGE[0] <= best.size <= optimize.SIZE_RANGE[1]
+
+
+def test_cross_entropy_search_never_scores_below_chais_seed():
+    """Iteration 0 is seeded with CHAI's released sign, so the reported best can
+    never be worse than the published attack."""
+    from midas import optimize
+
+    scenes = optimize.attackable_scenes(data.load_scenes("train"), "a)")
+    released = optimize.chai_released_candidate("a)")
+
+    def score_fn(c):
+        return 1.0 if c == released else 0.0
+
+    best, history = optimize.cross_entropy_search(
+        None, scenes, "a)", iterations=3, population=6, seed=1, score_fn=score_fn,
+    )
+    assert history[0]["best_score"] == 1.0
+    assert best == released
+
+
+def test_search_result_round_trips_through_disk(tmp_path):
+    """midas-eval --attack-params reads what midas-optimize writes."""
+    from midas import optimize
+
+    best = optimize.Candidate(1.1, (255, 0, 9), (4, 5, 6), (3, -4), 1)
+    path = optimize.save_search(
+        tmp_path / "search.json", best, [{"iteration": 0}], {"model": "stub"}
+    )
+    assert optimize.load_candidate(path) == best
+
+
+def test_optimize_cli_registered():
+    """A console script missing from pyproject fails only on Kaggle, minutes in."""
+    from pathlib import Path
+
+    assert "midas-optimize" in Path("pyproject.toml").read_text()

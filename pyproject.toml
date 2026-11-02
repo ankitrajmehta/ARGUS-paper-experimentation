@@ -13,6 +13,7 @@ midas-activations = "midas.cli.extract_activations:main"
 midas-probes = "midas.cli.train_probes:main"
 midas-fit-defense = "midas.cli.fit_defense:main"
 midas-sweep-defense = "midas.cli.sweep_defense:main"
+midas-optimize = "midas.cli.optimize_attack:main"
 
 [build-system]
 requires = ["setuptools>=68"]

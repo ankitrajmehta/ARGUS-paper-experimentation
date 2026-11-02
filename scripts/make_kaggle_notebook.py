@@ -37,6 +37,7 @@ STAGES = (
     "scale",
     "control",
     "styles",
+    "optimize",
     "defense",
     "package",
 )
@@ -704,6 +705,139 @@ for train_style in names:
         scored = (X - X.mean(0)) @ direction
         acc = max((scored > 0) == (y == 1), (scored < 0) == (y == 1), key=np.mean).mean()
         print(f"{train_style:10s} -> {test_style:10s} {acc:8.1%}")
+''')
+
+# ---------------------------------------------------------------- step 9e
+stage("optimize")
+md("""
+## 9e. CHAI's own search — the method, not just the output
+
+Everything above renders the sign CHAI *published*. Their attack is actually two
+searches, and we had been loading the results of both:
+
+| Stage | CHAI's code | What we were doing |
+|---|---|---|
+| 1. Phrase dictionary proposed by an attacker LLM | `create_dict.py` | load `attack_dicts_internvl.json` |
+| 2. Cross-entropy search over the sign's appearance | `main.py` + scenic/VerifAI | load `optimal_attacks/optimal.json` |
+
+Stage 2 searches a box: size ×0.8–1.2, background RGB, letter RGB, position
+±25 px, and which dictionary phrase to use. This section runs it.
+
+**First, a correction.** `main.py` sets `testing = True`, so its InternVL path
+calls `load_universal("internvl")` and **never reads `optimal.json`**. The two
+describe different signs:
+
+| | `optimal.json` (what we rendered) | `load_universal` (what CHAI run) |
+|---|---|---|
+| background | (255, 0, 15) | (255, 0, 0) |
+| letters | (237, 196, 196) pink | **(0, 0, 0) black** |
+| size | 1.00× | **0.93×** |
+
+Black on red is far more legible than pink on red, so our published rates were
+probably an **underestimate**. Measure that gap before searching.
+""")
+
+code('''
+for model_id, extra in ((STYLE_MODEL, []),
+                        ("OpenGVLab/InternVL2_5-8B", ["--device-map", "auto"])):
+    for source in ("chai_internvl", "optimal_json"):
+        print(f"\\n{'=' * 70}\\n{model_id}  sign={source}\\n{'=' * 70}", flush=True)
+        subprocess.run(
+            ["midas-eval", "--split", "train", "--both",
+             "--model", model_id, "--max-tiles", "6",
+             "--param-source", source, "--save-long",
+             "--out", f"/kaggle/working/results/param_source/{source}", *extra],
+            check=True,
+        )
+''')
+
+code('''
+print(f"{'model':6s} {'sign':14s} {'clean':>8s} {'attacked':>9s} {'delta':>8s}")
+for source in ("chai_internvl", "optimal_json"):
+    for size in ("2B", "8B"):
+        got = {}
+        for f in glob.glob(f"/kaggle/working/results/param_source/{source}/*.json"):
+            d = json.load(open(f))
+            if d["model_id"].split("-")[-1] == size:
+                got[d["label"]] = d["summary"]["asr_chai"]
+        if len(got) == 2:
+            delta = got["attack"] - got["baseline"]
+            print(f"{size:6s} {source:14s} {got['baseline']:8.1%} "
+                  f"{got['attack']:9.1%} {delta:+8.1%}")
+''')
+
+md("""
+### Run the search
+
+The search runs on the 2B. Forced-choice scoring is about ten times cheaper than
+generating a chain of thought per candidate per scene, but the 8B at
+12 × 24 × 6 evaluations would still be roughly four GPU-hours.
+
+`--target a)` matches CHAI, whose `main.py` hardcodes `targets = ["a)"]`. Only
+scenes whose benign answer is not already *proceed* can be attacked toward it,
+which is **6 of the 15** — so one scene is 16.7 points here, and anything under
+two scenes is noise. Iteration 0 is seeded with CHAI's own sign, so the reported
+best can never fall below the published attack.
+
+`--validate` re-runs CHAI's sign and the winner through **real generation** at
+the end: the forced-choice objective is a ranking signal only, having read 53.3%
+where generation read 73.3% on the same scenes.
+""")
+
+code('''
+subprocess.run(
+    ["midas-optimize", "--split", "train", "--model", STYLE_MODEL,
+     "--max-tiles", "6", "--target", "a)",
+     "--iterations", "12", "--population", "24",
+     "--objective", "forced", "--validate",
+     "--out", "/kaggle/working/results/optimize"],
+    check=True,
+)
+''')
+
+md("""
+### Does a re-optimised sign transfer across scale?
+
+CHAI's central claim is that one universal sign works everywhere. A sign tuned on
+the 2B and evaluated on the 8B tests that directly: if it holds up, universality
+extends across model size; if it collapses, their single released parameter set
+is doing more work than the paper implies.
+""")
+
+code('''
+search = sorted(glob.glob("/kaggle/working/results/optimize/*.json"))
+print("search results:", [p.split("/")[-1] for p in search])
+if search:
+    payload = json.load(open(search[0]))
+    print("best:", payload["best"])
+    print("validation:", payload["meta"].get("validation", "not run"))
+
+    subprocess.run(
+        ["midas-eval", "--split", "train", "--attack",
+         "--model", "OpenGVLab/InternVL2_5-8B", "--device-map", "auto",
+         "--max-tiles", "6", "--attack-params", search[0], "--save-long",
+         "--out", "/kaggle/working/results/optimize/transfer_8b"],
+        check=True,
+    )
+''')
+
+code('''
+rows = []
+for label, pattern in (
+    ("2B, CHAI sign", "/kaggle/working/results/param_source/chai_internvl/*.json"),
+    ("8B, re-optimised", "/kaggle/working/results/optimize/transfer_8b/*.json"),
+):
+    for f in sorted(glob.glob(pattern)):
+        d = json.load(open(f))
+        rows.append((label, d["model_id"].split("-")[-1], d["label"],
+                     d["summary"]["asr_chai"]))
+
+print(f"{'run':20s} {'model':6s} {'condition':10s} {'CHAI-rule ASR':>14s}")
+for label, size, cond, asr in rows:
+    print(f"{label:20s} {size:6s} {cond:10s} {asr:14.1%}")
+print("")
+print("The search used 6 attackable scenes, so one scene is 16.7 points there.")
+print("The transfer run is all 15, where one scene is 6.7.")
 ''')
 
 # ---------------------------------------------------------------- step 10

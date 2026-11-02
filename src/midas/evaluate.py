@@ -119,6 +119,10 @@ class RunRecord:
     # give materially different attack rates, so results are not comparable
     # across sources.
     label_source: str = "chai"
+    # Where the sign's appearance came from: "chai_internvl", "optimal_json", or
+    # the path of a midas-optimize search result. CHAI's two released artefacts
+    # describe different signs, so this is not comparable across values either.
+    param_source: str = "chai_internvl"
     results: list[SceneResult] = field(default_factory=list)
     started_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 

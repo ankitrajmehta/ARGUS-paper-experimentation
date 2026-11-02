@@ -196,6 +196,20 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--target-mode", choices=["auto", "dataset"], default="auto")
     parser.add_argument("--background-mode", choices=["code", "json"], default="code")
     parser.add_argument(
+        "--param-source",
+        choices=["chai_internvl", "optimal_json", "custom"],
+        default="chai_internvl",
+        help="where the sign's appearance comes from. chai_internvl (default) is "
+        "what CHAI's own InternVL path renders; optimal_json is their "
+        "optimal.json, which that path never reads. See config.AttackConfig.",
+    )
+    parser.add_argument(
+        "--attack-params",
+        type=Path,
+        default=None,
+        help="a search result from midas-optimize; implies --param-source custom",
+    )
+    parser.add_argument(
         "--style",
         default=None,
         help="injection style instead of CHAI's optimised phrase "
@@ -237,7 +251,16 @@ def main(argv: list[str] | None = None) -> int:
     if missing:
         raise SystemExit(f"{len(missing)} frames missing, first: {missing[0]}")
 
-    cfg = AttackConfig(background_mode=args.background_mode)
+    if args.attack_params:
+        from midas import optimize
+
+        candidate = optimize.load_candidate(args.attack_params)
+        cfg = candidate.as_attack_config(args.background_mode)
+        print(f"sign from {args.attack_params}: {candidate.to_json()}")
+    else:
+        cfg = AttackConfig(
+            param_source=args.param_source, background_mode=args.background_mode
+        )
 
     if args.dry_run:
         print("dry run: stub model, no GPU")
@@ -325,6 +348,9 @@ def main(argv: list[str] | None = None) -> int:
             results=results,
         )
         record.label_source = str(args.labels) if args.labels else "chai"
+        record.param_source = (
+            str(args.attack_params) if args.attack_params else args.param_source
+        )
         path = record.save(args.out)
         print(f"\n{evaluate.summarise(results).as_row(label)}")
         print(f"saved -> {path}")
