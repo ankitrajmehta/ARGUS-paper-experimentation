@@ -156,14 +156,26 @@ def cmd_upload(args: argparse.Namespace) -> None:
 def cmd_run(args: argparse.Namespace) -> None:
     user = require_credentials()
 
-    notebook = ROOT / "kaggle" / "midas_kaggle.ipynb"
+    name = "midas_stages.ipynb" if args.stages else "midas_kaggle.ipynb"
+    notebook = ROOT / "kaggle" / name
     if not notebook.exists():
-        sys.exit("Notebook missing. Run: python scripts/make_kaggle_notebook.py")
+        hint = " --only <stages>" if args.stages else ""
+        sys.exit(f"{name} missing. Run: python scripts/make_kaggle_notebook.py{hint}")
 
     if KERNEL_DIR.exists():
         shutil.rmtree(KERNEL_DIR)
     KERNEL_DIR.mkdir(parents=True)
+    # Kaggle keys a kernel by its slug, not its filename, so pushing under the
+    # same name replaces the running version rather than starting a second one.
     shutil.copy2(notebook, KERNEL_DIR / "midas_kaggle.ipynb")
+    if args.stages:
+        import json as _json
+
+        kept = sorted({
+            c.get("metadata", {}).get("midas_stage")
+            for c in _json.loads(notebook.read_text())["cells"]
+        } - {None})
+        print(f"pushing a stage-limited notebook: {', '.join(kept)}")
 
     (KERNEL_DIR / "kernel-metadata.json").write_text(
         json.dumps(
@@ -276,6 +288,12 @@ def main(argv: list[str] | None = None) -> int:
 
     run = sub.add_parser("run", help="push the notebook and start it on T4 x2")
     run.add_argument("--no-run", action="store_true", help="save without executing")
+    run.add_argument(
+        "--stages",
+        action="store_true",
+        help="push kaggle/midas_stages.ipynb (a stage-limited notebook built with "
+        "make_kaggle_notebook.py --only) instead of the full pipeline",
+    )
     run.set_defaults(func=cmd_run)
 
     sw = sub.add_parser("sweep", help="push the sweep-only kernel (inherits the main run)")

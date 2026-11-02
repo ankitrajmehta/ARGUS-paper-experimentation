@@ -300,7 +300,8 @@ def test_kaggle_notebook_cells_are_valid_python():
     from pathlib import Path
 
     paths = [p for p in (Path("kaggle/midas_kaggle.ipynb"),
-                         Path("kaggle/midas_sweep.ipynb")) if p.exists()]
+                         Path("kaggle/midas_sweep.ipynb"),
+                         Path("kaggle/midas_stages.ipynb")) if p.exists()]
     if not paths:
         pytest.skip("notebooks not generated")
 
@@ -532,3 +533,77 @@ def test_every_style_covers_both_target_actions():
         assert set(phrases) == {"a)", "b)"}, f"style {name} is missing a target"
         for target in ("a)", "b)"):
             assert styles.phrase_for(name, target)
+
+
+def _load_notebook_builder():
+    """Import scripts/make_kaggle_notebook.py without it being on sys.path."""
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location(
+        "_midas_nb", Path("scripts/make_kaggle_notebook.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_stage_filter_always_keeps_setup_and_package():
+    """A trimmed notebook with no setup cannot install the code; with no
+    packaging step its results are never archived and the session is wasted."""
+    nb = _load_notebook_builder()
+
+    for only in ({"control"}, {"styles"}, {"scale"}):
+        cells = nb.build(only)["cells"]
+        stages = {c["metadata"]["midas_stage"] for c in cells}
+        assert "setup" in stages and "package" in stages, (only, stages)
+        assert stages <= only | set(nb.ALWAYS), (only, stages)
+
+
+def test_stage_filter_rejects_unknown_stage():
+    nb = _load_notebook_builder()
+    with pytest.raises(ValueError, match="unknown stage"):
+        nb.build({"no-such-stage"})
+
+
+def test_each_stage_can_run_without_the_others():
+    """Any stage may be skipped, so no stage may depend on a name another one
+    happens to assign.
+
+    This caught SIZES and STYLES being defined inside the scale-study and
+    style cells: selecting only the option-order control produced a notebook
+    that raised NameError on its first line, minutes into a GPU session.
+    """
+    import ast
+
+    nb = _load_notebook_builder()
+    shared = {"SIZES", "STYLES", "STYLE_MODEL", "RESULTS"}
+
+    for stage in nb.STAGES:
+        cells = nb.build({stage})["cells"]
+        defined: set[str] = set()
+        for cell in cells:
+            if cell["cell_type"] != "code":
+                continue
+            source = "".join(cell["source"])
+            lines = [
+                l for l in source.splitlines()
+                if not l.lstrip().startswith(("!", "%"))
+            ]
+            try:
+                tree = ast.parse("\n".join(lines))
+            except SyntaxError:
+                continue  # covered by the cell-parses test
+
+            used = {
+                n.id for n in ast.walk(tree)
+                if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)
+            }
+            # A cell may use what it assigns itself, so count those as defined.
+            here = {
+                n.id for n in ast.walk(tree)
+                if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)
+            }
+            missing = (used & shared) - defined - here
+            assert not missing, f"stage {stage!r} uses undefined {sorted(missing)}"
+            defined |= here

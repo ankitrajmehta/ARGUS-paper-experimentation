@@ -22,15 +22,43 @@ from pathlib import Path
 
 MODEL = "OpenGVLab/InternVL2_5-8B"
 
-CELLS: list[tuple[str, str]] = []
+CELLS: list[tuple[str, str, str]] = []
+
+# Stage names in execution order. "setup" and "package" are always emitted;
+# everything else can be selected with --only, so a re-run spends GPU time on
+# the stages whose results are actually missing instead of reproducing a
+# session's worth of files already committed to the repository.
+STAGES = (
+    "setup",
+    "smoke",
+    "main",
+    "transcripts",
+    "labels",
+    "scale",
+    "control",
+    "styles",
+    "defense",
+    "package",
+)
+ALWAYS = ("setup", "package")
+
+_stage = "setup"
+
+
+def stage(name: str) -> None:
+    """Tag the cells that follow, up to the next call."""
+    global _stage
+    if name not in STAGES:
+        raise ValueError(f"unknown stage {name!r}; expected one of {STAGES}")
+    _stage = name
 
 
 def md(text: str) -> None:
-    CELLS.append(("markdown", text.strip()))
+    CELLS.append(("markdown", text.strip(), _stage))
 
 
 def code(text: str) -> None:
-    CELLS.append(("code", text.strip()))
+    CELLS.append(("code", text.strip(), _stage))
 
 
 # ---------------------------------------------------------------- intro
@@ -284,7 +312,33 @@ print(f"downloaded in {{(time.time() - t0) / 60:.1f}} min -> {{path}}")
 !du -sh {{path}}
 ''')
 
+md("""
+### Shared names
+
+Every stage below is independent and can be skipped, so the constants and
+imports they share are defined once, here, rather than inside whichever stage
+happened to need them first.
+""")
+
+code('''
+import collections, glob, json, subprocess
+from pathlib import Path
+
+# The scale study and the option-order control both sweep these.
+SIZES = ["OpenGVLab/InternVL2_5-1B", "OpenGVLab/InternVL2_5-2B",
+         "OpenGVLab/InternVL2_5-4B"]
+
+# Injection styles run on the 2B: it had 0% unreadable answers, where on the 8B
+# a quarter of replies name both actions and would bury the signal.
+STYLE_MODEL = "OpenGVLab/InternVL2_5-2B"
+STYLES = ["plain", "authority", "override", "urgency"]
+
+RESULTS = Path("/kaggle/working/results")
+print("SIZES:", [s.split("-")[-1] for s in SIZES], " STYLES:", STYLES)
+''')
+
 # ---------------------------------------------------------------- step 6
+stage("smoke")
 md("""
 ## 6. Smoke test — one scene
 
@@ -302,6 +356,7 @@ code(f'''
 ''')
 
 # ---------------------------------------------------------------- step 7
+stage("setup")
 md("""
 ## 7. Check memory headroom before raising the tile count
 
@@ -327,6 +382,7 @@ for name, seq in (("6 tiles", seq6), ("12 tiles", seq12)):
 ''')
 
 # ---------------------------------------------------------------- step 8
+stage("main")
 md("""
 ## 8. The main run — baseline and attack
 
@@ -360,6 +416,7 @@ code(f'''
 ''')
 
 # ---------------------------------------------------------------- step 9
+stage("transcripts")
 md("""
 ## 9. Read the transcripts
 
@@ -389,6 +446,7 @@ for label in ("baseline", "attack"):
     print(f"\\nSUMMARY TURN: {r['short']}")
 ''')
 
+stage("labels")
 md("""
 ## 9b. Re-derive the benign labels
 
@@ -421,6 +479,7 @@ for split in ("train", "test"):
         --out /kaggle/working/results/runs_8b_relabelled
 ''')
 
+stage("scale")
 md("""
 ## 9c. Scale study
 
@@ -438,11 +497,6 @@ The smaller models fit on one T4, so no sharding is needed below 8B.
 """)
 
 code('''
-import subprocess
-
-SIZES = ["OpenGVLab/InternVL2_5-1B", "OpenGVLab/InternVL2_5-2B",
-         "OpenGVLab/InternVL2_5-4B"]
-
 for model_id in SIZES:
     print(f"\\n{'=' * 70}\\n{model_id}\\n{'=' * 70}", flush=True)
     subprocess.run(
@@ -453,6 +507,7 @@ for model_id in SIZES:
     )
 ''')
 
+stage("control")
 md("""
 ### Control: is the one-word summary positional?
 
@@ -480,8 +535,6 @@ for model_id in SIZES + ["OpenGVLab/InternVL2_5-8B"]:
 ''')
 
 code('''
-import collections, glob, json
-
 def load(pattern):
     out = {}
     for f in sorted(glob.glob(pattern)):
@@ -522,6 +575,7 @@ for size, label, s in rows:
           f"{s['unreadable_rate']:11.1%}")
 ''')
 
+stage("styles")
 md("""
 ## 9d. Injection style
 
@@ -549,11 +603,6 @@ replies name both actions, which would bury the signal.
 """)
 
 code('''
-import subprocess
-
-STYLE_MODEL = "OpenGVLab/InternVL2_5-2B"
-STYLES = ["plain", "authority", "override", "urgency"]
-
 for style in STYLES:
     print(f"\\n{'=' * 70}\\nstyle: {style}\\n{'=' * 70}", flush=True)
     subprocess.run(
@@ -658,6 +707,7 @@ for train_style in names:
 ''')
 
 # ---------------------------------------------------------------- step 10
+stage("defense")
 md("""
 ## 10. The defense pipeline (optional, a further 2–3 GPU-hours)
 
@@ -742,6 +792,7 @@ print(f"\\nspread across configurations: {spread:.1%} "
 ''')
 
 # ---------------------------------------------------------------- step 11
+stage("package")
 md("""
 ## 11. Package the results
 
@@ -765,16 +816,30 @@ for f in sorted(glob.glob("/kaggle/working/results/runs_8b/*.json")):
 ''')
 
 
-def build() -> dict:
+def build(only: set[str] | None = None) -> dict:
+    """Assemble the notebook, optionally restricted to some stages.
+
+    ``only`` names the stages to keep; ``setup`` and ``package`` are always
+    kept, since nothing runs without the first and the results are unreachable
+    without the last.
+    """
+    keep = CELLS
+    if only is not None:
+        unknown = only - set(STAGES)
+        if unknown:
+            raise ValueError(f"unknown stage(s) {sorted(unknown)}; expected {STAGES}")
+        wanted = only | set(ALWAYS)
+        keep = [c for c in CELLS if c[2] in wanted]
+
     return {
         "cells": [
             {
                 "cell_type": kind,
-                "metadata": {},
+                "metadata": {"midas_stage": cell_stage},
                 "source": text.splitlines(keepends=True),
                 **({"outputs": [], "execution_count": None} if kind == "code" else {}),
             }
-            for kind, text in CELLS
+            for kind, text, cell_stage in keep
         ],
         "metadata": {
             "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
@@ -812,8 +877,8 @@ feature is causal anywhere it should be here.
 """)
 
     # Reuse the hardware, install and code-loading cells from the main notebook.
-    for kind, text in saved[1:8]:
-        CELLS.append((kind, text))
+    for kind, text, _ in saved[1:8]:
+        CELLS.append((kind, text, _stage))
 
     md(f"""
 ## Inherit the fitted defense
@@ -903,14 +968,50 @@ print("scenes is indistinguishable from no effect.")
     return notebook
 
 
-if __name__ == "__main__":
-    out = Path(__file__).resolve().parents[1] / "kaggle" / "midas_kaggle.ipynb"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(build(), indent=1))
-    print(f"wrote {out}  ({len(CELLS)} cells)")
+def main(argv: list[str] | None = None) -> int:
+    import argparse
 
-    sweep_out = out.parent / "midas_sweep.ipynb"
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--only",
+        default=None,
+        help="comma-separated stages to keep, e.g. 'scale,control,styles'. "
+        f"setup and package are always kept. Choices: {','.join(STAGES)}",
+    )
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=None,
+        help="where to write the notebook (default: kaggle/midas_kaggle.ipynb, "
+        "or kaggle/midas_stages.ipynb when --only is given, so the full "
+        "notebook stays the canonical one in version control)",
+    )
+    args = parser.parse_args(argv)
+
+    kaggle_dir = Path(__file__).resolve().parents[1] / "kaggle"
+    kaggle_dir.mkdir(parents=True, exist_ok=True)
+
+    only = None
+    if args.only:
+        only = {s.strip() for s in args.only.split(",") if s.strip()}
+
+    out = args.out or kaggle_dir / ("midas_stages.ipynb" if only else "midas_kaggle.ipynb")
+    notebook = build(only)
+    out.write_text(json.dumps(notebook, indent=1))
+    kept = sorted({c["metadata"]["midas_stage"] for c in notebook["cells"]},
+                  key=STAGES.index)
+    print(f"wrote {out}  ({len(notebook['cells'])} cells, stages: {', '.join(kept)})")
+
+    if only:
+        return 0
+
+    sweep_out = kaggle_dir / "midas_sweep.ipynb"
     sweep_nb = build_sweep_only("ankitpokhrel/midas-chai-attack-on-internvl2-5-8b")
     sweep_out.write_text(json.dumps(sweep_nb, indent=1))
     print(f"wrote {sweep_out}  ({len(sweep_nb['cells'])} cells)")
     print("\nDeploy with: python scripts/kaggle_deploy.py upload && ... run")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
