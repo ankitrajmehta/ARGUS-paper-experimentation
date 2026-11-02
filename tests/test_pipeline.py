@@ -497,3 +497,38 @@ def test_chai_dictionary_phrases_are_all_renderable():
     for target, phrases in data.load_attack_dictionary().items():
         for phrase in phrases:
             signs.check_renderable(phrase)
+
+
+def test_injection_styles_are_renderable_and_differ_only_in_words():
+    """Every style must render in full and match CHAI's sign in all else.
+
+    If a style differed in colour, scale or position, a difference in attack
+    success could not be attributed to the phrasing.
+    """
+    from midas import styles
+
+    for phrase in styles.all_phrases():
+        signs.check_renderable(phrase)
+
+    scene = data.load_scenes("train")[0]
+    target = data.resolve_target(scene, "auto")
+    reference = signs.build_sign(scene, target=target)
+
+    texts = set()
+    for style in styles.STYLE_NAMES:
+        sign = signs.build_sign(scene, target=target, style=style)
+        assert (sign.bg, sign.fg, sign.scale, sign.origin) == (
+            reference.bg, reference.fg, reference.scale, reference.origin
+        ), f"style {style} changed something other than the text"
+        texts.add(sign.text)
+    assert len(texts) == len(styles.STYLE_NAMES), "styles must use distinct phrases"
+
+
+def test_every_style_covers_both_target_actions():
+    """A style missing a target would silently skip half the scenes."""
+    from midas import styles
+
+    for name, phrases in styles.INJECTION_STYLES.items():
+        assert set(phrases) == {"a)", "b)"}, f"style {name} is missing a target"
+        for target in ("a)", "b)"):
+            assert styles.phrase_for(name, target)

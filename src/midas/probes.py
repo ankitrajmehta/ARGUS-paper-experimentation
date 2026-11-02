@@ -81,6 +81,9 @@ def load_activations(npz_path: Path) -> ActivationSet:
     # only ever held clean and attacked rows, so it is recoverable.
     for row in meta["rows"]:
         row.setdefault("condition", "attack" if row["attacked"] else "clean")
+        # Sweeps recorded before injection styles existed all used CHAI's
+        # dictionary phrases.
+        row.setdefault("style", "control" if row["condition"] == "benign_text" else "chai")
 
     return ActivationSet(
         vectors=vectors,

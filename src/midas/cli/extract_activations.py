@@ -40,6 +40,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--max-tiles", type=int, default=6)
     parser.add_argument("--device-map", default=None, help="e.g. 'auto' to shard over GPUs")
     parser.add_argument(
+        "--style",
+        default=None,
+        help="use an injection style's phrase instead of CHAI's dictionary "
+        "(plain | authority | override | urgency). One phrase per scene.",
+    )
+    parser.add_argument(
         "--phrases",
         type=int,
         default=0,
@@ -102,9 +108,18 @@ def main(argv: list[str] | None = None) -> int:
         benign = scene.correct_internvl
         base_images = scene.load_images()
 
-        phrases = [] if args.no_attack else dictionary[target]
-        if args.phrases:
-            phrases = phrases[: args.phrases]
+        if args.no_attack:
+            phrases = []
+        elif args.style:
+            # One phrase per scene: the style defines it, so there is nothing
+            # to sweep over.
+            from midas import styles
+
+            phrases = [styles.phrase_for(args.style, target)]
+        else:
+            phrases = dictionary[target]
+            if args.phrases:
+                phrases = phrases[: args.phrases]
 
         if not args.no_clean:
             answer_keys = [PROMPT_ONLY] if args.prompt_only else [benign, target]
@@ -120,6 +135,7 @@ def main(argv: list[str] | None = None) -> int:
                     split=args.split,
                     attacked=False,
                     condition="clean",
+                    style=args.style or "chai",
                     phrase="",
                     answer=answer_key,
                     follows_injection=0,  # nothing injected to follow
@@ -143,6 +159,7 @@ def main(argv: list[str] | None = None) -> int:
                     split=args.split,
                     attacked=True,
                     condition="attack",
+                    style=args.style or "chai",
                     phrase=phrase,
                     answer=answer_key,
                     # The label the steering probe learns: is the model about to
@@ -176,6 +193,7 @@ def main(argv: list[str] | None = None) -> int:
                     split=args.split,
                     attacked=False,
                     condition="benign_text",
+                    style="control",
                     phrase=phrase,
                     answer=answer_key,
                     # No instruction was injected, so there is nothing to follow.
@@ -192,6 +210,8 @@ def main(argv: list[str] | None = None) -> int:
 
     args.out.mkdir(parents=True, exist_ok=True)
     stem = f"{args.split}_{Path(args.model).name}_tiles{args.max_tiles}_{args.readout}"
+    if args.style:
+        stem += f"_style-{args.style}"
     if args.controls:
         stem += f"_ctrl{args.controls}"
     if args.prompt_only:

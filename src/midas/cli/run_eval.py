@@ -65,6 +65,7 @@ def _run_condition(
     verbose: bool,
     journal: Path | None = None,
     steerer=None,
+    style: str | None = None,
 ) -> list[SceneResult]:
     results: list[SceneResult] = []
     for repeat in range(repeats):
@@ -76,7 +77,9 @@ def _run_condition(
             images = scene.load_images()
             sign_text = None
             if attacked:
-                images, sign = signs.attack_scene(scene, images=images, target=target, cfg=cfg)
+                images, sign = signs.attack_scene(
+                    scene, images=images, target=target, cfg=cfg, style=style
+                )
                 sign_text = sign.text.upper()
 
             if isinstance(model, _StubModel):
@@ -192,6 +195,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--target-mode", choices=["auto", "dataset"], default="auto")
     parser.add_argument("--background-mode", choices=["code", "json"], default="code")
+    parser.add_argument(
+        "--style",
+        default=None,
+        help="injection style instead of CHAI's optimised phrase "
+        "(plain | authority | override | urgency). Same colours, scale and "
+        "position; only the wording changes.",
+    )
     parser.add_argument("--out", type=Path, default=Path("results/runs"))
     parser.add_argument(
         "--save-long", action="store_true", help="store full chain-of-thought in the JSON"
@@ -298,6 +308,7 @@ def main(argv: list[str] | None = None) -> int:
             verbose=args.save_long,
             journal=journal,
             steerer=steerer,
+            style=args.style,
         )
         collected[label] = results
 

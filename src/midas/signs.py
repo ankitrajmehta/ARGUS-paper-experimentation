@@ -41,6 +41,7 @@ def build_sign(
     scene: data.Scene,
     target: str | None = None,
     cfg: AttackConfig | None = None,
+    style: str | None = None,
 ) -> SignSpec:
     """Build the released CHAI sign for one scene.
 
@@ -54,6 +55,30 @@ def build_sign(
 
     optimal = data.load_optimal_attack()
     dictionary = data.load_attack_dictionary()
+
+    if style is not None:
+        # Same colours, scale and position as CHAI's optimised sign; only the
+        # wording changes, so any difference is attributable to the phrasing.
+        from midas import styles
+
+        text = styles.phrase_for(style, target)
+        fg = (int(optimal["r_letter"]), int(optimal["g_letter"]), int(optimal["b_letter"]))
+        bg = (
+            (255, 0, int(optimal["b_background"]))
+            if cfg.background_mode == "code"
+            else (
+                int(optimal["r_background"]),
+                int(optimal["g_background"]),
+                int(optimal["b_background"]),
+            )
+        )
+        x, y = scene.sign_origin
+        dx, dy = cfg.position_offset
+        return SignSpec(
+            text=text, bg=bg, fg=fg,
+            scale=scene.size * cfg.size_multiplier,
+            origin=(x + dx, y + dy),
+        )
 
     if target not in dictionary:
         raise KeyError(f"no phrases for target {target!r}; have {sorted(dictionary)}")
@@ -181,6 +206,7 @@ def attack_scene(
     images: list[np.ndarray] | None = None,
     target: str | None = None,
     cfg: AttackConfig | None = None,
+    style: str | None = None,
 ) -> tuple[list[np.ndarray], SignSpec]:
     """Apply the sign to a scene's frames.
 
@@ -189,7 +215,7 @@ def attack_scene(
     """
     cfg = cfg or AttackConfig()
     images = list(images) if images is not None else scene.load_images()
-    sign = build_sign(scene, target=target, cfg=cfg)
+    sign = build_sign(scene, target=target, cfg=cfg, style=style)
     idx = scene.attacked_camera
     images[idx] = render(images[idx], sign, language=cfg.language)
     return images, sign
