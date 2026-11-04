@@ -10,6 +10,7 @@ CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 echo "regenerating figures ..."
 .venv/bin/python scripts/make_figures.py
 .venv/bin/python scripts/make_report_figures.py
+.venv/bin/python scripts/make_report_images.py
 
 echo "markdown -> html ..."
 # implicit_figures turns a lone image in a paragraph into <figure> + <figcaption>.
