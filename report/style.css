@@ -1,0 +1,199 @@
+/* Print stylesheet for the MIDAS report.
+   Rendered through headless Chrome, so @page and CSS3 are available. */
+
+@page {
+  size: A4;
+  margin: 20mm 18mm 18mm 18mm;
+}
+
+:root {
+  --ink: #0b0b0b;
+  --ink2: #44433f;
+  --muted: #6e6c66;
+  --rule: #d9d7d1;
+  --surface: #fcfcfb;
+  --accent: #2a78d6;
+  --accent-soft: #eef4fc;
+}
+
+html { font-size: 10.5pt; }
+
+body {
+  font-family: "Charter", "Georgia", "Times New Roman", serif;
+  color: var(--ink2);
+  line-height: 1.52;
+  max-width: 100%;
+  margin: 0;
+  background: #fff;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------------------------------------------------------------- title */
+header#title-block-header {
+  border-bottom: 2.5px solid var(--ink);
+  padding-bottom: 14px;
+  margin-bottom: 30px;
+}
+
+h1.title {
+  font-size: 20pt;
+  line-height: 1.22;
+  color: var(--ink);
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.01em;
+}
+
+p.author, p.date {
+  margin: 2px 0;
+  font-size: 9.5pt;
+  color: var(--muted);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ---------------------------------------------------------- headings */
+h1, h2, h3 {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  color: var(--ink);
+  font-weight: 700;
+  line-height: 1.25;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+h1 {
+  font-size: 15pt;
+  margin: 32px 0 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+  letter-spacing: -0.005em;
+}
+
+/* The executive summary opens the document; no rule above it. */
+body > h1:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+
+h2 { font-size: 12pt; margin: 22px 0 9px; }
+h3 { font-size: 10.5pt; margin: 18px 0 7px; color: var(--ink2); }
+
+p { margin: 0 0 10px; orphans: 3; widows: 3; }
+
+strong { color: var(--ink); font-weight: 700; }
+
+a { color: var(--accent); text-decoration: none; }
+
+/* ------------------------------------------------------------- tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 14px 0 18px;
+  font-size: 9pt;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+thead th {
+  text-align: left;
+  color: var(--ink);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--ink);
+  padding: 7px 9px 6px;
+  vertical-align: bottom;
+}
+
+tbody td {
+  padding: 6px 9px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+tbody tr:last-child td { border-bottom: 1.5px solid var(--ink); }
+
+/* Pandoc emits <colgroup> widths derived from the source Markdown, which makes
+   a one-character header like "#" claim a third of the table. Let the browser
+   size columns from their content instead. */
+colgroup { display: none; }
+table { table-layout: auto; }
+th:first-child, td:first-child { white-space: nowrap; }
+
+/* ------------------------------------------------------------ figures */
+figure {
+  margin: 20px 0 22px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  text-align: center;
+}
+
+figure img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+}
+
+figcaption {
+  font-size: 8.5pt;
+  line-height: 1.45;
+  color: var(--muted);
+  margin-top: 8px;
+  text-align: left;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+figcaption strong { color: var(--ink); }
+
+/* -------------------------------------------------------- block quote */
+blockquote {
+  margin: 14px 0;
+  padding: 11px 15px;
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 3px 3px 0;
+  font-size: 9.5pt;
+  break-inside: avoid;
+}
+
+blockquote p { margin: 0 0 7px; }
+blockquote p:last-child { margin-bottom: 0; }
+blockquote h3 {
+  font-size: 9.5pt;
+  margin: 0 0 5px;
+  font-family: "SF Mono", "Menlo", monospace;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------- code */
+code {
+  font-family: "SF Mono", "Menlo", "Consolas", monospace;
+  font-size: 0.87em;
+  background: #f1efea;
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: var(--ink);
+}
+
+pre {
+  background: #f7f6f2;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 11px 13px;
+  overflow-x: auto;
+  font-size: 8.5pt;
+  line-height: 1.45;
+  break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; font-size: 1em; }
+
+/* --------------------------------------------------------------- misc */
+ul, ol { margin: 0 0 11px; padding-left: 20px; }
+li { margin-bottom: 4px; }
+
+hr {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 26px 0;
+}
+
+/* Keep a heading with the paragraph that follows it. */
+h1 + p, h2 + p, h3 + p, h1 + table, h2 + table { break-before: avoid; }

@@ -113,7 +113,7 @@ def fig_chai_pipeline():
 # ---------------------------------------------------------------- fig 3
 def fig_our_pipeline():
     fig, ax = plt.subplots(figsize=(9, 3.0))
-    ax.set_xlim(0, 10); ax.set_ylim(0, 3.1); ax.axis("off")
+    ax.set_xlim(0, 11.6); ax.set_ylim(0, 3.1); ax.axis("off")
 
     steps = [
         ("1  Get CHAI\nfiles", BLUE), ("2  Put the sign\non the image", BLUE),
@@ -123,7 +123,7 @@ def fig_our_pipeline():
         box(ax, 0.1 + i * 2.45, 2.0, 2.1, 0.8, text, colour)
         if i < 3:
             arrow(ax, 2.2 + i * 2.45, 2.4, 2.55 + i * 2.45, 2.4)
-    ax.text(9.85, 2.4, "attack\nworks", ha="right", va="center",
+    ax.text(11.5, 2.4, "attack\nworks", ha="right", va="center",
             color=INK2, fontsize=8, style="italic")
 
     steps2 = [
@@ -134,7 +134,7 @@ def fig_our_pipeline():
         box(ax, 0.1 + i * 2.45, 0.5, 2.1, 0.8, text, colour, tc="#06281d")
         if i < 3:
             arrow(ax, 2.2 + i * 2.45, 0.9, 2.55 + i * 2.45, 0.9)
-    ax.text(9.85, 0.9, "no effect", ha="right", va="center",
+    ax.text(11.5, 0.9, "no effect", ha="right", va="center",
             color=ORANGE, fontsize=8, weight="bold")
 
     ax.text(0.1, 1.55, "Attack  (steps 1-4)", color=INK2, fontsize=8.5, weight="bold")
