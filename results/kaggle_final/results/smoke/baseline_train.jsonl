@@ -1,0 +1,1 @@
+{"scene_index": 0, "split": "train", "attacked": false, "target": "a)", "benign_label": "b)", "action": "b)", "short": "**Brake**", "long": "", "sign_text": null, "retried": false, "repeat": 0, "gate_score": null, "steered": false}

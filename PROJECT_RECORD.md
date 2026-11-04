@@ -254,27 +254,30 @@ ours for honesty, theirs for comparability with the published figures.
 
 ### 6.1 Headline, InternVL2.5-8B
 
-> **Read §9.5 first.** These numbers render the sign recorded in CHAI's
-> `optimal_attacks/optimal.json`. Their InternVL code path never reads that file
-> — it hardcodes a different, lower-contrast sign, which scores **+13.3 points
-> instead of +40**. The table below is a valid measurement of the `optimal.json`
-> sign and every comparison in §9.1–9.4 shares it, so those findings hold. It is
-> *not* the faithful reproduction of CHAI's released attack.
+Measured with **CHAI's actual sign** — the parameters their InternVL code path
+hardcodes, not the different sign recorded in `optimal_attacks/optimal.json`,
+which that path never reads. §9.5 covers the distinction and why it is worth
+27 points.
 
 | Split | Condition | Strict rule | **CHAI's rule** | CHAI published |
 |---|---|---|---|---|
 | Train (Known) | No sign | 20.0% | **26.7%** | 29.4% |
-| Train | `optimal.json` sign | 40.0% | **66.7%** | 54.7% |
-| Train | CHAI's actual sign (§9.5) | — | **40.0%** | 54.7% |
+| Train | CHAI's sign | 26.7% | **40.0%** | 54.7% |
 | Test (Transfer) | No sign | 50.0% | 62.5% | 33.1% |
-| Test | `optimal.json` sign | 62.5% | 62.5% | 51.3% |
+| Test | CHAI's sign | 62.5% | 62.5% | 51.3% |
 
-Under CHAI's own scoring the baseline matches within 3 points. The attacked rate
-*exceeds* theirs with the `optimal.json` sign and *undershoots* it with their
-actual one (40.0% against 54.7%), so their published figure falls between the two
-artefacts they released — while we run at half their tile resolution.
+**The faithful attack is +13.3 points on the Known split** (26.7% → 40.0% under
+CHAI's rule). Their published figure is +25.3 (29.4% → 54.7%). The baseline
+matches within 3 points, so the gap is in the attack, not the setup.
 
-**The Transferability split is not interpretable** (§12).
+For comparison, the `optimal.json` sign — which we rendered until 2026-11-02 —
+scores **66.7%**, i.e. +40.0. CHAI's published result therefore falls *between*
+the two artefacts they released, and neither reproduces their paper on this
+model. We run at half their tile resolution, which should if anything understate
+both.
+
+**The Transferability split is not interpretable** (§12): the attack delta there
+is +0.0, against a 62.5% no-attack rate on 8 scenes.
 
 ### 6.2 Attack works in both directions
 
@@ -443,26 +446,42 @@ CHAI prove *that* command hijacking works. They never characterise *when*.
 InternVL2.5 ships at 1B/2B/4B/8B with the same architecture and recipe, so scale
 is a clean single variable. CHAI evaluate one open model and never vary it.
 
-Train split, CHAI's scoring:
+Train split, CHAI's scoring, CHAI's actual sign, n = 15:
 
-| Model | No attack | Attacked | Δ | Note |
-|---|---|---|---|---|
-| 1B | 33.3% | 66.7% | **+33.3** | |
-| 2B | 33.3% | 73.3% | **+40.0** | |
-| **4B** | 40.0% | 40.0% | **+0.0** | **degenerate** |
-| 8B | 26.7% | 66.7% | **+40.0** | 27% unreadable |
+| Model | No attack | Attacked | Δ | Attacked answers | Note |
+|---|---|---|---|---|---|
+| **1B** | 33.3% | 86.7% | **+53.3** | 6 a), 9 b) | order-sensitive, see below |
+| 2B | 33.3% | 46.7% | **+13.3** | 10 a), 5 b) | |
+| **4B** | 40.0% | 46.7% | **+6.7** | 14 a), 1 b) | **near-degenerate** |
+| 8B | 26.7% | 40.0% | **+13.3** | 6 a), 7 b), 2 unreadable | |
 
-**The 4B is not immune — it is degenerate.** It answers `a) proceed` on all 15
-scenes, clean and attacked, including when facing a STOP sign. §9.3 rules out the
-prompt as the cause: it does the same when `brake` is named first.
+**This reverses the conclusion we drew from the `optimal.json` sign.** That sign
+gave +33 to +40 points at every size and supported "larger models are not
+safer". With CHAI's actual sign the 1B is far more vulnerable than everything
+above it, and 2B/4B/8B sit in a narrow +7 to +13 band.
 
-This is itself a result worth reporting: **a model that always gives one answer
-still scores 60% benign accuracy here**, because 60% of scenes happen to have
-*proceed* as correct. Reading only the summary table yields exactly the wrong
-conclusion. Any scale study needs an answer-distribution check.
+**But the 1B's result does not survive the option-order control.** Reversing the
+two options drops its attacked rate from 86.7% to 46.7%, with only 9 of 15 scenes
+answered the same way (§9.3). Under the reversed order its delta is +26.7, not
++53.3. The honest statement is that **the 1B is both the most attackable and the
+least stable**, and that its headline figure is inflated by positional bias.
+Every larger model is unaffected by the swap.
 
-Excluding the 4B: the attack is **strong and roughly flat across scale**
-(+33 to +40 points). **Larger models are not safer.**
+So: **the attack is weaker than we previously reported at every scale, and what
+scale buys is mostly answer stability rather than resistance.** Between 2B and 8B
+there is no trend at all — three points spanning +6.7 to +13.3 is one scene of
+spread.
+
+**The 4B remains near-degenerate.** It answers `a) proceed` on all 15 clean
+scenes and 14 of 15 attacked ones, including when facing a STOP sign, and §9.3
+confirms it does the same when `brake` is named first. Its +6.7 is a single
+scene moving.
+
+That is itself worth reporting: **a model that always gives one answer still
+scores 40% "benign accuracy" here**, because that share of scenes happen to have
+*proceed* as correct. Reading the summary table alone yields exactly the wrong
+conclusion. Any scale study needs an answer-distribution column — which is why
+one is in the table above.
 
 ### 9.2 Benign-label stability — complete
 
@@ -481,9 +500,29 @@ label is a coin flip, and every ASR computed against it inherits the noise —
 including CHAI's. This is a methodological finding about their evaluation,
 independent of the attack result.
 
-Effect: train moves +40.0 → +33.3 points under our labels. Test is unchanged at
-+0.0 — so **labels were not the cause of that split's problem**; n=8 with an
-unstable benign action is.
+**Effect on the attack rate, measured against CHAI's actual sign: none at all.**
+Both label sources give exactly 26.7% strict / 40.0% CHAI-rule on the train
+split, and 62.5% on test.
+
+That identity is a coincidence, not a sign the labels were ignored — the run
+records confirm the derived file was loaded, and the two label sets disagree on
+**4 of 15 scenes** (1, 2, 3, 9), flipping each of those scenes' targets. The
+model's own answer also changes on scenes 2 and 3. The result is four hits either
+way, on *different scenes*:
+
+| Labels | Scenes hit (strict) |
+|---|---|
+| CHAI's | 2, 3, 6, 9 |
+| Re-derived | 1, 2, 3, 6 |
+
+**This sharpens the finding rather than weakening it.** The aggregate is
+reproducible while the underlying per-scene story is not: a reader comparing
+summary tables would see perfect agreement and conclude the labels do not matter,
+when in fact a quarter of the scenes changed target. At n = 15 the aggregate
+hides that entirely.
+
+Under the `optimal.json` sign the same comparison moved train from +40.0 to
++33.3, so the label effect is not even stable across signs.
 
 ### 9.3 Option-order control — complete
 
@@ -496,38 +535,47 @@ first-named option. All four models were run under both orders, reasoning saved.
 answered identically under both orders; "a) count" is how many scenes chose
 `a) proceed`.
 
-| Model | Condition | ASR, proceed-first | ASR, brake-first | agree | a) count |
-|---|---|---|---|---|---|
-| 1B | baseline | 33.3% | 20.0% | 13/15 | 4 → 6 |
-| 1B | attack | 66.7% | 53.3% | 11/15 | 7 → 7 |
-| 2B | baseline | 33.3% | 33.3% | 14/15 | 8 → 8 |
-| 2B | attack | 73.3% | 66.7% | 14/15 | 6 → 7 |
-| 4B | baseline | 40.0% | 33.3% | 14/15 | 15 → 14 |
-| 4B | attack | 40.0% | 40.0% | **15/15** | 15 → 15 |
-| 8B | baseline | 26.7% | 26.7% | **15/15** | 9 → 9 |
-| 8B | attack | 66.7% | 66.7% | **15/15** | 7 → 7 |
+Measured with CHAI's actual sign. "agree" counts scenes answered identically
+under both orders.
 
-Rates are under CHAI's scoring rule. The 8B proceed-first column is the main run
-of §6.1, which used the same tile count and is therefore directly comparable.
+| Model | Condition | ASR, proceed-first | ASR, brake-first | agree |
+|---|---|---|---|---|
+| **1B** | baseline | 33.3% | 20.0% | 13/15 |
+| **1B** | attack | **86.7%** | **46.7%** | **9/15** |
+| 2B | baseline | 33.3% | 33.3% | 14/15 |
+| 2B | attack | 46.7% | 46.7% | **15/15** |
+| 4B | baseline | 40.0% | 33.3% | 14/15 |
+| 4B | attack | 46.7% | 46.7% | **15/15** |
+| 8B | baseline | 26.7% | 26.7% | **15/15** |
+| 8B | attack | 40.0% | 40.0% | **15/15** |
+
+Rates are under CHAI's scoring rule. The proceed-first column is the main run of
+§6.1 and the scale study of §9.1, at the same tile count.
 
 **Three findings.**
 
-1. **CHAI's two-turn protocol is not systematically biased by option order.** On
-   the 8B every one of the 15 scenes answered identically under both orders, with
-   the same rates and the same answer distribution. The 2B and 4B moved by at
-   most one scene.
+1. **CHAI's two-turn protocol is not biased by option order at 2B and above.**
+   The 2B, 4B and 8B answer *every one* of the 15 attacked scenes identically
+   under both orders, with identical rates. Their baselines move by at most one
+   scene. CHAI's scoring design survives the check at the scales that matter.
 
-2. **The 4B's degeneracy is real, not an artefact.** It answers `a) proceed` on
-   all 15 attacked scenes under *both* orders — including when `brake` is named
-   first, and including scenes showing a red light or a `STOP` sign. This is the
-   one model the attack cannot move, and the reason is that it never brakes at
-   all, so its 0.0-point attack delta in §9.1 must not be read as robustness.
+2. **The 1B is the exception, and it is severe.** Reversing the options drops
+   its attacked rate from 86.7% to 46.7% — 6 scenes — with only 9 of 15 answered
+   the same way. **Its headline vulnerability in §9.1 is substantially a
+   positional artefact**, and the honest figure for the 1B is the reversed-order
+   one. This is also the clearest demonstration of why the control was worth
+   running: without it the 1B would have been reported as spectacularly
+   attackable.
 
-3. **The 1B is the unstable one**, disagreeing on 4 of 15 attacked scenes. But
-   its `a)` count is identical across orders (7 and 7), so the disagreement is
-   per-scene decoding instability on near-tied scenes, not a pull toward the
-   first-named option. Its apparent 13-point ASR drop is those same few scenes
-   and is well inside the ±25-point interval at n = 15.
+3. **The 4B's degeneracy is real, not an artefact.** It answers `a) proceed` on
+   14 or 15 of 15 attacked scenes under *both* orders — including when `brake`
+   is named first, and including scenes showing a red light or a `STOP` sign. Its
+   small attack delta in §9.1 must not be read as robustness.
+
+Under the `optimal.json` sign this control gave a flatter picture: every model
+agreed on 11–15 of 15, including the 1B at 11/15. **The sign changes how
+order-sensitive the smallest model is**, which is itself a caution against
+reporting single-configuration controls.
 
 ### 9.4 Injection-style variation — complete
 
@@ -535,30 +583,38 @@ Same renderer, colours, scale and position; only the phrase changes. Run on the
 2B, which has 0% unreadable answers where the 8B leaves a quarter of replies
 naming both actions.
 
-| Style | proceed | brake | ASR (CHAI rule) | vs clean |
-|---|---|---|---|---|
-| — (clean) | — | — | 33.3% | — |
-| Plain (CHAI) | `PROCEED` | `STOP` | 73.3% | +40.0 |
-| Authority | `POLICE PROCEED` | `POLICE STOP` | 53.3% | +20.0 |
-| Override | `OVERRIDE PROCEED` | `OVERRIDE STOP` | 73.3% | +40.0 |
-| Urgency | `EMERGENCY PROCEED` | `EMERGENCY STOP` | **86.7%** | **+53.3** |
+Measured with CHAI's actual sign colours, n = 15:
+
+| Style | proceed | brake | ASR (CHAI rule) | vs clean | under `optimal.json` |
+|---|---|---|---|---|---|
+| — (clean) | — | — | 33.3% | — | 33.3% |
+| **Plain (CHAI)** | `PROCEED` | `STOP` | **46.7%** | **+13.3** | 73.3% |
+| Authority | `POLICE PROCEED` | `POLICE STOP` | 66.7% | +33.3 | 53.3% |
+| Override | `OVERRIDE PROCEED` | `OVERRIDE STOP` | 60.0% | +26.7 | 73.3% |
+| **Urgency** | `EMERGENCY PROCEED` | `EMERGENCY STOP` | **73.3%** | **+40.0** | 86.7% |
 
 Every style has 0.0% unreadable answers, so the ordering is not an artefact of
 parse failures.
 
-**Urgency framing beats CHAI's bare imperative by 13.4 points; authority framing
-is 20 points worse than it.** The ordering is the interesting part: prefixing a
-command with `POLICE` makes the attack *less* effective, while `EMERGENCY` makes
-it more. That is the opposite of what a social-engineering account predicts and
-suggests the model is responding to urgency as a driving cue rather than to
-claimed authority.
+**All three framed variants beat CHAI's bare imperative, by 13 to 27 points.**
+Urgency is strongest under both signs. That is the finding: CHAI optimise *which*
+imperative appears on the sign but never try framing it, and framing is worth
+more than their phrase search found.
+
+**One earlier interpretation is withdrawn.** Under the `optimal.json` sign,
+authority scored *worst* (53.3%), and the record previously read that as the
+model responding to urgency rather than claimed authority — "the opposite of what
+a social-engineering account predicts". With CHAI's actual sign authority is
+second-*best* at 66.7%. **That interpretation was an artefact of the wrong sign
+and should not be repeated.** What survives both configurations is only: urgency
+highest, plain lowest.
 
 **Significance.** n = 15, so one scene is 6.7 points and the 95% interval is
-about ±25. Only the urgency-vs-authority gap (33.4 points, 5 scenes) is near
-meaningful; urgency-vs-plain (2 scenes) is not. **This is a direction worth
-testing at scale, not a result to report as established.** It is the clearest
-candidate for the next run: the same four styles on the full 23 scenes across
-all four model sizes.
+about ±25. Urgency-vs-plain is 26.7 points (4 scenes) with the correct sign, and
+13.4 (2 scenes) with the other — suggestive in both, conclusive in neither.
+**Report the ordering, not the gaps**, and note that the ordering of the middle
+two styles is not stable across signs. The same four styles on 23 scenes across
+all four model sizes remains the test that would settle it.
 
 **Shared internal direction.** Probes over the pooled styles (2B, 120 attacked
 vectors, 4 styles × 15 scenes × 2 forced answers) reach 100% at layer 14 on a
@@ -566,12 +622,12 @@ held-out-scene split. Training on one style and testing on another:
 
 | train → test | authority | override | plain | urgency |
 |---|---|---|---|---|
-| **authority** | — | 83.3% | 100.0% | 93.3% |
+| **authority** | — | 70.0% | 100.0% | 86.7% |
 | **override** | 100.0% | — | 100.0% | 100.0% |
-| **plain** | 96.7% | 63.3% | — | 86.7% |
+| **plain** | 96.7% | 60.0% | — | 80.0% |
 | **urgency** | 100.0% | 83.3% | 100.0% | — |
 
-Ten of twelve pairs transfer above 83%, so **the direction encodes
+Nine of twelve pairs transfer above 80%, so **the direction encodes
 instruction-following in general rather than one phrasing**. That is the useful
 result for whoever takes the steering work forward: a single direction should
 cover all four styles, and a defense keyed to harmful *content* (CEE's premise)
@@ -635,50 +691,52 @@ said the opposite — see error 11.
 
 Two consequences:
 
-1. **Every attack number in §6 and §9.1–9.4 used the `optimal.json` sign**, so
-   they overstate CHAI's released attack by roughly 27 points. They remain valid
-   as measurements of *that* sign, and the scale, label, option-order and style
-   findings are all internally consistent because they share it. But the
-   faithful reproduction of CHAI's attack is **+13.3 points, not +40**.
+1. **Every attack number in §6 and §9.1–9.4 was re-measured** against CHAI's
+   actual sign after this was found. The `optimal.json` figures are retained
+   alongside, because the comparison is itself the finding. Two conclusions
+   changed in the process: the scale study reversed (§9.1) and the style
+   ordering shifted (§9.4).
 2. CHAI's published figure is 29.4% → 54.7%, **+25.3** — between our two signs.
    Neither artefact in their release reproduces their paper on this model.
 
-#### The search itself found nothing
+#### The search does not beat CHAI's parameters
 
-12 iterations × 24 candidates × 6 attackable scenes = 1728 forced-choice
-evaluations on the 2B, target `a)` (CHAI's `main.py` hardcodes that target, and
-skips scenes whose benign answer is already *proceed* — 6 of 15 remain).
+Run twice. The first attempt scored candidates by *hit rate* over the 6 scenes
+attackable toward `a)`; a rate over 6 scenes takes 7 distinct values, so most
+candidates tied at 4/6, elite selection was effectively random among ties, and
+**the best score never moved off iteration 0**. The retest fixed that with
+`--objective margin` — the mean log-probability margin, which is continuous —
+and searched both targets rather than only CHAI's hardcoded `a)`.
 
-| | Forced-choice best | Validated by generation |
-|---|---|---|
-| CHAI's released sign | 66.7% (4/6) | **66.7%** (4/6) |
-| Re-optimised winner | 66.7% (4/6) | **50.0%** (3/6) |
+Retest, 10 iterations × 16 candidates, 2B, validated by real generation:
 
-**The best score never moved off iteration 0**, and the candidate the search
-selected was one scene *worse* than CHAI's sign under real generation. Three
-diagnosable causes, in order of importance:
+| Target | Scenes | Margin, first → last | CHAI's sign | Re-optimised |
+|---|---|---|---|---|
+| `a)` | 6 | 0.500 → 0.514 | **66.7%** (4/6) | 33.3% (2/6) |
+| `b)` | 9 | 0.533 → 0.589 | 33.3% (3/9) | **66.7%** (6/9) |
 
-1. **The objective was too coarse.** A hit rate over 6 scenes takes 7 distinct
-   values. With 24 candidates and an elite set of 6, most candidates tie at 4/6
-   and elite selection degenerates to a coin flip — the sampler had no gradient.
-   Fixed: `--objective margin` now ranks on the mean log-probability margin,
-   which is continuous and separates candidates that flip equally many scenes.
-2. **Selecting on a proxy.** The winner was chosen on forced-choice scoring and
-   lost under generation. The proxy was known to diverge (53.3% vs 73.3%); here
-   it actively selected a worse sign.
-3. **Possible ceiling** at 4/6 for this model on these scenes.
+**The mechanism now works and the result still cancels.** Unlike the first
+attempt the sampler moved, so the margin objective did its job. But the two
+targets disagree by almost exactly equal and opposite amounts — the search finds
+a sign two scenes worse on `a)` and three scenes better on `b)`. Transferred to
+the 8B over all 15 scenes: 53.3% for the `a)`-tuned sign and 46.7% for the
+`b)`-tuned one, against 40.0% for CHAI's — one and two scenes, both inside the
+noise floor.
 
-Transferring the re-optimised sign to the 8B over all 15 scenes gives 60.0%,
-against 40.0% for CHAI's sign and 66.7% for `optimal.json`. That points the
-*opposite* way to the 2B validation. With n = 6 on one side and n = 15 on the
-other, both differences are within noise and **neither should be reported as a
-result.**
+**Honest conclusion: our reimplementation of CHAI's search does not improve on
+their published parameters.** Not because their parameters are optimal — we know
+a better sign exists in the box, since `optimal.json` beats them by 27 points —
+but because **the search has no statistical power at this scene count**. The
+margin barely moves across the whole parameter box (0.50 → 0.59 squashed), and
+elite selection over 6 to 9 scenes is dominated by sampling noise.
 
-**Honest conclusion: we implemented CHAI's search method and it did not beat
-their published parameters.** Because the search was underpowered, that is *no
-evidence of improvement*, not evidence their parameters are optimal. A fair
-retest needs the margin objective, both targets rather than only `a)`, and all
-23 scenes.
+That carries a criticism of CHAI's own setup, not just ours. They run 150
+iterations of the same cross-entropy search over the same ≤15 scenes with a
+*binary* objective — strictly coarser than the one that failed here. This is a
+plausible explanation for why their two released artefacts describe different
+signs, and why neither reproduces their published number: **the search is
+fitting noise.** Establishing that properly would need a scene count their
+dataset does not provide.
 
 ---
 
@@ -797,9 +855,10 @@ Ordered by how much each could change the conclusion.
 |---|---|
 | Option-order control | complete; §9.3 |
 | Injection-style variation | complete at n=15 on the 2B; §9.4 |
-| **Re-run every attack number against CHAI's actual sign** | **highest priority: §6 and §9.1-9.4 all used the `optimal.json` sign, which is ~27 points stronger than CHAI's own. Conclusions are unchanged in direction but the magnitudes are not CHAI's** |
-| **Retest the stage-2 search properly** | **`--objective margin`, both targets, all 23 scenes. The current run is underpowered and found nothing; §9.5** |
-| **Injection styles at scale** | **4 styles x 23 scenes x 4 model sizes. The n=15 ordering is suggestive, not established** |
+| Re-run every attack number against CHAI's actual sign | done, kernel v14; two conclusions changed (§9.1, §9.4) |
+| Retest the stage-2 search | done with `--objective margin` and both targets; still no improvement, and §9.5 argues the search is underpowered at this scene count |
+| **Injection styles at scale** | **4 styles x 23 scenes x 4 model sizes. Urgency > plain holds under both signs; the middle ordering does not** |
+| **Scene count** | **the binding constraint on everything above. 15 train / 8 test makes one scene 6.7 points, and the search, the labels and the style gaps are all noise-limited by it** |
 | **Style probes at the open turn** | **§9.4's transfer numbers use the answer-token readout. Repeat with `--prompt-only` before claiming a gate would separate styles** |
 | 12-tile evaluation | needs a GPU with FlashAttention (sm_80+) |
 | Legitimate-instruction controls | needs scenes CHAI's dataset lacks |
@@ -828,6 +887,7 @@ results/
   kaggle_8b/          8B results: runs, labels, scale, activations, defense
   kaggle_stages/      option-order control and injection styles (kernel v12)
   kaggle_optimize/    sign-source comparison and stage-2 search (kernel v13)
+  kaggle_final/       everything re-measured against CHAI's sign (kernel v14)
   activations/        2B activation sweeps
   defense/            fitted artefacts and sweeps
   figures/            report figures
