@@ -254,15 +254,25 @@ ours for honesty, theirs for comparability with the published figures.
 
 ### 6.1 Headline, InternVL2.5-8B
 
+> **Read §9.5 first.** These numbers render the sign recorded in CHAI's
+> `optimal_attacks/optimal.json`. Their InternVL code path never reads that file
+> — it hardcodes a different, lower-contrast sign, which scores **+13.3 points
+> instead of +40**. The table below is a valid measurement of the `optimal.json`
+> sign and every comparison in §9.1–9.4 shares it, so those findings hold. It is
+> *not* the faithful reproduction of CHAI's released attack.
+
 | Split | Condition | Strict rule | **CHAI's rule** | CHAI published |
 |---|---|---|---|---|
 | Train (Known) | No sign | 20.0% | **26.7%** | 29.4% |
-| Train | CHAI sign | 40.0% | **66.7%** | 54.7% |
+| Train | `optimal.json` sign | 40.0% | **66.7%** | 54.7% |
+| Train | CHAI's actual sign (§9.5) | — | **40.0%** | 54.7% |
 | Test (Transfer) | No sign | 50.0% | 62.5% | 33.1% |
-| Test | CHAI sign | 62.5% | 62.5% | 51.3% |
+| Test | `optimal.json` sign | 62.5% | 62.5% | 51.3% |
 
-Under CHAI's own scoring the baseline matches within 3 points and the attacked
-rate **exceeds** theirs — while running at half their tile resolution.
+Under CHAI's own scoring the baseline matches within 3 points. The attacked rate
+*exceeds* theirs with the `optimal.json` sign and *undershoots* it with their
+actual one (40.0% against 54.7%), so their published figure falls between the two
+artefacts they released — while we run at half their tile resolution.
 
 **The Transferability split is not interpretable** (§12).
 
@@ -582,6 +592,94 @@ action while still looking valid. Now rejected by a guard; an opt-in multi-line
 renderer handles longer phrases and is verified pixel-identical to CHAI's at one
 and two words. All four styles above are at most two words for this reason.
 
+### 9.5 CHAI's stage-2 search — implemented; found no improvement
+
+Everything above §9.5 renders the sign CHAI *published*. Their attack is two
+searches, and we had been loading the output of both:
+
+| Stage | CHAI's code | What we did |
+|---|---|---|
+| 1. Phrase dictionary, proposed by an attacker LLM | `create_dict.py` | load `attack_dicts_internvl.json` |
+| 2. Cross-entropy search over sign appearance | `main.py` + scenic/VerifAI | load `optimal_attacks/optimal.json` |
+
+Stage 2 searches size ×0.8–1.2, background RGB, letter RGB, position ±25 px, and
+which dictionary phrase to use. `midas-optimize` runs it. VerifAI is not used —
+the box is small and a textbook cross-entropy method covers it; convergence is
+verified against an objective with a known optimum (mean 0.17 → 0.79 over 12
+iterations, no variance collapse).
+
+#### Which sign is CHAI's? Two released artefacts disagree
+
+`main.py` sets `testing = True`, so its InternVL path calls
+`load_universal("internvl")` and **never reads `optimal.json`** — the file we had
+been rendering from. They describe different signs, and it matters a great deal:
+
+| | `optimal.json` (what we rendered to 2026-11-02) | `load_universal` (what CHAI run) |
+|---|---|---|
+| Background | (255, 0, 15) | (255, 0, 0) |
+| Letters | (237, 196, 196) light pink | (0, 0, 0) black |
+| Size | 1.00× | 0.93× |
+
+Measured on the train split, n = 15, `--max-tiles 6`, CHAI's scoring rule:
+
+| Sign | 2B clean | 2B attacked | Δ | 8B clean | 8B attacked | Δ |
+|---|---|---|---|---|---|---|
+| `load_universal` — CHAI's actual | 33.3% | 46.7% | **+13.3** | 26.7% | 40.0% | **+13.3** |
+| `optimal.json` — what we used | 33.3% | 73.3% | **+40.0** | 26.7% | 66.7% | **+40.0** |
+
+**The sign we had been using is three times more effective than CHAI's own
+parameters**, and the gap is identical on both model sizes. The reason is
+contrast: pure red has a luminance around 54/255, so light pink on red is high
+luminance contrast while black on red is low. Prediction recorded before the run
+said the opposite — see error 11.
+
+Two consequences:
+
+1. **Every attack number in §6 and §9.1–9.4 used the `optimal.json` sign**, so
+   they overstate CHAI's released attack by roughly 27 points. They remain valid
+   as measurements of *that* sign, and the scale, label, option-order and style
+   findings are all internally consistent because they share it. But the
+   faithful reproduction of CHAI's attack is **+13.3 points, not +40**.
+2. CHAI's published figure is 29.4% → 54.7%, **+25.3** — between our two signs.
+   Neither artefact in their release reproduces their paper on this model.
+
+#### The search itself found nothing
+
+12 iterations × 24 candidates × 6 attackable scenes = 1728 forced-choice
+evaluations on the 2B, target `a)` (CHAI's `main.py` hardcodes that target, and
+skips scenes whose benign answer is already *proceed* — 6 of 15 remain).
+
+| | Forced-choice best | Validated by generation |
+|---|---|---|
+| CHAI's released sign | 66.7% (4/6) | **66.7%** (4/6) |
+| Re-optimised winner | 66.7% (4/6) | **50.0%** (3/6) |
+
+**The best score never moved off iteration 0**, and the candidate the search
+selected was one scene *worse* than CHAI's sign under real generation. Three
+diagnosable causes, in order of importance:
+
+1. **The objective was too coarse.** A hit rate over 6 scenes takes 7 distinct
+   values. With 24 candidates and an elite set of 6, most candidates tie at 4/6
+   and elite selection degenerates to a coin flip — the sampler had no gradient.
+   Fixed: `--objective margin` now ranks on the mean log-probability margin,
+   which is continuous and separates candidates that flip equally many scenes.
+2. **Selecting on a proxy.** The winner was chosen on forced-choice scoring and
+   lost under generation. The proxy was known to diverge (53.3% vs 73.3%); here
+   it actively selected a worse sign.
+3. **Possible ceiling** at 4/6 for this model on these scenes.
+
+Transferring the re-optimised sign to the 8B over all 15 scenes gives 60.0%,
+against 40.0% for CHAI's sign and 66.7% for `optimal.json`. That points the
+*opposite* way to the 2B validation. With n = 6 on one side and n = 15 on the
+other, both differences are within noise and **neither should be reported as a
+result.**
+
+**Honest conclusion: we implemented CHAI's search method and it did not beat
+their published parameters.** Because the search was underpowered, that is *no
+evidence of improvement*, not evidence their parameters are optimal. A fair
+retest needs the margin objective, both targets rather than only `a)`, and all
+23 scenes.
+
 ---
 
 ## 10. Errors made and corrected
@@ -599,6 +697,9 @@ Documented because each changed a conclusion, and most produced
 | 6 | 8B sweep flat at exactly 40.0% | Ran **stale code** from the inherited kernel output, not the uploaded dataset | Prefer the dataset mount; print candidates; test |
 | 7 | Sweep cell silently absent | An edit replaced a span containing it; kernel "succeeded" having skipped the stage | Test asserts every pipeline stage appears |
 | 8 | Option-order results reported before they existed | The `--swap-summarise` instrument was built and committed; its *conclusions* were then stated as if measured. No `scale_swapped/` output existed anywhere | Checked the result files. **An instrument that exists is not a measurement that ran — confirm the output file before quoting a number** |
+| 10 | Rendered the wrong sign throughout | `main.py` sets `testing = True`, so CHAI's InternVL path calls `load_universal("internvl")` and never reads `optimal_attacks/optimal.json`, which we had been loading. Different colours and size | `param_source` selects between them, defaulting to CHAI's actual values. **The faithful attack is +13.3 points, not +40** -- §9.5 |
+| 11 | Predicted the correction would *raise* the attack rate | Reasoned "black on red is more legible than pink on red" from intuition. Pure red has luminance ~54/255, so black on red is *low* luminance contrast and pink on red is high | The measurement reversed it: +40.0 for pink, +13.3 for black. **Stated as a prediction before the run, which is why it was caught; an unstated assumption would have become the explanation** |
+| 12 | CE search never improved, and the test did not catch it | The objective thresholded log-probs to a binary hit; over 6 scenes that is 7 values, so candidates tied and elite selection was random. The end-to-end test scored candidates by frame brightness, which no sign can move, so it passed with the search frozen at 0% | Added `--objective margin` (continuous); gave the loop a `score_fn` hook and a test asserting actual improvement toward a known optimum |
 | 9 | Fetching run v12 overwrote run v10's archive | `kaggle kernels output` writes into one fixed directory and also restores a full copy of the attached dataset (the vendored nuScenes frames, deleted earlier on purpose) | `fetch` now refuses a non-empty directory unless `--force`, takes `--out`, and deletes the source copy |
 
 **Kaggle environment failures** (seven consecutive runs, each exposing one
@@ -623,8 +724,9 @@ vision tower from its embedding; GPU 0 OOM'd carrying 12.26 GB.
 | `midas-probes` | per-layer probes under grouped validation |
 | `midas-fit-defense` | fit direction, subspace, gate |
 | `midas-sweep-defense` | sweep defense configurations |
+| `midas-optimize` | run CHAI's stage-2 cross-entropy sign search |
 
-### Tests — 39, all passing
+### Tests — 57, all passing
 
 Notable guards: prompt drift against CHAI's source; signs rendered out of
 bounds; control phrases that are secretly instructions; phrases the renderer
@@ -695,7 +797,9 @@ Ordered by how much each could change the conclusion.
 |---|---|
 | Option-order control | complete; §9.3 |
 | Injection-style variation | complete at n=15 on the 2B; §9.4 |
-| **Injection styles at scale** | **the clearest next run: 4 styles x 23 scenes x 4 model sizes. The n=15 ordering is suggestive, not established** |
+| **Re-run every attack number against CHAI's actual sign** | **highest priority: §6 and §9.1-9.4 all used the `optimal.json` sign, which is ~27 points stronger than CHAI's own. Conclusions are unchanged in direction but the magnitudes are not CHAI's** |
+| **Retest the stage-2 search properly** | **`--objective margin`, both targets, all 23 scenes. The current run is underpowered and found nothing; §9.5** |
+| **Injection styles at scale** | **4 styles x 23 scenes x 4 model sizes. The n=15 ordering is suggestive, not established** |
 | **Style probes at the open turn** | **§9.4's transfer numbers use the answer-token readout. Repeat with `--prompt-only` before claiming a gate would separate styles** |
 | 12-tile evaluation | needs a GPU with FlashAttention (sm_80+) |
 | Legitimate-instruction controls | needs scenes CHAI's dataset lacks |
@@ -716,13 +820,14 @@ src/midas/            implementation (21 files, 7 CLIs)
   steering.py         defense artefact and steerer (secondary scope)
   tasks/drivelm.py    prompt chain, answer parsing, upstream verification
   models/internvl.py  inference, device mapping, activation extraction
-tests/                39 tests
+tests/                57 tests
 kaggle/               notebooks + deployment README
 scripts/              setup, figures, notebook generation, Kaggle deploy
 results/
   runs_2b_tiles6/     2B attack results
   kaggle_8b/          8B results: runs, labels, scale, activations, defense
   kaggle_stages/      option-order control and injection styles (kernel v12)
+  kaggle_optimize/    sign-source comparison and stage-2 search (kernel v13)
   activations/        2B activation sweeps
   defense/            fitted artefacts and sweeps
   figures/            report figures

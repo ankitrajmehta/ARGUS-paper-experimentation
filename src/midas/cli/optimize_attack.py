@@ -46,9 +46,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--population", type=int, default=16)
     parser.add_argument("--elite-frac", type=float, default=0.25)
     parser.add_argument(
-        "--objective", choices=["forced", "generate"], default="forced",
-        help="forced: compare answer log-probabilities (cheap proxy). "
-        "generate: CHAI's actual test, ~10x the cost.",
+        "--objective", choices=["margin", "forced", "generate"], default="margin",
+        help="margin: mean log-prob margin, continuous so the sampler can rank "
+        "candidates that flip equally many scenes (default). forced: the same "
+        "two passes thresholded to a hit rate -- too coarse at n=6, where the "
+        "first run's best score never moved off iteration 0. generate: CHAI's "
+        "actual test, ~10x the cost.",
     )
     parser.add_argument("--background-mode", choices=["code", "json"], default="code")
     parser.add_argument(
@@ -114,9 +117,12 @@ def main(argv: list[str] | None = None) -> int:
     dictionary = data.load_attack_dictionary()
     print("\n=== search result ===")
     print(f"{'parameter':18s} {'CHAI released':>22s} {'re-optimised':>22s}")
+    as_rendered = lambda c: c.as_attack_config(args.background_mode).resolve()["background"]
     rows = [
         ("size multiplier", f"{released.size:.2f}", f"{best.size:.2f}"),
-        ("background", str(released.background), str(best.background)),
+        # Rendered, not searched: "code" mode discards the red and green
+        # channels, so printing the raw vector invites a false comparison.
+        ("background", str(as_rendered(released)), str(as_rendered(best))),
         ("letter", str(released.letter), str(best.letter)),
         ("position offset", str(released.position_offset), str(best.position_offset)),
         (

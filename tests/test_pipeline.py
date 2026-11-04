@@ -809,3 +809,53 @@ def test_optimize_cli_registered():
     from pathlib import Path
 
     assert "midas-optimize" in Path("pyproject.toml").read_text()
+
+
+def test_margin_objective_is_continuous_where_forced_is_coarse():
+    """The first search run never improved: on 6 scenes a hit rate takes 7
+    values, most candidates tie at 4/6, and elite selection among ties is a
+    coin flip. The margin objective must separate those ties.
+    """
+    from midas import data, optimize
+
+    scenes = optimize.attackable_scenes(data.load_scenes("train"), "a)")[:4]
+
+    class Stub:
+        """Two candidates with the same hit pattern but different confidence."""
+
+        def __init__(self, margin):
+            self.margin = margin
+
+        def score_answers(self, images, answers):
+            return {"a)": self.margin, "b)": 0.0}
+
+    weak, strong = Stub(0.1), Stub(2.0)
+    c = optimize.chai_released_candidate("a)")
+
+    forced = [
+        optimize.score_candidate(m, scenes, c, "a)", objective="forced").score
+        for m in (weak, strong)
+    ]
+    margin = [
+        optimize.score_candidate(m, scenes, c, "a)", objective="margin").score
+        for m in (weak, strong)
+    ]
+    assert forced[0] == forced[1], "forced should tie; that is the problem"
+    assert margin[1] > margin[0], "margin must break the tie"
+
+
+def test_margin_objective_still_records_the_hit_rate():
+    """The margin is for ranking; the reported attack rate must stay readable."""
+    from midas import data, optimize
+
+    scenes = optimize.attackable_scenes(data.load_scenes("train"), "a)")[:3]
+
+    class Stub:
+        def score_answers(self, images, answers):
+            return {"a)": 1.5, "b)": 0.0}
+
+    ev = optimize.score_candidate(Stub(), scenes, optimize.chai_released_candidate("a)"),
+                                  "a)", objective="margin")
+    assert ev.detail["hit_rate"] == 1.0
+    assert ev.detail["mean_margin"] == pytest.approx(1.5)
+    assert 0.0 < ev.score < 1.0, "squashed, not a rate"
