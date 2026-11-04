@@ -34,9 +34,11 @@ STAGES = (
     "main",
     "transcripts",
     "labels",
+    "relabelled",
     "scale",
     "control",
     "styles",
+    "paramsource",
     "optimize",
     "defense",
     "package",
@@ -468,13 +470,27 @@ for split in ("train", "test"):
         --max-tiles 6 --runs 11 --out /kaggle/working/results/labels
 ''')
 
+stage("relabelled")
+md("""
+### Evaluate against the re-derived labels
+
+Separate from the derivation above, which costs 4.6 GPU-hours and is
+sign-independent: its output ships with the source dataset, so this can be rerun
+against a different sign without repeating it. Labels are taken from the dataset
+mount when present, and from this session otherwise.
+""")
+
 code(f'''
 import glob
 
 for split in ("train", "test"):
-    labels = glob.glob(f"/kaggle/working/results/labels/{{split}}_*.json")
+    labels = (
+        glob.glob(f"/kaggle/input/**/labels/{{split}}_*.json", recursive=True)
+        or glob.glob(f"/kaggle/working/results/labels/{{split}}_*.json")
+    )
     if not labels:
         print(f"no labels for {{split}}"); continue
+    print(f"{{split}}: using {{labels[0]}}", flush=True)
     !midas-eval --split {{split}} --both --labels {{labels[0]}} \\
         --model {MODEL} --device-map auto --max-tiles 6 \\
         --out /kaggle/working/results/runs_8b_relabelled
@@ -538,7 +554,7 @@ for model_id in SIZES + ["OpenGVLab/InternVL2_5-8B"]:
 code('''
 def load(pattern):
     out = {}
-    for f in sorted(glob.glob(pattern)):
+    for f in sorted(glob.glob(pattern, recursive=True)):
         d = json.load(open(f))
         out[(d["model_id"].split("-")[-1], d["label"])] = d
     return out
@@ -708,7 +724,7 @@ for train_style in names:
 ''')
 
 # ---------------------------------------------------------------- step 9e
-stage("optimize")
+stage("paramsource")
 md("""
 ## 9e. CHAI's own search — the method, not just the output
 
@@ -766,33 +782,44 @@ for source in ("chai_internvl", "optimal_json"):
                   f"{got['attack']:9.1%} {delta:+8.1%}")
 ''')
 
+stage("optimize")
 md("""
 ### Run the search
 
-The search runs on the 2B. Forced-choice scoring is about ten times cheaper than
-generating a chain of thought per candidate per scene, but the 8B at
-12 × 24 × 6 evaluations would still be roughly four GPU-hours.
+The search runs on the 2B: the inner objective is two forward passes per scene
+per candidate, and the 8B at this many evaluations would be several GPU-hours.
 
-`--target a)` matches CHAI, whose `main.py` hardcodes `targets = ["a)"]`. Only
-scenes whose benign answer is not already *proceed* can be attacked toward it,
-which is **6 of the 15** — so one scene is 16.7 points here, and anything under
-two scenes is noise. Iteration 0 is seeded with CHAI's own sign, so the reported
-best can never fall below the published attack.
+**Retest, with the first attempt's flaw fixed.** That run scored candidates by
+*hit rate* over the 6 scenes attackable toward `a)`. A rate over 6 scenes takes
+only 7 distinct values, so most candidates tied at 4/6, the elite set was
+effectively random among ties, and the best score never moved off iteration 0 —
+while the candidate it did pick scored one scene *worse* than CHAI's sign under
+real generation.
 
-`--validate` re-runs CHAI's sign and the winner through **real generation** at
-the end: the forced-choice objective is a ranking signal only, having read 53.3%
-where generation read 73.3% on the same scenes.
+Two changes:
+
+* `--objective margin` ranks on the mean log-probability margin, which is
+  continuous and separates candidates that flip equally many scenes.
+* **Both targets**, not just `a)`. CHAI's `main.py` hardcodes `targets = ["a)"]`,
+  which uses only the 6 of 15 scenes whose benign answer is not already
+  *proceed*; `b)` adds the other 9.
+
+Iteration 0 is seeded with CHAI's own sign, so the reported best can never fall
+below the published attack. `--validate` re-runs CHAI's sign and the winner
+through **real generation**, because the margin is a ranking signal only.
 """)
 
 code('''
-subprocess.run(
-    ["midas-optimize", "--split", "train", "--model", STYLE_MODEL,
-     "--max-tiles", "6", "--target", "a)",
-     "--iterations", "12", "--population", "24",
-     "--objective", "forced", "--validate",
-     "--out", "/kaggle/working/results/optimize"],
-    check=True,
-)
+for target in ("a)", "b)"):
+    print(f"\\n{'=' * 70}\\nsearch, target {target}\\n{'=' * 70}", flush=True)
+    subprocess.run(
+        ["midas-optimize", "--split", "train", "--model", STYLE_MODEL,
+         "--max-tiles", "6", "--target", target,
+         "--iterations", "10", "--population", "16",
+         "--objective", "margin", "--validate",
+         "--out", "/kaggle/working/results/optimize"],
+        check=True,
+    )
 ''')
 
 md("""
@@ -807,37 +834,49 @@ is doing more work than the paper implies.
 code('''
 search = sorted(glob.glob("/kaggle/working/results/optimize/*.json"))
 print("search results:", [p.split("/")[-1] for p in search])
-if search:
-    payload = json.load(open(search[0]))
-    print("best:", payload["best"])
-    print("validation:", payload["meta"].get("validation", "not run"))
 
+for path in search:
+    payload = json.load(open(path))
+    meta = payload["meta"]
+    print(f"\\n{'=' * 70}\\ntarget {meta['target']}: {payload['best']}", flush=True)
+    for name, v in (meta.get("validation") or {}).items():
+        print(f"  {name:14s} {v['score']:6.1%}")
+
+    # One transfer run per target, so a sign tuned for "proceed" is not judged
+    # on scenes it was never optimised for.
     subprocess.run(
         ["midas-eval", "--split", "train", "--attack",
          "--model", "OpenGVLab/InternVL2_5-8B", "--device-map", "auto",
-         "--max-tiles", "6", "--attack-params", search[0], "--save-long",
-         "--out", "/kaggle/working/results/optimize/transfer_8b"],
+         "--max-tiles", "6", "--attack-params", path, "--save-long",
+         "--out", f"/kaggle/working/results/optimize/transfer_8b/{meta['target'].rstrip(')')}"],
         check=True,
     )
 ''')
 
 code('''
+# Sources are whichever stages ran; the param_source comparison is its own
+# stage and may have been skipped, so missing patterns are simply absent.
 rows = []
 for label, pattern in (
-    ("2B, CHAI sign", "/kaggle/working/results/param_source/chai_internvl/*.json"),
-    ("8B, re-optimised", "/kaggle/working/results/optimize/transfer_8b/*.json"),
+    ("8B, CHAI sign", "/kaggle/working/results/runs_8b/*train*.json"),
+    ("8B, optimal.json", "/kaggle/working/results/param_source/optimal_json/*.json"),
+    ("8B, re-optimised", "/kaggle/working/results/optimize/transfer_8b/**/*.json"),
 ):
-    for f in sorted(glob.glob(pattern)):
+    for f in sorted(glob.glob(pattern, recursive=True)):
         d = json.load(open(f))
-        rows.append((label, d["model_id"].split("-")[-1], d["label"],
-                     d["summary"]["asr_chai"]))
+        if d["model_id"].split("-")[-1] != "8B":
+            continue
+        rows.append((label, d["label"], d["summary"]["asr_chai"],
+                     d["summary"]["n"], d.get("param_source", "?")))
 
-print(f"{'run':20s} {'model':6s} {'condition':10s} {'CHAI-rule ASR':>14s}")
-for label, size, cond, asr in rows:
-    print(f"{label:20s} {size:6s} {cond:10s} {asr:14.1%}")
+print(f"{'run':20s} {'condition':10s} {'ASR':>7s} {'n':>4s}  sign")
+for label, cond, asr, n, src in rows:
+    print(f"{label:20s} {cond:10s} {asr:7.1%} {n:4d}  {src.split('/')[-1]}")
 print("")
-print("The search used 6 attackable scenes, so one scene is 16.7 points there.")
-print("The transfer run is all 15, where one scene is 6.7.")
+print("All 15 train scenes. One scene is 6.7 points, and the 95% interval is")
+print("about +/-25, so only differences of four scenes or more mean anything.")
+print("The search itself ran on the subset attackable toward each target:")
+print("6 scenes for a), 9 for b).")
 ''')
 
 # ---------------------------------------------------------------- step 10

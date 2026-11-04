@@ -113,6 +113,17 @@ def cmd_upload(args: argparse.Namespace) -> None:
             shutil.copy2(source, target)
         print(f"  staged: {item}")
 
+    # Benign labels re-derived on the 8B. Shipping them (a few KB) lets a rerun
+    # evaluate against our own labels without repeating the derivation, which is
+    # 11 unattacked runs per scene -- 4.6 GPU-hours, and sign-independent, so
+    # there is never a reason to redo it.
+    labels = ROOT / "results" / "kaggle_8b" / "results" / "labels"
+    if labels.exists():
+        shutil.copytree(labels, STAGING / "labels")
+        print(f"  staged: labels ({len(list(labels.glob('*.json')))} files)")
+    else:
+        print("  skip (absent): derived labels")
+
     if not VENDOR.exists():
         sys.exit("vendor/chai is missing. Run scripts/setup_vendor.sh first.")
     shutil.copytree(
