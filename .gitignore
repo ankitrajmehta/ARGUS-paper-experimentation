@@ -1,0 +1,26 @@
+# Local environment / caches (rebuildable)
+.claude/
+env/
+venv/
+hf_cache/
+__pycache__/
+*.pyc
+
+# Downloaded models and datasets (pinned HF revisions, see CLAUDE.md)
+models/
+datasets/
+
+# Large binaries
+*.zip
+
+# Outputs: keep results, logs, probes and steering vectors (~40 MB);
+# drop rendered frames (~3.6 GB, rebuilt by experiments/e2*/build) and
+# hidden-state activations (~0.8 GB, recollected by the collect stages)
+outputs/**/*.png
+outputs/**/*.pt
+
+# LaTeX build files
+reports/*.aux
+reports/*.log
+reports/*.out
+reports/*.toc

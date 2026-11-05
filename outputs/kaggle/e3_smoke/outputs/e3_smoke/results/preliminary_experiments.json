@@ -1,0 +1,663 @@
+{
+  "selection_rule": {
+    "single_layer_ranking": "rank layers by the AIA gap between attack and defense directions at the fixed alpha",
+    "final_layers_and_strength": "among defense steering candidates, choose AIA=0 with maximum UIA; if none reach AIA=0, choose the lowest AIA, then highest UIA"
+  },
+  "no_steering": {
+    "UIA": 0.25,
+    "AIA": 0.0,
+    "AIFR": 0.0
+  },
+  "fixed_alpha": 10.0,
+  "layer_range": [
+    8,
+    18
+  ],
+  "fixed_layer_results": [
+    {
+      "layers": [
+        8
+      ],
+      "layer": 8,
+      "alpha": 10.0,
+      "direction": "attack",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "layers": [
+        8
+      ],
+      "layer": 8,
+      "alpha": 10.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "layers": [
+        9
+      ],
+      "layer": 9,
+      "alpha": 10.0,
+      "direction": "attack",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "layers": [
+        9
+      ],
+      "layer": 9,
+      "alpha": 10.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "layers": [
+        10
+      ],
+      "layer": 10,
+      "alpha": 10.0,
+      "direction": "attack",
+      "UIA": 0.25,
+      "AIA": 0.25,
+      "AIFR": 0.25
+    },
+    {
+      "layers": [
+        10
+      ],
+      "layer": 10,
+      "alpha": 10.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "layers": [
+        11
+      ],
+      "layer": 11,
+      "alpha": 10.0,
+      "direction": "attack",
+      "UIA": 0.25,
+      "AIA": 0.25,
+      "AIFR": 0.25
+    },
+    {
+      "layers": [
+        11
+      ],
+      "layer": 11,
+      "alpha": 10.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "layers": [
+        12
+      ],
+      "layer": 12,
+      "alpha": 10.0,
+      "direction": "attack",
+      "UIA": 0.25,
+      "AIA": 0.25,
+      "AIFR": 0.25
+    },
+    {
+      "layers": [
+        12
+      ],
+      "layer": 12,
+      "alpha": 10.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "layers": [
+        13
+      ],
+      "layer": 13,
+      "alpha": 10.0,
+      "direction": "attack",
+      "UIA": 0.25,
+      "AIA": 0.5,
+      "AIFR": 0.5
+    },
+    {
+      "layers": [
+        13
+      ],
+      "layer": 13,
+      "alpha": 10.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "layers": [
+        14
+      ],
+      "layer": 14,
+      "alpha": 10.0,
+      "direction": "attack",
+      "UIA": 0.25,
+      "AIA": 0.5,
+      "AIFR": 0.5
+    },
+    {
+      "layers": [
+        14
+      ],
+      "layer": 14,
+      "alpha": 10.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "layers": [
+        15
+      ],
+      "layer": 15,
+      "alpha": 10.0,
+      "direction": "attack",
+      "UIA": 0.25,
+      "AIA": 0.25,
+      "AIFR": 0.25
+    },
+    {
+      "layers": [
+        15
+      ],
+      "layer": 15,
+      "alpha": 10.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "layers": [
+        16
+      ],
+      "layer": 16,
+      "alpha": 10.0,
+      "direction": "attack",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "layers": [
+        16
+      ],
+      "layer": 16,
+      "alpha": 10.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "layers": [
+        17
+      ],
+      "layer": 17,
+      "alpha": 10.0,
+      "direction": "attack",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "layers": [
+        17
+      ],
+      "layer": 17,
+      "alpha": 10.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "layers": [
+        18
+      ],
+      "layer": 18,
+      "alpha": 10.0,
+      "direction": "attack",
+      "UIA": 0.25,
+      "AIA": 0.25,
+      "AIFR": 0.25
+    },
+    {
+      "layers": [
+        18
+      ],
+      "layer": 18,
+      "alpha": 10.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    }
+  ],
+  "aia_gaps": [
+    {
+      "layer": 8,
+      "aia_gap": 0.0
+    },
+    {
+      "layer": 9,
+      "aia_gap": 0.0
+    },
+    {
+      "layer": 10,
+      "aia_gap": 0.25
+    },
+    {
+      "layer": 11,
+      "aia_gap": 0.25
+    },
+    {
+      "layer": 12,
+      "aia_gap": 0.25
+    },
+    {
+      "layer": 13,
+      "aia_gap": 0.5
+    },
+    {
+      "layer": 14,
+      "aia_gap": 0.5
+    },
+    {
+      "layer": 15,
+      "aia_gap": 0.25
+    },
+    {
+      "layer": 16,
+      "aia_gap": 0.0
+    },
+    {
+      "layer": 17,
+      "aia_gap": 0.0
+    },
+    {
+      "layer": 18,
+      "aia_gap": 0.25
+    }
+  ],
+  "ranked_layers": [
+    13,
+    14,
+    10,
+    11,
+    12,
+    15,
+    18,
+    8,
+    9,
+    16,
+    17
+  ],
+  "best_single_layer": 13,
+  "strength_grid": [
+    5.0,
+    10.0,
+    15.0,
+    20.0,
+    25.0,
+    30.0,
+    35.0,
+    40.0
+  ],
+  "single_sensitivity_results": [
+    {
+      "kind": "single_sensitivity",
+      "layers": [
+        13
+      ],
+      "layer": 13,
+      "alpha": 5.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "single_sensitivity",
+      "layers": [
+        13
+      ],
+      "layer": 13,
+      "alpha": 10.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "single_sensitivity",
+      "layers": [
+        13
+      ],
+      "layer": 13,
+      "alpha": 15.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "single_sensitivity",
+      "layers": [
+        13
+      ],
+      "layer": 13,
+      "alpha": 20.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "single_sensitivity",
+      "layers": [
+        13
+      ],
+      "layer": 13,
+      "alpha": 25.0,
+      "direction": "defense",
+      "UIA": 0.0,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "single_sensitivity",
+      "layers": [
+        13
+      ],
+      "layer": 13,
+      "alpha": 30.0,
+      "direction": "defense",
+      "UIA": 0.0,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "single_sensitivity",
+      "layers": [
+        13
+      ],
+      "layer": 13,
+      "alpha": 35.0,
+      "direction": "defense",
+      "UIA": 0.0,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "single_sensitivity",
+      "layers": [
+        13
+      ],
+      "layer": 13,
+      "alpha": 40.0,
+      "direction": "defense",
+      "UIA": 0.0,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    }
+  ],
+  "multi_topn_values": [
+    2,
+    3,
+    4,
+    5
+  ],
+  "multi_strength_grid": {
+    "2": [
+      10.0,
+      15.0,
+      20.0
+    ],
+    "3": [
+      12.0,
+      15.0,
+      18.0
+    ],
+    "4": [
+      8.0,
+      10.0,
+      12.0
+    ],
+    "5": [
+      6.0,
+      8.0,
+      10.0
+    ]
+  },
+  "multi_layer_results": [
+    {
+      "kind": "multi_topn",
+      "top_n": 2,
+      "layers": [
+        13,
+        14
+      ],
+      "layer": null,
+      "alpha": 10.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "multi_topn",
+      "top_n": 2,
+      "layers": [
+        13,
+        14
+      ],
+      "layer": null,
+      "alpha": 15.0,
+      "direction": "defense",
+      "UIA": 0.0,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "multi_topn",
+      "top_n": 2,
+      "layers": [
+        13,
+        14
+      ],
+      "layer": null,
+      "alpha": 20.0,
+      "direction": "defense",
+      "UIA": 0.0,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "multi_topn",
+      "top_n": 3,
+      "layers": [
+        13,
+        14,
+        10
+      ],
+      "layer": null,
+      "alpha": 12.0,
+      "direction": "defense",
+      "UIA": 0.0,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "multi_topn",
+      "top_n": 3,
+      "layers": [
+        13,
+        14,
+        10
+      ],
+      "layer": null,
+      "alpha": 15.0,
+      "direction": "defense",
+      "UIA": 0.0,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "multi_topn",
+      "top_n": 3,
+      "layers": [
+        13,
+        14,
+        10
+      ],
+      "layer": null,
+      "alpha": 18.0,
+      "direction": "defense",
+      "UIA": 0.0,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "multi_topn",
+      "top_n": 4,
+      "layers": [
+        13,
+        14,
+        10,
+        11
+      ],
+      "layer": null,
+      "alpha": 8.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "multi_topn",
+      "top_n": 4,
+      "layers": [
+        13,
+        14,
+        10,
+        11
+      ],
+      "layer": null,
+      "alpha": 10.0,
+      "direction": "defense",
+      "UIA": 0.0,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "multi_topn",
+      "top_n": 4,
+      "layers": [
+        13,
+        14,
+        10,
+        11
+      ],
+      "layer": null,
+      "alpha": 12.0,
+      "direction": "defense",
+      "UIA": 0.0,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "multi_topn",
+      "top_n": 5,
+      "layers": [
+        13,
+        14,
+        10,
+        11,
+        12
+      ],
+      "layer": null,
+      "alpha": 6.0,
+      "direction": "defense",
+      "UIA": 0.25,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "multi_topn",
+      "top_n": 5,
+      "layers": [
+        13,
+        14,
+        10,
+        11,
+        12
+      ],
+      "layer": null,
+      "alpha": 8.0,
+      "direction": "defense",
+      "UIA": 0.0,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    },
+    {
+      "kind": "multi_topn",
+      "top_n": 5,
+      "layers": [
+        13,
+        14,
+        10,
+        11,
+        12
+      ],
+      "layer": null,
+      "alpha": 10.0,
+      "direction": "defense",
+      "UIA": 0.0,
+      "AIA": 0.0,
+      "AIFR": 0.0
+    }
+  ],
+  "best_layers": [
+    13
+  ],
+  "best_layer": 13,
+  "best_strength": 5.0,
+  "best_strength_metrics": {
+    "kind": "single_sensitivity",
+    "layers": [
+      13
+    ],
+    "layer": 13,
+    "alpha": 5.0,
+    "direction": "defense",
+    "UIA": 0.25,
+    "AIA": 0.0,
+    "AIFR": 0.0
+  },
+  "prediction_path": "/kaggle/working/outputs/e3_smoke/results/preliminary_experiments_predictions.json",
+  "condition_dir": "/kaggle/working/outputs/e3_smoke/results/preliminary_conditions"
+}

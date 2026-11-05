@@ -1,0 +1,26 @@
+{
+  "selection_rule": "Select samples where no-defense attack succeeds and the selected best defense blocks the attack but misses the user answer; rank by how often other defense settings preserve the user answer.",
+  "best_layers": [
+    13
+  ],
+  "best_strength": 5.0,
+  "sample_count": 0,
+  "sample_ids": [],
+  "eval_interval_steps": 100,
+  "patience": 2,
+  "best_objective": 0.0,
+  "history": [
+    {
+      "step": 8,
+      "objective": 0.0,
+      "metrics": {
+        "UIA": 0.0,
+        "AIA": 0.0,
+        "AIFR": 0.0
+      },
+      "improved": true,
+      "stale_evals": 0,
+      "results": []
+    }
+  ]
+}

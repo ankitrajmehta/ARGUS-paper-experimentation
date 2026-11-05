@@ -1,0 +1,12 @@
+[
+  {
+    "layer": 13,
+    "eval_acc": 0.975,
+    "external_eval_acc": 0.86
+  },
+  {
+    "layer": 12,
+    "eval_acc": 0.975,
+    "external_eval_acc": 0.9
+  }
+]

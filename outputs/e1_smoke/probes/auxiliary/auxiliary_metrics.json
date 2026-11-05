@@ -1,0 +1,422 @@
+[
+  {
+    "layer": 0,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 0,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 0,
+    "auxiliary": 3,
+    "eval_acc": 0.25
+  },
+  {
+    "layer": 1,
+    "auxiliary": 1,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 1,
+    "auxiliary": 2,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 1,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 2,
+    "auxiliary": 1,
+    "eval_acc": 1.0
+  },
+  {
+    "layer": 2,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 2,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 3,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 3,
+    "auxiliary": 2,
+    "eval_acc": 0.25
+  },
+  {
+    "layer": 3,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 4,
+    "auxiliary": 1,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 4,
+    "auxiliary": 2,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 4,
+    "auxiliary": 3,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 5,
+    "auxiliary": 1,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 5,
+    "auxiliary": 2,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 5,
+    "auxiliary": 3,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 6,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 6,
+    "auxiliary": 2,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 6,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 7,
+    "auxiliary": 1,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 7,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 7,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 8,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 8,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 8,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 9,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 9,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 9,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 10,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 10,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 10,
+    "auxiliary": 3,
+    "eval_acc": 0.25
+  },
+  {
+    "layer": 11,
+    "auxiliary": 1,
+    "eval_acc": 0.25
+  },
+  {
+    "layer": 11,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 11,
+    "auxiliary": 3,
+    "eval_acc": 0.25
+  },
+  {
+    "layer": 12,
+    "auxiliary": 1,
+    "eval_acc": 0.25
+  },
+  {
+    "layer": 12,
+    "auxiliary": 2,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 12,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 13,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 13,
+    "auxiliary": 2,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 13,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 14,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 14,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 14,
+    "auxiliary": 3,
+    "eval_acc": 0.25
+  },
+  {
+    "layer": 15,
+    "auxiliary": 1,
+    "eval_acc": 0.25
+  },
+  {
+    "layer": 15,
+    "auxiliary": 2,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 15,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 16,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 16,
+    "auxiliary": 2,
+    "eval_acc": 1.0
+  },
+  {
+    "layer": 16,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 17,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 17,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 17,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 18,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 18,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 18,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 19,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 19,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 19,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 20,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 20,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 20,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 21,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 21,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 21,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 22,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 22,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 22,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 23,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 23,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 23,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 24,
+    "auxiliary": 1,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 24,
+    "auxiliary": 2,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 24,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 25,
+    "auxiliary": 1,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 25,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 25,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 26,
+    "auxiliary": 1,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 26,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 26,
+    "auxiliary": 3,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 27,
+    "auxiliary": 1,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 27,
+    "auxiliary": 2,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 27,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  }
+]

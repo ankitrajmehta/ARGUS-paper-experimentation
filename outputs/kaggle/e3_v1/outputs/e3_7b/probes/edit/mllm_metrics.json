@@ -1,0 +1,142 @@
+[
+  {
+    "layer": 0,
+    "eval_acc": 0.775,
+    "external_eval_acc": 0.565
+  },
+  {
+    "layer": 1,
+    "eval_acc": 0.791667,
+    "external_eval_acc": 0.705
+  },
+  {
+    "layer": 2,
+    "eval_acc": 0.833333,
+    "external_eval_acc": 0.55
+  },
+  {
+    "layer": 3,
+    "eval_acc": 0.816667,
+    "external_eval_acc": 0.52
+  },
+  {
+    "layer": 4,
+    "eval_acc": 0.85,
+    "external_eval_acc": 0.6
+  },
+  {
+    "layer": 5,
+    "eval_acc": 0.891667,
+    "external_eval_acc": 0.69
+  },
+  {
+    "layer": 6,
+    "eval_acc": 0.908333,
+    "external_eval_acc": 0.755
+  },
+  {
+    "layer": 7,
+    "eval_acc": 0.9,
+    "external_eval_acc": 0.715
+  },
+  {
+    "layer": 8,
+    "eval_acc": 0.933333,
+    "external_eval_acc": 0.775
+  },
+  {
+    "layer": 9,
+    "eval_acc": 0.95,
+    "external_eval_acc": 0.91
+  },
+  {
+    "layer": 10,
+    "eval_acc": 0.95,
+    "external_eval_acc": 0.86
+  },
+  {
+    "layer": 11,
+    "eval_acc": 0.966667,
+    "external_eval_acc": 0.84
+  },
+  {
+    "layer": 12,
+    "eval_acc": 0.975,
+    "external_eval_acc": 0.9
+  },
+  {
+    "layer": 13,
+    "eval_acc": 0.975,
+    "external_eval_acc": 0.86
+  },
+  {
+    "layer": 14,
+    "eval_acc": 0.991667,
+    "external_eval_acc": 0.975
+  },
+  {
+    "layer": 15,
+    "eval_acc": 0.991667,
+    "external_eval_acc": 0.965
+  },
+  {
+    "layer": 16,
+    "eval_acc": 1.0,
+    "external_eval_acc": 0.99
+  },
+  {
+    "layer": 17,
+    "eval_acc": 1.0,
+    "external_eval_acc": 0.97
+  },
+  {
+    "layer": 18,
+    "eval_acc": 1.0,
+    "external_eval_acc": 0.98
+  },
+  {
+    "layer": 19,
+    "eval_acc": 1.0,
+    "external_eval_acc": 0.99
+  },
+  {
+    "layer": 20,
+    "eval_acc": 1.0,
+    "external_eval_acc": 0.96
+  },
+  {
+    "layer": 21,
+    "eval_acc": 1.0,
+    "external_eval_acc": 0.895
+  },
+  {
+    "layer": 22,
+    "eval_acc": 0.991667,
+    "external_eval_acc": 0.865
+  },
+  {
+    "layer": 23,
+    "eval_acc": 0.991667,
+    "external_eval_acc": 0.83
+  },
+  {
+    "layer": 24,
+    "eval_acc": 0.983333,
+    "external_eval_acc": 0.865
+  },
+  {
+    "layer": 25,
+    "eval_acc": 0.983333,
+    "external_eval_acc": 0.875
+  },
+  {
+    "layer": 26,
+    "eval_acc": 0.95,
+    "external_eval_acc": 0.785
+  },
+  {
+    "layer": 27,
+    "eval_acc": 0.883333,
+    "external_eval_acc": 0.635
+  }
+]

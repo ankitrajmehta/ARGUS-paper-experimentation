@@ -1,0 +1,542 @@
+[
+  {
+    "layer": 0,
+    "auxiliary": 1,
+    "eval_acc": 0.766667
+  },
+  {
+    "layer": 0,
+    "auxiliary": 2,
+    "eval_acc": 0.6
+  },
+  {
+    "layer": 0,
+    "auxiliary": 3,
+    "eval_acc": 0.525
+  },
+  {
+    "layer": 1,
+    "auxiliary": 1,
+    "eval_acc": 0.758333
+  },
+  {
+    "layer": 1,
+    "auxiliary": 2,
+    "eval_acc": 0.691667
+  },
+  {
+    "layer": 1,
+    "auxiliary": 3,
+    "eval_acc": 0.566667
+  },
+  {
+    "layer": 2,
+    "auxiliary": 1,
+    "eval_acc": 0.8
+  },
+  {
+    "layer": 2,
+    "auxiliary": 2,
+    "eval_acc": 0.716667
+  },
+  {
+    "layer": 2,
+    "auxiliary": 3,
+    "eval_acc": 0.591667
+  },
+  {
+    "layer": 3,
+    "auxiliary": 1,
+    "eval_acc": 0.808333
+  },
+  {
+    "layer": 3,
+    "auxiliary": 2,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 3,
+    "auxiliary": 3,
+    "eval_acc": 0.616667
+  },
+  {
+    "layer": 4,
+    "auxiliary": 1,
+    "eval_acc": 0.85
+  },
+  {
+    "layer": 4,
+    "auxiliary": 2,
+    "eval_acc": 0.808333
+  },
+  {
+    "layer": 4,
+    "auxiliary": 3,
+    "eval_acc": 0.708333
+  },
+  {
+    "layer": 5,
+    "auxiliary": 1,
+    "eval_acc": 0.866667
+  },
+  {
+    "layer": 5,
+    "auxiliary": 2,
+    "eval_acc": 0.783333
+  },
+  {
+    "layer": 5,
+    "auxiliary": 3,
+    "eval_acc": 0.683333
+  },
+  {
+    "layer": 6,
+    "auxiliary": 1,
+    "eval_acc": 0.866667
+  },
+  {
+    "layer": 6,
+    "auxiliary": 2,
+    "eval_acc": 0.816667
+  },
+  {
+    "layer": 6,
+    "auxiliary": 3,
+    "eval_acc": 0.708333
+  },
+  {
+    "layer": 7,
+    "auxiliary": 1,
+    "eval_acc": 0.875
+  },
+  {
+    "layer": 7,
+    "auxiliary": 2,
+    "eval_acc": 0.841667
+  },
+  {
+    "layer": 7,
+    "auxiliary": 3,
+    "eval_acc": 0.758333
+  },
+  {
+    "layer": 8,
+    "auxiliary": 1,
+    "eval_acc": 0.866667
+  },
+  {
+    "layer": 8,
+    "auxiliary": 2,
+    "eval_acc": 0.858333
+  },
+  {
+    "layer": 8,
+    "auxiliary": 3,
+    "eval_acc": 0.808333
+  },
+  {
+    "layer": 9,
+    "auxiliary": 1,
+    "eval_acc": 0.9
+  },
+  {
+    "layer": 9,
+    "auxiliary": 2,
+    "eval_acc": 0.808333
+  },
+  {
+    "layer": 9,
+    "auxiliary": 3,
+    "eval_acc": 0.75
+  },
+  {
+    "layer": 10,
+    "auxiliary": 1,
+    "eval_acc": 0.916667
+  },
+  {
+    "layer": 10,
+    "auxiliary": 2,
+    "eval_acc": 0.858333
+  },
+  {
+    "layer": 10,
+    "auxiliary": 3,
+    "eval_acc": 0.766667
+  },
+  {
+    "layer": 11,
+    "auxiliary": 1,
+    "eval_acc": 0.891667
+  },
+  {
+    "layer": 11,
+    "auxiliary": 2,
+    "eval_acc": 0.875
+  },
+  {
+    "layer": 11,
+    "auxiliary": 3,
+    "eval_acc": 0.825
+  },
+  {
+    "layer": 12,
+    "auxiliary": 1,
+    "eval_acc": 0.9
+  },
+  {
+    "layer": 12,
+    "auxiliary": 2,
+    "eval_acc": 0.858333
+  },
+  {
+    "layer": 12,
+    "auxiliary": 3,
+    "eval_acc": 0.791667
+  },
+  {
+    "layer": 13,
+    "auxiliary": 1,
+    "eval_acc": 0.891667
+  },
+  {
+    "layer": 13,
+    "auxiliary": 2,
+    "eval_acc": 0.9
+  },
+  {
+    "layer": 13,
+    "auxiliary": 3,
+    "eval_acc": 0.658333
+  },
+  {
+    "layer": 14,
+    "auxiliary": 1,
+    "eval_acc": 0.891667
+  },
+  {
+    "layer": 14,
+    "auxiliary": 2,
+    "eval_acc": 0.85
+  },
+  {
+    "layer": 14,
+    "auxiliary": 3,
+    "eval_acc": 0.841667
+  },
+  {
+    "layer": 15,
+    "auxiliary": 1,
+    "eval_acc": 0.908333
+  },
+  {
+    "layer": 15,
+    "auxiliary": 2,
+    "eval_acc": 0.916667
+  },
+  {
+    "layer": 15,
+    "auxiliary": 3,
+    "eval_acc": 0.858333
+  },
+  {
+    "layer": 16,
+    "auxiliary": 1,
+    "eval_acc": 0.891667
+  },
+  {
+    "layer": 16,
+    "auxiliary": 2,
+    "eval_acc": 0.916667
+  },
+  {
+    "layer": 16,
+    "auxiliary": 3,
+    "eval_acc": 0.9
+  },
+  {
+    "layer": 17,
+    "auxiliary": 1,
+    "eval_acc": 0.933333
+  },
+  {
+    "layer": 17,
+    "auxiliary": 2,
+    "eval_acc": 0.933333
+  },
+  {
+    "layer": 17,
+    "auxiliary": 3,
+    "eval_acc": 0.866667
+  },
+  {
+    "layer": 18,
+    "auxiliary": 1,
+    "eval_acc": 0.9
+  },
+  {
+    "layer": 18,
+    "auxiliary": 2,
+    "eval_acc": 0.933333
+  },
+  {
+    "layer": 18,
+    "auxiliary": 3,
+    "eval_acc": 0.891667
+  },
+  {
+    "layer": 19,
+    "auxiliary": 1,
+    "eval_acc": 0.941667
+  },
+  {
+    "layer": 19,
+    "auxiliary": 2,
+    "eval_acc": 0.941667
+  },
+  {
+    "layer": 19,
+    "auxiliary": 3,
+    "eval_acc": 0.9
+  },
+  {
+    "layer": 20,
+    "auxiliary": 1,
+    "eval_acc": 0.925
+  },
+  {
+    "layer": 20,
+    "auxiliary": 2,
+    "eval_acc": 0.958333
+  },
+  {
+    "layer": 20,
+    "auxiliary": 3,
+    "eval_acc": 0.891667
+  },
+  {
+    "layer": 21,
+    "auxiliary": 1,
+    "eval_acc": 0.95
+  },
+  {
+    "layer": 21,
+    "auxiliary": 2,
+    "eval_acc": 0.958333
+  },
+  {
+    "layer": 21,
+    "auxiliary": 3,
+    "eval_acc": 0.941667
+  },
+  {
+    "layer": 22,
+    "auxiliary": 1,
+    "eval_acc": 0.916667
+  },
+  {
+    "layer": 22,
+    "auxiliary": 2,
+    "eval_acc": 0.966667
+  },
+  {
+    "layer": 22,
+    "auxiliary": 3,
+    "eval_acc": 0.966667
+  },
+  {
+    "layer": 23,
+    "auxiliary": 1,
+    "eval_acc": 0.933333
+  },
+  {
+    "layer": 23,
+    "auxiliary": 2,
+    "eval_acc": 0.983333
+  },
+  {
+    "layer": 23,
+    "auxiliary": 3,
+    "eval_acc": 0.933333
+  },
+  {
+    "layer": 24,
+    "auxiliary": 1,
+    "eval_acc": 0.95
+  },
+  {
+    "layer": 24,
+    "auxiliary": 2,
+    "eval_acc": 0.958333
+  },
+  {
+    "layer": 24,
+    "auxiliary": 3,
+    "eval_acc": 0.95
+  },
+  {
+    "layer": 25,
+    "auxiliary": 1,
+    "eval_acc": 0.95
+  },
+  {
+    "layer": 25,
+    "auxiliary": 2,
+    "eval_acc": 0.95
+  },
+  {
+    "layer": 25,
+    "auxiliary": 3,
+    "eval_acc": 0.925
+  },
+  {
+    "layer": 26,
+    "auxiliary": 1,
+    "eval_acc": 0.941667
+  },
+  {
+    "layer": 26,
+    "auxiliary": 2,
+    "eval_acc": 0.958333
+  },
+  {
+    "layer": 26,
+    "auxiliary": 3,
+    "eval_acc": 0.925
+  },
+  {
+    "layer": 27,
+    "auxiliary": 1,
+    "eval_acc": 0.883333
+  },
+  {
+    "layer": 27,
+    "auxiliary": 2,
+    "eval_acc": 0.966667
+  },
+  {
+    "layer": 27,
+    "auxiliary": 3,
+    "eval_acc": 0.908333
+  },
+  {
+    "layer": 28,
+    "auxiliary": 1,
+    "eval_acc": 0.908333
+  },
+  {
+    "layer": 28,
+    "auxiliary": 2,
+    "eval_acc": 0.9
+  },
+  {
+    "layer": 28,
+    "auxiliary": 3,
+    "eval_acc": 0.908333
+  },
+  {
+    "layer": 29,
+    "auxiliary": 1,
+    "eval_acc": 0.9
+  },
+  {
+    "layer": 29,
+    "auxiliary": 2,
+    "eval_acc": 0.566667
+  },
+  {
+    "layer": 29,
+    "auxiliary": 3,
+    "eval_acc": 0.5
+  },
+  {
+    "layer": 30,
+    "auxiliary": 1,
+    "eval_acc": 0.883333
+  },
+  {
+    "layer": 30,
+    "auxiliary": 2,
+    "eval_acc": 0.691667
+  },
+  {
+    "layer": 30,
+    "auxiliary": 3,
+    "eval_acc": 0.883333
+  },
+  {
+    "layer": 31,
+    "auxiliary": 1,
+    "eval_acc": 0.866667
+  },
+  {
+    "layer": 31,
+    "auxiliary": 2,
+    "eval_acc": 0.783333
+  },
+  {
+    "layer": 31,
+    "auxiliary": 3,
+    "eval_acc": 0.858333
+  },
+  {
+    "layer": 32,
+    "auxiliary": 1,
+    "eval_acc": 0.883333
+  },
+  {
+    "layer": 32,
+    "auxiliary": 2,
+    "eval_acc": 0.866667
+  },
+  {
+    "layer": 32,
+    "auxiliary": 3,
+    "eval_acc": 0.666667
+  },
+  {
+    "layer": 33,
+    "auxiliary": 1,
+    "eval_acc": 0.816667
+  },
+  {
+    "layer": 33,
+    "auxiliary": 2,
+    "eval_acc": 0.858333
+  },
+  {
+    "layer": 33,
+    "auxiliary": 3,
+    "eval_acc": 0.516667
+  },
+  {
+    "layer": 34,
+    "auxiliary": 1,
+    "eval_acc": 0.875
+  },
+  {
+    "layer": 34,
+    "auxiliary": 2,
+    "eval_acc": 0.683333
+  },
+  {
+    "layer": 34,
+    "auxiliary": 3,
+    "eval_acc": 0.65
+  },
+  {
+    "layer": 35,
+    "auxiliary": 1,
+    "eval_acc": 0.858333
+  },
+  {
+    "layer": 35,
+    "auxiliary": 2,
+    "eval_acc": 0.575
+  },
+  {
+    "layer": 35,
+    "auxiliary": 3,
+    "eval_acc": 0.816667
+  }
+]
