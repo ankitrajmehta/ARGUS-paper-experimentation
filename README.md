@@ -63,6 +63,6 @@ git push
 |---|---|---|
 | `models/`, `datasets/`, `hf_cache/` | many GB | pinned HF revisions, downloaded by the runners (see `CLAUDE.md`) |
 | `env/`, `venv/` | | Python env; pins in `CLAUDE.md` |
-| `thor/*.zip` | 770 MB | AI2-THOR build, `thor/install_build.sh` |
+| `thor/*.zip` | 770 MB | AI2-THOR Linux build `thor-Linux64-f0825767…`; `pip install ai2thor` downloads it on first run, and `thor/install_build.sh` unzips a local copy |
 | `outputs/**/*.png` | 3.6 GB | rendered robot frames, rebuilt by the E2 build stages |
 | `outputs/**/*.pt` | 0.8 GB | hidden-state activations, recollected by the collect stages (the Kaggle copies are still in the kernel outputs) |
