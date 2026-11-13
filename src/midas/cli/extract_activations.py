@@ -40,6 +40,9 @@ def main(argv: list[str] | None = None) -> int:
         "midas-build-scenes) | a path to a scene JSON",
     )
     parser.add_argument("--model", default="models/InternVL2_5-2B")
+    parser.add_argument("--backend", choices=["auto", "internvl", "qwen"], default="auto")
+    parser.add_argument("--vision-dtype", default="auto", help="Qwen only; see midas-eval")
+    parser.add_argument("--max-pixels", type=int, default=None, help="Qwen only")
     parser.add_argument("--device", default="auto")
     parser.add_argument("--dtype", default="auto")
     parser.add_argument("--max-tiles", type=int, default=6)
@@ -89,14 +92,17 @@ def main(argv: list[str] | None = None) -> int:
     dictionary = data.load_attack_dictionary()
     cfg = AttackConfig()
 
-    from midas.models.internvl import InternVLDriveLM
+    from midas.models import load_model
 
-    print(f"loading {args.model} ...")
-    model = InternVLDriveLM(
-        model_id=args.model,
+    print(f"loading {args.model} (backend {args.backend}) ...")
+    model = load_model(
+        args.model,
+        backend=args.backend,
         device=args.device,
         dtype=args.dtype,
+        vision_dtype=args.vision_dtype,
         max_tiles=args.max_tiles,
+        max_pixels=args.max_pixels,
         device_map=args.device_map,
     )
 

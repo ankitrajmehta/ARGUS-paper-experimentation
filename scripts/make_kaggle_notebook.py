@@ -830,6 +830,36 @@ if base:
     print("Compare with the 23-scene numbers above, where one scene was 6.7.")
 ''')
 
+md("""
+### Activations for the steering defense
+
+Collected in the same session, because loading a model is the expensive part and
+the steering work (section 13) needs two readouts of it:
+
+* **prompt-only** -- the open turn, before any token is generated. This is what
+  the detection probe can actually see at inference, and fitting a gate anywhere
+  else was worth 13 points of accuracy when we got it wrong before.
+* **answer** -- teacher-forced at the answer token, both the benign and the
+  attacker's action on the same image. This is the pair the steering direction
+  is fitted on.
+""")
+
+code('''
+for readout_args, label in (
+    (["--prompt-only"], "prompt-only (detection gate)"),
+    ([], "answer token (steering direction)"),
+):
+    print(f"\\n{'=' * 70}\\nactivations: {label}\\n{'=' * 70}", flush=True)
+    subprocess.run(
+        ["midas-activations", "--split", DRIVELM_SCENES, "--model", DRIVELM_MODEL,
+         "--backend", "qwen", "--phrases", "1", "--controls", "2",
+         *LIMIT_ARGS, *readout_args,
+         "--out", "/kaggle/working/results/drivelm/activations"],
+        check=True,
+    )
+print(sorted(glob.glob("/kaggle/working/results/drivelm/activations/*.npz")))
+''')
+
 # ---------------------------------------------------------------- step 9e
 stage("paramsource")
 md("""
