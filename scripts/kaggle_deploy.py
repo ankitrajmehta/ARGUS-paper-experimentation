@@ -91,6 +91,60 @@ def require_credentials() -> str:
     sys.exit("Could not determine the Kaggle username from `kaggle config view`.")
 
 
+def find_activations(requested, roots: list[Path] | None = None) -> Path | None:
+    """Locate a DriveLM activation sweep to ship with the source dataset.
+
+    ``requested`` is a directory, or ``True`` to search the usual fetch
+    destinations. A directory with no ``.npz`` in it is treated as absent: an
+    empty fetch directory is the normal state before a run has completed, and
+    silently staging nothing is worse than saying so.
+    """
+    if roots is None:
+        roots = [
+            ROOT / "results" / "kaggle_drivelm" / "results" / "drivelm" / "activations",
+            ROOT / "results" / "kaggle_8b" / "results" / "drivelm" / "activations",
+        ]
+    candidates = ([Path(requested)] if requested is not True else []) + roots
+    for c in candidates:
+        if c.is_dir() and any(c.glob("*.npz")):
+            return c
+    return None
+
+
+def stage_activations(requested, dest: Path, roots: list[Path] | None = None) -> Path | None:
+    """Copy an activation sweep into the staging tree.
+
+    The steering stage fits its probes from these, and re-extracting them costs
+    a model load plus a forward pass per sample -- so a steering-only kernel
+    inherits them rather than recomputing.
+    """
+    source = find_activations(requested, roots)
+    if source is None:
+        print("  skip (absent): no DriveLM activations found. Fetch a completed run:")
+        print("    python scripts/kaggle_deploy.py fetch --out results/kaggle_drivelm")
+        return None
+
+    dest.mkdir(parents=True, exist_ok=True)
+    # The .json sidecar carries the row metadata -- scene, phrase, condition,
+    # follows_injection. Without it the .npz is an unlabelled block of floats
+    # and no probe can be fitted from it, so both are copied and a missing
+    # sidecar is called out rather than discovered on the GPU.
+    staged = 0
+    for pattern in ("*.npz", "*.json"):
+        for f in sorted(source.glob(pattern)):
+            shutil.copy2(f, dest / f.name)
+            staged += 1
+    orphans = sorted(
+        f.name for f in dest.glob("*.npz") if not f.with_suffix(".json").exists()
+    )
+    size = sum(f.stat().st_size for f in dest.iterdir()) / 1e6
+    print(f"  staged: drivelm/activations ({staged} files, {size:.0f} MB) from {source}")
+    if orphans:
+        print(f"    WARNING: no metadata sidecar for {orphans}; "
+              "these cannot be used to fit a probe")
+    return source
+
+
 def cmd_upload(args: argparse.Namespace) -> None:
     user = require_credentials()
 
@@ -146,6 +200,9 @@ def cmd_upload(args: argparse.Namespace) -> None:
             print(f"    WARNING: {missing} frames missing on disk")
     elif args.drivelm:
         print(f"  skip (absent): {scenes_json} -- run midas-build-scenes first")
+
+    if args.activations:
+        stage_activations(args.activations, STAGING / "drivelm" / "activations")
 
     labels = ROOT / "results" / "kaggle_8b" / "results" / "labels"
     if labels.exists():
@@ -347,6 +404,13 @@ def main(argv: list[str] | None = None) -> int:
     up.add_argument(
         "--drivelm", action="store_true",
         help="also stage data/drivelm/scenes.json and the frames it references",
+    )
+    up.add_argument(
+        "--activations", nargs="?", const=True, default=None, metavar="DIR",
+        help="also stage DriveLM activation sweeps, so a steering-only kernel can "
+        "fit its probes without re-extracting them (a model load plus a forward "
+        "pass per sample). With no argument, looks in results/kaggle_drivelm then "
+        "results/kaggle_8b.",
     )
     up.set_defaults(func=cmd_upload)
 

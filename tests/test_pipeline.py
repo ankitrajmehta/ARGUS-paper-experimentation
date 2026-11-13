@@ -1423,3 +1423,38 @@ def test_stale_artifact_warns_instead_of_silently_misscaling():
 
     source = inspect.getsource(run_eval.main)
     assert "predates" in source and "probe_norm == 1.0" in source
+
+
+def test_activation_staging_carries_the_metadata_sidecar(tmp_path):
+    """A .npz without its .json is an unlabelled block of floats.
+
+    The steering stage fits probes from these on Kaggle; a sweep staged without
+    its row metadata fails after the model has loaded, not before.
+    """
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location(
+        "kaggle_deploy", Path(__file__).resolve().parents[1] / "scripts" / "kaggle_deploy.py"
+    )
+    deploy = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(deploy)
+
+    source = tmp_path / "acts"
+    source.mkdir()
+    (source / "sweep.npz").write_bytes(b"\x00" * 16)
+    (source / "sweep.json").write_text('{"rows": []}')
+    (source / "orphan.npz").write_bytes(b"\x00" * 16)
+
+    dest = tmp_path / "staged"
+    assert deploy.stage_activations(source, dest) == source
+    assert (dest / "sweep.npz").exists() and (dest / "sweep.json").exists()
+    assert (dest / "orphan.npz").exists()
+
+    # An empty or missing directory must report absent, not stage nothing
+    # silently -- that is the normal state before a run has completed.
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    assert deploy.find_activations(empty, roots=[]) is None
+    assert deploy.find_activations(tmp_path / "nope", roots=[]) is None
+    assert deploy.find_activations(True, roots=[source]) == source

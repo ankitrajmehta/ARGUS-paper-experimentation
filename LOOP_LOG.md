@@ -257,3 +257,30 @@ attack rate and wrecks clean accuracy -- the pair has to be read together. It
 prints its own verdict, including the case where the argus schedule is *also*
 inert, which would mean the suspect is the direction or the layer choice rather
 than the step shape.
+
+---
+
+## Iteration 4 — 2026-11-13 15:13 UTC — quiet hold, one gap closed
+
+Kernel v16 `RUNNING` at 2 h 10 m of an estimated ~3.5 h. On track; nothing to
+decide.
+
+**Gap found in the handover path.** The steering stage looks for activations in
+`/kaggle/input/**/drivelm/activations`, but `kaggle_deploy.py upload --drivelm`
+only staged `scenes.json` and the frames. A steering-only kernel would therefore
+have found nothing and re-extracted the sweeps -- a model load plus a forward
+pass per sample, for data the running kernel is producing right now.
+
+Added `upload --activations [DIR]`, defaulting to a search of
+`results/kaggle_drivelm` then `results/kaggle_8b`. Two details worth recording:
+
+* **The `.json` sidecar travels with the `.npz`.** It carries scene, phrase,
+  condition and `follows_injection`; without it the archive is an unlabelled
+  block of floats and no probe can be fitted. A `.npz` with no sidecar is now
+  named in a warning rather than discovered after the model has loaded.
+* **An empty directory reports absent rather than staging nothing.** That is the
+  normal state before a run completes, and a silent no-op there would produce a
+  kernel that fails at the probe-fitting cell for no visible reason.
+
+Pulled out as `find_activations` / `stage_activations` so it is testable without
+a live upload, and tested. 80 -> 81.
