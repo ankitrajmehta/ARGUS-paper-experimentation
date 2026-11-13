@@ -46,3 +46,33 @@ benign action. That is now unnecessary: the scenes carry labels from DriveLM's
 recorded driver behaviour. Dropping it saves about an hour per run. The
 label-agreement comparison is kept as its own step, because it is a result in
 its own right rather than a prerequisite.
+
+**Kaggle account.** The token in `~/.kaggle/access_token` had been replaced on
+12 Nov with one for a different account (`ankitpokhrel101`, used by an unrelated
+project). The first upload went there and *created* a new empty dataset rather
+than versioning the existing one. Restored the original `ankitpokhrel` token,
+backed the other one up to `access_token.spyder-backup` rather than discarding
+it, and confirmed both prior kernels and the dataset are intact.
+
+**Result.** Smoke kernel pushed 12:22 UTC: Qwen2.5-VL-3B, 10 DriveLM scenes,
+baseline plus four framings. Dataset uploaded at 126.8 MB, of which 84 MB is
+600 DriveLM frames.
+
+**Two efficiency changes while waiting**, both baked in at notebook-generation
+time:
+
+* `MIDAS_NO_INTERNVL=1` skips the 16 GB InternVL download. A Qwen-only run was
+  fetching weights it never loads.
+* `MIDAS_DRIVELM_LIMIT` caps the scene count, so the same stage serves a smoke
+  run and the full run.
+
+**GitHub preparation.** A push would have been rejected: three blobs exceed
+GitHub's 100 MB per-file hard limit (a 150 MB results archive and two activation
+tensors at 100 MB and 50 MB). Checking what they actually contain turned up
+something worth fixing on its own merits -- the 123 per-scene result JSONs total
+**4.6 MB** and are the evidence behind every number in the report, yet they were
+gitignored and survived only inside that zip. They are now tracked; the archives
+and tensors are not, and stay on disk. The remaining obstacle is that the
+oversized blobs are still in *history*, so a rewrite is needed before any push.
+Deferred until the experiment result is in, rather than interleaving a history
+rewrite with experiment monitoring.
