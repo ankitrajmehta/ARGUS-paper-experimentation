@@ -332,7 +332,19 @@ class QwenVLDriveLM:
         ``answer=None`` reads the open turn -- the state that exists at
         inference, before any token is generated. With an answer it is
         teacher-forced and read at the final answer token.
+
+        ``readout`` exists for parity with the InternVL runner, where the two
+        values genuinely differ: its chat template closes the assistant turn
+        with ``<|im_end|>\\n``, so the literal final token is a newline shared
+        by every answer and ``"answer"`` has to step back past it. Here the
+        answer is appended straight onto the generation prompt with no closing
+        suffix, so the final token **is** the answer token and the two readouts
+        coincide. Both are accepted; anything else raises, because the value is
+        written into the output filename and the metadata, and silently
+        recording a readout that was not performed is worse than failing.
         """
+        if readout not in {"answer", "last"}:
+            raise ValueError(f"readout must be 'answer' or 'last', got {readout!r}")
         messages = self._messages(images, drivelm.build_prompt())
         text = self.processor.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True

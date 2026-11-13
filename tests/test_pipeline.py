@@ -1588,3 +1588,19 @@ def test_steerer_falls_back_to_the_internvl_nesting():
     # hooking the block they always did.
     assert not hasattr(runner, "ACTIVATION_LAYER_OFFSET")
     assert getattr(runner, "ACTIVATION_LAYER_OFFSET", 1) == 1
+
+
+def test_qwen_activations_validates_the_readout():
+    """The readout string lands in the filename and the metadata.
+
+    On Qwen the two readouts coincide -- no closing suffix follows the answer,
+    so the last token is the answer token. But an unrecognised value used to be
+    accepted silently and then recorded as though it had been honoured.
+    """
+    import pytest
+
+    from midas.models.qwen import QwenVLDriveLM
+
+    runner = QwenVLDriveLM.__new__(QwenVLDriveLM)
+    with pytest.raises(ValueError, match="readout must be"):
+        runner.activations([], answer="brake", readout="penultimate")
