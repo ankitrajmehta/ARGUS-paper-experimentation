@@ -18,9 +18,16 @@ rather than edited by hand.
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 MODEL = "OpenGVLab/InternVL2_5-8B"
+
+# Scenes to evaluate in the DriveLM stage. Set MIDAS_DRIVELM_LIMIT=10 when
+# generating to produce a smoke notebook; unset runs the whole set.
+DRIVELM_LIMIT = os.environ.get("MIDAS_DRIVELM_LIMIT")
+# Set MIDAS_NO_INTERNVL=1 when every selected stage runs Qwen.
+PREFETCH_INTERNVL = not os.environ.get("MIDAS_NO_INTERNVL")
 
 CELLS: list[tuple[str, str, str]] = []
 
@@ -307,13 +314,18 @@ code(f'''
 from huggingface_hub import snapshot_download
 import time
 
-t0 = time.time()
-path = snapshot_download(
-    "{MODEL}",
-    allow_patterns=["*.json", "*.py", "*.safetensors", "*.txt", "*.model"],
-)
-print(f"downloaded in {{(time.time() - t0) / 60:.1f}} min -> {{path}}")
-!du -sh {{path}}
+# Skipped when no selected stage uses InternVL: the 8B is ~16 GB, and a
+# Qwen-only run would spend minutes fetching weights it never loads.
+if {PREFETCH_INTERNVL!r}:
+    t0 = time.time()
+    path = snapshot_download(
+        "{MODEL}",
+        allow_patterns=["*.json", "*.py", "*.safetensors", "*.txt", "*.model"],
+    )
+    print(f"downloaded in {{(time.time() - t0) / 60:.1f}} min -> {{path}}")
+    !du -sh {{path}}
+else:
+    print("skipping the InternVL download: no selected stage uses it")
 ''')
 
 md("""
@@ -769,17 +781,13 @@ print("scenes:", DRIVELM_SCENES)
 print("count :", len(json.load(open(DRIVELM_SCENES))))
 ''')
 
-code('''
-# Derive the benign action for this model. Sampled, not greedy: with greedy
-# decoding every run is identical and the mode over N runs is just one run.
-subprocess.run(
-    ["midas-labels", "--split", DRIVELM_SCENES, "--model", DRIVELM_MODEL,
-     "--backend", "qwen", "--runs", "5",
-     "--out", "/kaggle/working/results/drivelm/labels"],
-    check=True,
-)
-labels = sorted(glob.glob("/kaggle/working/results/drivelm/labels/*.json"))
-print("labels:", labels)
+code(f'''
+# Scenes carry a benign action already, taken from DriveLM's record of what the
+# human driver did. No label-derivation pass is needed, which saves about an
+# hour; section 9f-b compares that label against the model's own vote.
+DRIVELM_LIMIT = {DRIVELM_LIMIT!r}
+LIMIT_ARGS = ["--limit", DRIVELM_LIMIT] if DRIVELM_LIMIT else []
+print("scene limit:", DRIVELM_LIMIT or "none (full set)")
 ''')
 
 code('''
@@ -789,7 +797,7 @@ for style in [None] + STYLES:
     print(f"\\n{'=' * 70}\\nDriveLM / {DRIVELM_MODEL.split('/')[-1]} / {name}\\n{'=' * 70}",
           flush=True)
     cmd = ["midas-eval", "--split", DRIVELM_SCENES, "--model", DRIVELM_MODEL,
-           "--backend", "qwen", "--labels", labels[0], "--save-long",
+           "--backend", "qwen", "--save-long", *LIMIT_ARGS,
            "--out", f"/kaggle/working/results/drivelm/{name}"]
     cmd += ["--baseline"] if style is None else ["--attack", "--style", style]
     subprocess.run(cmd, check=True)
