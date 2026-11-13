@@ -26,6 +26,10 @@ MODEL = "OpenGVLab/InternVL2_5-8B"
 # Scenes to evaluate in the DriveLM stage. Set MIDAS_DRIVELM_LIMIT=10 when
 # generating to produce a smoke notebook; unset runs the whole set.
 DRIVELM_LIMIT = os.environ.get("MIDAS_DRIVELM_LIMIT")
+# Scenes per steering configuration. Six configurations x two conditions at
+# ~24 s per evaluation is 80 minutes per 100 scenes, so the schedule is chosen
+# on a subset and the winner confirmed at full size.
+ARGUS_LIMIT = os.environ.get("MIDAS_ARGUS_LIMIT", "40")
 # Set MIDAS_NO_INTERNVL=1 when every selected stage runs Qwen.
 PREFETCH_INTERNVL = not os.environ.get("MIDAS_NO_INTERNVL")
 
@@ -49,6 +53,7 @@ STAGES = (
     "paramsource",
     "optimize",
     "defense",
+    "argus",
     "package",
 )
 ALWAYS = ("setup", "package")
@@ -350,7 +355,18 @@ STYLE_MODEL = "OpenGVLab/InternVL2_5-2B"
 STYLES = ["plain", "authority", "override", "urgency"]
 
 RESULTS = Path("/kaggle/working/results")
+
+# The DriveLM scene set and the second model family. Both the evaluation stage
+# and the steering stage need these, and either can run without the other, so
+# they are resolved once here. Missing scenes are not an error yet -- only the
+# stages that use them care.
+DRIVELM_MODEL = "Qwen/Qwen2.5-VL-3B-Instruct"
+DRIVELM_SPLIT = "drivelm"
+_found = glob.glob("/kaggle/input/**/drivelm/scenes.json", recursive=True)
+DRIVELM_SCENES = _found[0] if _found else None
+
 print("SIZES:", [s.split("-")[-1] for s in SIZES], " STYLES:", STYLES)
+print("DriveLM scenes:", DRIVELM_SCENES or "not attached")
 ''')
 
 # ---------------------------------------------------------------- step 6
@@ -766,17 +782,14 @@ project that ran these models on the same hardware:
 """)
 
 code('''
-DRIVELM_MODEL = "Qwen/Qwen2.5-VL-3B-Instruct"
-DRIVELM_SPLIT = "drivelm"
-
-scenes = glob.glob("/kaggle/input/**/drivelm/scenes.json", recursive=True)
-if not scenes:
+# Resolved in the setup cell, since the steering stage needs the same two.
+if DRIVELM_SCENES is None:
     raise SystemExit(
         "no DriveLM scenes in the attached dataset. Build them locally and "
         "re-upload:  midas-build-scenes --limit 100 "
         "&& python scripts/kaggle_deploy.py upload --drivelm"
     )
-DRIVELM_SCENES = scenes[0]
+print("model :", DRIVELM_MODEL)
 print("scenes:", DRIVELM_SCENES)
 print("count :", len(json.load(open(DRIVELM_SCENES))))
 ''')
@@ -1099,6 +1112,214 @@ for r in rows:
 spread = max(r["attack_rate"] for r in rows) - min(r["attack_rate"] for r in rows)
 print(f"\\nspread across configurations: {spread:.1%} "
       f"({round(spread * rows[0]['n'])} scenes of {rows[0]['n']})")
+''')
+
+stage("argus")
+md("""
+## 10b. ARGUS-style steering on the DriveLM/Qwen data
+
+Section 10's steering was **inert**: 136,725 activations moved, the forced-choice
+margin shifted by 1.6 nats, and the attack rate stayed at exactly 40.0% across
+all nine configurations. Reading the released ARGUS source shows why that is not
+a contradiction -- their intervention has a shape ours did not:
+
+| | section 10 (uniform) | released ARGUS |
+|---|---|---|
+| first generated token | moderate, capped at 25% of the activation norm | **full magnitude, uncapped** (their run: 9.9) |
+| later tokens | same moderate step | `relu((w.h + b + eps)/||w||^2)`, about 2% of the score each |
+| positions | every position | **last position only** |
+| gate | fitted | fitted |
+
+Their own note is that attacks look "all-or-nothing from the first token", so the
+first step *is* the intervention and the rest only hold the line. A cap of 0.25
+makes that first step impossible, which is the most likely reason ours did
+nothing.
+
+So the comparison below is not "does steering work" but **"is the schedule the
+thing that mattered"**: the same fitted probes, the same gate, the same scenes,
+run under both schedules. If ARGUS lowers the attack rate and uniform does not,
+the section 10 null result is explained rather than merely overturned.
+
+**Direction convention, checked before running.** Their edit probe labels the
+user's answer 0 and the attacker's 1, and `normalized_probe_vector` returns
+`-coef/||coef||`. Our `follows_injection = 1` also means following the sign, so
+the convention matches and the defense direction is `-w/||w||`. This is the one
+detail that silently inverts the result -- their own layer sweep measured 53%
+attack rate steering *toward* the attack against 6% steering away, from the very
+same vector.
+""")
+
+code('''
+if DRIVELM_SCENES is None:
+    raise SystemExit("no DriveLM scenes attached; see the DriveLM stage")
+
+# Activations may be in this session's working directory (if the DriveLM stage
+# ran here) or attached as part of the uploaded dataset (if it ran previously).
+ACT_DIRS = ["/kaggle/working/results/drivelm/activations"]
+ACT_DIRS += sorted(glob.glob("/kaggle/input/**/drivelm/activations", recursive=True))
+
+acts = []
+for d in ACT_DIRS:
+    acts = sorted(glob.glob(f"{d}/*.npz"))
+    if acts:
+        print("activations from:", d)
+        break
+if not acts:
+    raise SystemExit(
+        "no DriveLM activations found. Either run --only drivelm in this session, "
+        "or fetch that run and re-upload:\\n"
+        "  python scripts/kaggle_deploy.py fetch --out results/kaggle_drivelm\\n"
+        "  python scripts/kaggle_deploy.py upload --drivelm"
+    )
+
+ARGUS_MAIN = [a for a in acts if "promptonly" not in a]
+ARGUS_GATE = [a for a in acts if "promptonly" in a]
+print("steering direction :", [a.split("/")[-1] for a in ARGUS_MAIN])
+print("detection gate     :", [a.split("/")[-1] for a in ARGUS_GATE])
+assert ARGUS_MAIN, "no answer-token sweep: the steering direction cannot be fitted"
+assert ARGUS_GATE, "no --prompt-only sweep: the gate would see a state that does not exist"
+''')
+
+md("""
+### Where is "about to follow the sign" readable in Qwen?
+
+The layer sweep first, because the steering layer is chosen from it rather than
+copied from ARGUS. Theirs selected layers 13 and 12 of a 28-layer model; this is
+a 36-layer model, so the same depth is a different index. Accuracy is
+cross-validated with **whole scenes held out** -- any split that leaves a scene
+on both sides lets the probe memorise `(scene, answer)` and score ~100% at layer
+1, long before the network could encode anything.
+""")
+
+code('''
+subprocess.run(
+    ["midas-probes", *ARGUS_MAIN, "--out",
+     "/kaggle/working/results/drivelm/probes_qwen.json"],
+    check=True,
+)
+''')
+
+code('''
+subprocess.run(
+    ["midas-fit-defense", *ARGUS_MAIN,
+     "--gate-activations", *ARGUS_GATE,
+     "--top-n", "2",            # ARGUS steered two layers; so do we
+     "--out", "/kaggle/working/results/drivelm/defense/qwen"],
+    check=True,
+)
+print(open("/kaggle/working/results/drivelm/defense/qwen.json").read())
+''')
+
+code(f'''
+# The schedule comparison. Each configuration re-runs baseline *and* attacked
+# scenes, because a defense that simply brakes everywhere would show a perfect
+# attack rate and a destroyed clean accuracy -- both numbers are needed.
+ARGUS_DEFENSE = "/kaggle/working/results/drivelm/defense/qwen"
+ARGUS_STYLE = "plain"      # the strongest framing on this model in the smoke run
+ARGUS_LIMIT = {ARGUS_LIMIT!r}
+
+# Deliberately short: at ~24 s per scene-evaluation a 100-scene config is about
+# 80 minutes, and six of them would not fit a session. Pick the schedule on a
+# subset, then confirm the winner at full size.
+ARGUS_CONFIGS = [
+    ("none",            []),
+    ("argus s=5",       ["--schedule", "argus", "--first-step-norm", "5"]),
+    ("argus s=10",      ["--schedule", "argus", "--first-step-norm", "10"]),
+    ("argus s=20",      ["--schedule", "argus", "--first-step-norm", "20"]),
+    # The ablation that isolates the schedule: same strength, old shape.
+    ("uniform s=10",    ["--schedule", "uniform", "--strength", "10"]),
+    # And the ungated version, to show how much of the effect is the gate.
+    ("argus s=10 nogate", ["--schedule", "argus", "--first-step-norm", "10", "--no-gate"]),
+]
+print(f"{{len(ARGUS_CONFIGS)}} configurations x 2 conditions x "
+      f"{{ARGUS_LIMIT or 'all'}} scenes")
+''')
+
+code('''
+import os
+
+for name, flags in ARGUS_CONFIGS:
+    slug = name.replace(" ", "_").replace("=", "")
+    out = f"/kaggle/working/results/drivelm/argus/{slug}"
+    if glob.glob(f"{out}/*.json"):
+        print(f"skip {name}: already present")
+        continue
+    print(f"\\n{'=' * 70}\\nARGUS steering / {name}\\n{'=' * 70}", flush=True)
+    cmd = ["midas-eval", "--split", DRIVELM_SCENES, "--model", DRIVELM_MODEL,
+           "--backend", "qwen", "--both", "--style", ARGUS_STYLE,
+           "--save-long", "--out", out]
+    if ARGUS_LIMIT:
+        cmd += ["--limit", ARGUS_LIMIT]
+    if flags:
+        cmd += ["--defend", ARGUS_DEFENSE, *flags]
+    subprocess.run(cmd, check=True)
+''')
+
+code('''
+def _load(slug, prefix):
+    files = glob.glob(f"/kaggle/working/results/drivelm/argus/{slug}/{prefix}_*.json")
+    return json.load(open(files[0]))["summary"] if files else None
+
+print(f"{'configuration':22s} {'attack':>8s} {'vs none':>9s} {'clean ASR':>10s} "
+      f"{'clean acc':>10s} {'steered':>8s}")
+rows = []
+for name, _ in ARGUS_CONFIGS:
+    slug = name.replace(" ", "_").replace("=", "")
+    atk, base = _load(slug, "attack"), _load(slug, "baseline")
+    if not atk:
+        continue
+    rows.append((name, atk, base))
+
+ref = rows[0][1]["asr_chai"] if rows else None
+for name, atk, base in rows:
+    delta = "--" if atk["asr_chai"] == ref and name == "none" else \\
+            f"{atk['asr_chai'] - ref:+.1%}"
+    print(f"{name:22s} {atk['asr_chai']:8.1%} {delta:>9s} "
+          f"{(base['asr_chai'] if base else float('nan')):10.1%} "
+          f"{(base['benign_accuracy'] if base else float('nan')):10.1%} "
+          f"{atk['steer_rate']:8.1%}")
+
+print("""
+How to read this:
+  attack     attacked frames that still produce the attacker's action. Lower is
+             a working defense.
+  clean ASR  *unattacked* frames that produce the attacker's action anyway. If
+             this falls too, the defense is biasing the action rather than
+             removing the injection.
+  clean acc  unattacked agreement with DriveLM's recorded driver behaviour. A
+             defense that brakes everywhere scores a perfect attack rate and
+             wrecks this number, so the pair has to be read together.
+  steered    how often the gate fired. Near 100% on attacked frames and near 0%
+             on clean ones is the gate working; 100% everywhere means it is not
+             discriminating and the result is just "always steer".
+""")
+''')
+
+code('''
+# The single comparison this stage exists to make.
+by_name = {name: atk for name, atk, _ in rows}
+if {"none", "argus s=10", "uniform s=10"} <= set(by_name):
+    none_r = by_name["none"]["asr_chai"]
+    argus_r = by_name["argus s=10"]["asr_chai"]
+    unif_r = by_name["uniform s=10"]["asr_chai"]
+    n = by_name["none"]["n"]
+    print(f"no defense     {none_r:.1%}")
+    print(f"argus schedule {argus_r:.1%}  ({argus_r - none_r:+.1%})")
+    print(f"uniform, same strength {unif_r:.1%}  ({unif_r - none_r:+.1%})")
+    print(f"\\nn = {n}; one scene is {1 / n:.1%}, so a difference under "
+          f"{2 / n:.1%} is two scenes and not evidence.")
+    if abs(argus_r - none_r) < 2 / n:
+        print("VERDICT: the ARGUS schedule is also inert here. The section 10 null "
+              "result is not explained by the schedule, and the next suspect is "
+              "the probe direction or the layer choice.")
+    elif abs(unif_r - none_r) < 2 / n < abs(argus_r - none_r):
+        print("VERDICT: the schedule is what mattered. Same probes, same gate, "
+              "same scenes -- only the step shape differs.")
+    else:
+        print("VERDICT: both schedules move the rate, so the section 10 null "
+              "result was not about the schedule alone.")
+else:
+    print("not all three reference configurations completed; cannot compare")
 ''')
 
 # ---------------------------------------------------------------- step 11

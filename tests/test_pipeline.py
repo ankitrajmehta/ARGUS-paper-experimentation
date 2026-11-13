@@ -622,11 +622,17 @@ def test_each_stage_can_run_without_the_others():
     This caught SIZES and STYLES being defined inside the scale-study and
     style cells: selecting only the option-order control produced a notebook
     that raised NameError on its first line, minutes into a GPU session.
+
+    The check used to compare against a hand-written list of shared names,
+    which meant it only caught the leaks someone had already thought of --
+    DRIVELM_SCENES and DRIVELM_MODEL leaked into the steering stage under it.
+    It now flags *any* load of a name the notebook never binds, so a new stage
+    cannot introduce a fresh one.
     """
     import ast
+    import builtins
 
     nb = _load_notebook_builder()
-    shared = {"SIZES", "STYLES", "STYLE_MODEL", "RESULTS"}
 
     for stage in nb.STAGES:
         cells = nb.build({stage})["cells"]
@@ -649,11 +655,22 @@ def test_each_stage_can_run_without_the_others():
                 if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)
             }
             # A cell may use what it assigns itself, so count those as defined.
+            # Imports, function and class definitions, comprehension and
+            # for-loop targets and except-aliases all bind names too.
             here = {
                 n.id for n in ast.walk(tree)
                 if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)
             }
-            missing = (used & shared) - defined - here
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.Import, ast.ImportFrom)):
+                    here |= {a.asname or a.name.split(".")[0] for a in node.names}
+                elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                    here.add(node.name)
+                    here |= {a.arg for a in node.args.args + node.args.kwonlyargs}
+                elif isinstance(node, ast.ExceptHandler) and node.name:
+                    here.add(node.name)
+
+            missing = used - defined - here - set(dir(builtins))
             assert not missing, f"stage {stage!r} uses undefined {sorted(missing)}"
             defined |= here
 
