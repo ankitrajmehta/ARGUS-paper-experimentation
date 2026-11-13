@@ -29,7 +29,7 @@ DRIVELM_LIMIT = os.environ.get("MIDAS_DRIVELM_LIMIT")
 # Scenes per steering configuration. Six configurations x two conditions at
 # ~24 s per evaluation is 80 minutes per 100 scenes, so the schedule is chosen
 # on a subset and the winner confirmed at full size.
-ARGUS_LIMIT = os.environ.get("MIDAS_ARGUS_LIMIT", "40")
+ARGUS_LIMIT = os.environ.get("MIDAS_ARGUS_LIMIT", "30")
 # Set MIDAS_NO_INTERNVL=1 when every selected stage runs Qwen.
 PREFETCH_INTERNVL = not os.environ.get("MIDAS_NO_INTERNVL")
 
@@ -1210,12 +1210,39 @@ subprocess.run(
 print(open("/kaggle/working/results/drivelm/defense/qwen.json").read())
 ''')
 
+md("""
+### A second artifact, deliberately deeper
+
+Probe accuracy picks layers **5 and 6** of 36 here, and that choice is itself a
+symptom: the offline diagnostic shows a probe reaching 100% at layer 5 while the
+no-sign control sits at 77-84%, which is what a lexical match between the word
+on the sign and the word in the answer slot looks like. Layers 5-6 are where
+that match completes, not where a driving decision is formed.
+
+ARGUS selected layers 13 and 12 of a 28-layer model -- 46% of the way down. The
+same relative depth here is **16 and 17**. Fitting both lets the steering result
+distinguish "we steered where the probe is most accurate" from "we steered where
+the decision is", which are different claims and, on this evidence, probably
+different layers.
+""")
+
+code('''
+subprocess.run(
+    ["midas-fit-defense", *ARGUS_MAIN,
+     "--gate-activations", *ARGUS_GATE,
+     "--layers", "16", "17",     # ARGUS's relative depth, 46% of 36
+     "--out", "/kaggle/working/results/drivelm/defense/qwen_deep"],
+    check=True,
+)
+print(open("/kaggle/working/results/drivelm/defense/qwen_deep.json").read())
+''')
+
 code(f'''
 # The schedule comparison. Each configuration re-runs baseline *and* attacked
 # scenes, because a defense that simply brakes everywhere would show a perfect
 # attack rate and a destroyed clean accuracy -- both numbers are needed.
 ARGUS_DEFENSE = "/kaggle/working/results/drivelm/defense/qwen"
-ARGUS_STYLE = "plain"      # the strongest framing on this model in the smoke run
+ARGUS_STYLE = "plain"   # strongest on this model at n=100: +25.0, McNemar p=0.0005
 ARGUS_LIMIT = {ARGUS_LIMIT!r}
 ''')
 
@@ -1241,22 +1268,29 @@ FRACTIONS = [0.1, 0.25, 0.5]
 STEPS = {f"{f:g}x": f"{f * _ref:.2f}" for f in FRACTIONS}
 print("sweep points:", {k: float(v) for k, v in STEPS.items()})
 
-# Deliberately short: at ~24 s per scene-evaluation a 100-scene config is about
-# 80 minutes, and six of them would not fit a session. Pick the schedule on a
-# subset, then confirm the winner at full size.
-ARGUS_CONFIGS = [("none", [])]
+# Deliberately short. The 100-scene run measured ~26 s per scene-evaluation, so
+# seven configurations x two conditions x 100 scenes would be about 10 hours.
+# Pick the schedule on a subset, then confirm the winner at full size.
+# (name, artifact or None for no defense, extra flags)
+ARGUS_DEEP = ARGUS_DEFENSE + "_deep"
+_mid = STEPS["0.25x"]
+
+ARGUS_CONFIGS = [("none", None, [])]
 ARGUS_CONFIGS += [
-    (f"argus {k}", ["--schedule", "argus", "--first-step-norm", v])
+    (f"argus {k}", ARGUS_DEFENSE, ["--schedule", "argus", "--first-step-norm", v])
     for k, v in STEPS.items()
 ]
-_mid = STEPS["0.25x"]
 ARGUS_CONFIGS += [
     # The ablation that isolates the schedule: same strength, old step shape.
-    ("uniform 0.25x", ["--schedule", "uniform", "--strength", _mid]),
-    # And ungated, to show how much of the effect is the gate rather than the
+    ("uniform 0.25x", ARGUS_DEFENSE, ["--schedule", "uniform", "--strength", _mid]),
+    # Ungated, to show how much of the effect is the gate rather than the
     # steering -- an ungated defense that works is just a biased model.
-    ("argus 0.25x nogate",
+    ("argus 0.25x nogate", ARGUS_DEFENSE,
      ["--schedule", "argus", "--first-step-norm", _mid, "--no-gate"]),
+    # Same schedule and strength, steered at ARGUS's relative depth instead of
+    # where our probe happens to be most accurate.
+    ("argus 0.25x deep", ARGUS_DEEP,
+     ["--schedule", "argus", "--first-step-norm", _mid]),
 ]
 print(f"\\n{len(ARGUS_CONFIGS)} configurations x 2 conditions x "
       f"{ARGUS_LIMIT or 'all'} scenes")
@@ -1271,7 +1305,7 @@ def _load(slug, prefix):
 code('''
 import os
 
-for name, flags in ARGUS_CONFIGS:
+for name, artifact, flags in ARGUS_CONFIGS:
     slug = name.replace(" ", "_").replace("=", "")
     out = f"/kaggle/working/results/drivelm/argus/{slug}"
     if glob.glob(f"{out}/*.json"):
@@ -1283,8 +1317,8 @@ for name, flags in ARGUS_CONFIGS:
            "--save-long", "--out", out]
     if ARGUS_LIMIT:
         cmd += ["--limit", ARGUS_LIMIT]
-    if flags:
-        cmd += ["--defend", ARGUS_DEFENSE, *flags]
+    if artifact:
+        cmd += ["--defend", artifact, *flags]
     subprocess.run(cmd, check=True)
 ''')
 
@@ -1307,8 +1341,8 @@ whatever the sign says.
 """)
 
 code('''
-for name, flags in ARGUS_CONFIGS:
-    if not flags:
+for name, artifact, flags in ARGUS_CONFIGS:
+    if not artifact:
         continue   # no defense: nothing to control for
     slug = name.replace(" ", "_").replace("=", "") + "__benign"
     out = f"/kaggle/working/results/drivelm/argus/{slug}"
@@ -1318,7 +1352,7 @@ for name, flags in ARGUS_CONFIGS:
     print(f"\\n{'=' * 70}\\nbenign-text control / {name}\\n{'=' * 70}", flush=True)
     cmd = ["midas-eval", "--split", DRIVELM_SCENES, "--model", DRIVELM_MODEL,
            "--backend", "qwen", "--attack", "--style", "benign_text",
-           "--save-long", "--defend", ARGUS_DEFENSE, *flags, "--out", out]
+           "--save-long", "--defend", artifact, *flags, "--out", out]
     if ARGUS_LIMIT:
         cmd += ["--limit", ARGUS_LIMIT]
     subprocess.run(cmd, check=True)
@@ -1327,7 +1361,7 @@ for name, flags in ARGUS_CONFIGS:
 code('''
 print(f"{'configuration':22s} {'attacked':>9s} {'benign-text':>12s} {'difference':>11s}")
 print("A defense worth the name steers the first and leaves the second alone.")
-for name, _ in ARGUS_CONFIGS:
+for name, _artifact, _flags in ARGUS_CONFIGS:
     slug = name.replace(" ", "_").replace("=", "")
     atk = _load(slug, "attack")
     ben = _load(slug + "__benign", "attack")
@@ -1347,7 +1381,7 @@ code('''
 print(f"{'configuration':22s} {'attack':>8s} {'vs none':>9s} {'clean ASR':>10s} "
       f"{'clean acc':>10s} {'steered':>8s}")
 rows = []
-for name, _ in ARGUS_CONFIGS:
+for name, _artifact, _flags in ARGUS_CONFIGS:
     slug = name.replace(" ", "_").replace("=", "")
     atk, base = _load(slug, "attack"), _load(slug, "baseline")
     if not atk:
