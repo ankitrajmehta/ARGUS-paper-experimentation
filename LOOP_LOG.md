@@ -185,3 +185,75 @@ is 60.
 **Launched 13:03 UTC** -- 100 scenes, baseline plus four framings, plus
 activation collection for the steering work. Estimated ~3.5 h from the smoke
 timing (~24 s per scene-evaluation, 500 evaluations, plus setup).
+
+---
+
+## Iteration 3 — 2026-11-13 14:12 UTC — steering built while the run is in flight
+
+Kernel v16 still `RUNNING` at 1 h 09 m. Nothing to decide until it lands, so the
+hour went on the work that was going to block the next step anyway: the steering
+path did not exist for Qwen at all (`QwenVLDriveLM.ask` raised
+`NotImplementedError`). Now built, with the ARGUS schedule from the design above.
+
+**What was added.**
+
+* `SteerConfig.schedule` -- `"uniform"` (what section 12 measured) or
+  `"argus"`. The argus path refuses `all_positions`, because their hook indexes
+  `[:, -1, :]` unconditionally and conflating the two is how the section 12
+  result became uninterpretable.
+* `Steerer._steer_argus` -- step 0 adds the vector at **full magnitude with no
+  cap**, steps >= 1 take Eq. 7 steps. The step counter resets on every prefill,
+  so each of the three generations in `ask()` gets its own step 0 rather than
+  the chain-of-thought turn taking the big step and the summarise turn -- the
+  one the action is parsed from -- getting nothing.
+* `LayerDefense.probe_norm` and `.bias`. Eq. 7 is
+  `relu((w.h + b + eps)/||w||^2)` and `direction` has `||w||` divided out, so
+  without these the step size cannot be reconstructed. `midas-fit-defense` now
+  records them; artifacts fitted earlier default to 1.0 and `midas-eval` prints
+  a warning rather than silently taking steps ~`||w||` times too large.
+* `midas-eval --schedule/--first-step-norm/--epsilon`.
+
+**Two defects found while building, both of the silent kind.**
+
+1. **The layer offset was wrong for Qwen.** `Steerer.__enter__` hooked decoder
+   block `layer - 1`, correct for InternVL because its `activations()` reads
+   `out.hidden_states`, whose index 0 is the embedding output. The Qwen runner
+   hooks `decoder[i]` directly, so its layer *i* **is** block *i*. Reusing the
+   InternVL offset would have steered a neighbouring layer and produced a
+   plausible null result with no error anywhere. Each runner now declares
+   `ACTIVATION_LAYER_OFFSET` and the Steerer reads it.
+
+2. **`--dry-run --defend` crashed** -- `_StubModel.ask()` took no `steerer`.
+   The dry run exists to catch wiring faults on a laptop instead of ten minutes
+   into a GPU session, and the defense was the one path it could not check. The
+   stub now runs the gate and records the telemetry.
+
+**And the test that should have caught the first one was weaker than its own
+docstring.** `test_each_stage_can_run_without_the_others` claimed "no stage may
+depend on a name another one assigns" but compared against a hardcoded set of
+four names -- so it only caught leaks someone had already thought of. The new
+steering stage leaked `DRIVELM_SCENES` and `DRIVELM_MODEL` straight past it.
+Rewritten to flag any load of a name the notebook never binds; it then failed on
+exactly those two and nothing else, which is also evidence every other stage is
+clean. Both names moved to the shared setup cell.
+
+**Forced-choice scoring now refuses the argus schedule.** That path is a single
+prefill over a complete sequence, so the answer tokens' logits come from
+positions *before* the one being steered: the log-probs would come back
+byte-identical and read as "the defense does nothing" -- the same shape as the
+section 12 result. It raises instead.
+
+78 -> 80 tests. The schedule difference is pinned by assertion, not by
+inspection: step 0 has the stated norm with a 0.25 cap configured, step 1 moves
+exactly `1/||w||` of the score, and `relu` leaves an already-safe state alone.
+
+**Notebook stage `argus` added.** Fits the probes and gate from the activations
+the running kernel is collecting, then compares six configurations at 40 scenes
+each: no defense, argus at first-step norms 5/10/20, **uniform at the same
+strength** as the ablation that isolates the schedule, and argus ungated to show
+how much of the effect is the gate. Both baseline and attacked conditions run
+under each, because a defense that simply brakes everywhere scores a perfect
+attack rate and wrecks clean accuracy -- the pair has to be read together. It
+prints its own verdict, including the case where the argus schedule is *also*
+inert, which would mean the suspect is the direction or the layer choice rather
+than the step shape.
