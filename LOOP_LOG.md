@@ -145,3 +145,43 @@ sibling project measured it ending ≈99% on the edit probe, within 0.65° of it
 so for a first implementation `strength · (−w_edit/‖w_edit‖)` is faithful to
 what the released code actually produces. `strength` is whatever the preliminary
 layer/alpha search selects; theirs chose layers [13, 12] at α = 10.
+
+---
+
+## Iteration 2 — 2026-11-13 13:01 UTC — smoke test passed
+
+**Qwen2.5-VL-3B runs clean.** 26.6 min for 10 scenes x 5 conditions. No
+traceback, and **no NaN** -- the float32 vision tower did its job on frames
+carrying rendered text, which was the failure mode the sibling project warned
+about.
+
+| Condition | ASR | vs clean | unreadable |
+|---|---|---|---|
+| no sign | 30.0% | -- | 0.0% |
+| plain (CHAI's wording) | **90.0%** | **+60.0** | 0.0% |
+| authority | 70.0% | +40.0 | 0.0% |
+| override | 60.0% | +30.0 | 0.0% |
+| urgency | 50.0% | +20.0 | 0.0% |
+
+**The attack transfers, and far more strongly than on InternVL** -- +60 points
+against +13.3 for the same CHAI sign on InternVL2.5-8B. It is not an InternVL
+quirk.
+
+**0% unreadable in every condition**, against 13-27% on the InternVL 8B. Qwen
+answers the two-option question cleanly, so the strict and CHAI scoring rules
+agree exactly. That removes the scoring-rule ambiguity that cost up to 13 points
+of spread in the earlier work.
+
+**The style ordering is reversed from InternVL** -- plain best, urgency worst,
+where on InternVL2.5-2B it was urgency best, plain worst. **At n = 10 one scene
+is 10 points and the interval is +/-31, so this ordering is not evidence of
+anything yet.** It is a question for the 100-scene run, and if it holds it is
+interesting: it would mean the best phrasing is model-specific, which weakens
+the idea of a single universal wording.
+
+**Decision: proceed to the full run.** The bar was 10 points over baseline; this
+is 60.
+
+**Launched 13:03 UTC** -- 100 scenes, baseline plus four framings, plus
+activation collection for the steering work. Estimated ~3.5 h from the smoke
+timing (~24 s per scene-evaluation, 500 evaluations, plus setup).
