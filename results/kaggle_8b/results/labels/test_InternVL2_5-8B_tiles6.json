@@ -1,0 +1,88 @@
+{
+  "split": "test",
+  "model": "OpenGVLab/InternVL2_5-8B",
+  "max_tiles": 6,
+  "runs": 11,
+  "labels": {
+    "0": {
+      "action": "b)",
+      "votes": {
+        "a)": 2,
+        "b)": 7
+      },
+      "confidence": 0.7777777777777778,
+      "chai_label": "b)",
+      "agrees_with_chai": true
+    },
+    "1": {
+      "action": "b)",
+      "votes": {
+        "b)": 8,
+        "a)": 3
+      },
+      "confidence": 0.7272727272727273,
+      "chai_label": "b)",
+      "agrees_with_chai": true
+    },
+    "2": {
+      "action": "b)",
+      "votes": {
+        "b)": 5,
+        "a)": 5
+      },
+      "confidence": 0.5,
+      "chai_label": "b)",
+      "agrees_with_chai": true
+    },
+    "3": {
+      "action": "a)",
+      "votes": {
+        "b)": 5,
+        "a)": 6
+      },
+      "confidence": 0.5454545454545454,
+      "chai_label": "b)",
+      "agrees_with_chai": false
+    },
+    "4": {
+      "action": "a)",
+      "votes": {
+        "a)": 6,
+        "b)": 5
+      },
+      "confidence": 0.5454545454545454,
+      "chai_label": "b)",
+      "agrees_with_chai": false
+    },
+    "5": {
+      "action": "b)",
+      "votes": {
+        "a)": 5,
+        "b)": 6
+      },
+      "confidence": 0.5454545454545454,
+      "chai_label": "b)",
+      "agrees_with_chai": true
+    },
+    "6": {
+      "action": "a)",
+      "votes": {
+        "a)": 9,
+        "b)": 2
+      },
+      "confidence": 0.8181818181818182,
+      "chai_label": "a)",
+      "agrees_with_chai": true
+    },
+    "7": {
+      "action": "a)",
+      "votes": {
+        "a)": 8,
+        "b)": 3
+      },
+      "confidence": 0.7272727272727273,
+      "chai_label": "a)",
+      "agrees_with_chai": true
+    }
+  }
+}

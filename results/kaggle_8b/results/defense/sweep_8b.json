@@ -1,0 +1,110 @@
+[
+  {
+    "strength": 0.0,
+    "top_layers": 5,
+    "max_step_ratio": 0.25,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": null,
+    "steps_steered": 0,
+    "steps_clipped": 0,
+    "mean_logprob_shift": 0.0,
+    "n": 15
+  },
+  {
+    "strength": 5.0,
+    "top_layers": 5,
+    "max_step_ratio": 0.25,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": 1.0,
+    "steps_steered": 136725,
+    "steps_clipped": 52954,
+    "mean_logprob_shift": 0.8693741516934501,
+    "n": 15
+  },
+  {
+    "strength": 10.0,
+    "top_layers": 5,
+    "max_step_ratio": 0.25,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": 1.0,
+    "steps_steered": 136725,
+    "steps_clipped": 64162,
+    "mean_logprob_shift": 1.4546664064543113,
+    "n": 15
+  },
+  {
+    "strength": 0.0,
+    "top_layers": 5,
+    "max_step_ratio": 0.5,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": null,
+    "steps_steered": 0,
+    "steps_clipped": 0,
+    "mean_logprob_shift": 0.0,
+    "n": 15
+  },
+  {
+    "strength": 5.0,
+    "top_layers": 5,
+    "max_step_ratio": 0.5,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": 1.0,
+    "steps_steered": 136725,
+    "steps_clipped": 15853,
+    "mean_logprob_shift": 1.39314787781073,
+    "n": 15
+  },
+  {
+    "strength": 10.0,
+    "top_layers": 5,
+    "max_step_ratio": 0.5,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": 1.0,
+    "steps_steered": 136725,
+    "steps_clipped": 40396,
+    "mean_logprob_shift": 1.6390297898815738,
+    "n": 15
+  },
+  {
+    "strength": 0.0,
+    "top_layers": 5,
+    "max_step_ratio": 1.0,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": null,
+    "steps_steered": 0,
+    "steps_clipped": 0,
+    "mean_logprob_shift": 0.0,
+    "n": 15
+  },
+  {
+    "strength": 5.0,
+    "top_layers": 5,
+    "max_step_ratio": 1.0,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": 1.0,
+    "steps_steered": 136725,
+    "steps_clipped": 251,
+    "mean_logprob_shift": 1.6178796951555545,
+    "n": 15
+  },
+  {
+    "strength": 10.0,
+    "top_layers": 5,
+    "max_step_ratio": 1.0,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": 1.0,
+    "steps_steered": 136725,
+    "steps_clipped": 8484,
+    "mean_logprob_shift": 1.3941516638629965,
+    "n": 15
+  }
+]

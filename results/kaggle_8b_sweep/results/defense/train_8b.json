@@ -1,0 +1,34 @@
+{
+  "layers": [
+    {
+      "layer": 11,
+      "margin": 15.542176288007152,
+      "accuracy": 1.0
+    },
+    {
+      "layer": 12,
+      "margin": 16.920828928689232,
+      "accuracy": 1.0
+    },
+    {
+      "layer": 13,
+      "margin": 18.18574467127697,
+      "accuracy": 1.0
+    },
+    {
+      "layer": 14,
+      "margin": 19.25092039050882,
+      "accuracy": 1.0
+    },
+    {
+      "layer": 15,
+      "margin": 18.105116887559472,
+      "accuracy": 1.0
+    }
+  ],
+  "gate_layer": 13,
+  "gate_b": -0.23599622523699038,
+  "model": "OpenGVLab/InternVL2_5-8B",
+  "notes": "fitted on 330 vectors: {np.str_('attack'): 150, np.str_('benign_text'): 150, np.str_('clean'): 30}",
+  "subspace_dim": 5
+}

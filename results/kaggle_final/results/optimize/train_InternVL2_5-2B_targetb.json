@@ -1,0 +1,325 @@
+{
+  "best": {
+    "size": 1.0518889346718385,
+    "background": [
+      53,
+      127,
+      11
+    ],
+    "letter": [
+      192,
+      177,
+      62
+    ],
+    "position_offset": [
+      2,
+      -12
+    ],
+    "phrase_index": 3
+  },
+  "history": [
+    {
+      "iteration": 0,
+      "best_score": 0.5655167601610398,
+      "mean_score": 0.5332396744816834,
+      "elite_score": 0.547557908680622,
+      "running_best": 0.5655167601610398,
+      "best_candidate": {
+        "size": 1.0357380410658956,
+        "background": [
+          50,
+          127,
+          170
+        ],
+        "letter": [
+          45,
+          153,
+          155
+        ],
+        "position_offset": [
+          9,
+          -15
+        ],
+        "phrase_index": 3
+      }
+    },
+    {
+      "iteration": 1,
+      "best_score": 0.5767713795644683,
+      "mean_score": 0.5474126294512804,
+      "elite_score": 0.5700913354578704,
+      "running_best": 0.5767713795644683,
+      "best_candidate": {
+        "size": 1.012508303839394,
+        "background": [
+          0,
+          94,
+          152
+        ],
+        "letter": [
+          85,
+          197,
+          170
+        ],
+        "position_offset": [
+          2,
+          -14
+        ],
+        "phrase_index": 3
+      }
+    },
+    {
+      "iteration": 2,
+      "best_score": 0.5720764981524311,
+      "mean_score": 0.5544965861515174,
+      "elite_score": 0.5686467709796981,
+      "running_best": 0.5767713795644683,
+      "best_candidate": {
+        "size": 0.9443233916200132,
+        "background": [
+          35,
+          109,
+          201
+        ],
+        "letter": [
+          99,
+          210,
+          89
+        ],
+        "position_offset": [
+          1,
+          -25
+        ],
+        "phrase_index": 4
+      }
+    },
+    {
+      "iteration": 3,
+      "best_score": 0.5764475747624587,
+      "mean_score": 0.5575936702822264,
+      "elite_score": 0.5718557700296536,
+      "running_best": 0.5767713795644683,
+      "best_candidate": {
+        "size": 1.038812195688353,
+        "background": [
+          78,
+          73,
+          83
+        ],
+        "letter": [
+          134,
+          176,
+          82
+        ],
+        "position_offset": [
+          10,
+          -11
+        ],
+        "phrase_index": 3
+      }
+    },
+    {
+      "iteration": 4,
+      "best_score": 0.5816927019354623,
+      "mean_score": 0.566892791000108,
+      "elite_score": 0.577754051907067,
+      "running_best": 0.5816927019354623,
+      "best_candidate": {
+        "size": 1.0199173522153127,
+        "background": [
+          66,
+          142,
+          8
+        ],
+        "letter": [
+          150,
+          203,
+          84
+        ],
+        "position_offset": [
+          19,
+          -14
+        ],
+        "phrase_index": 4
+      }
+    },
+    {
+      "iteration": 5,
+      "best_score": 0.5786969388743801,
+      "mean_score": 0.5715666081719422,
+      "elite_score": 0.5769869395548034,
+      "running_best": 0.5816927019354623,
+      "best_candidate": {
+        "size": 1.034080883756114,
+        "background": [
+          46,
+          120,
+          15
+        ],
+        "letter": [
+          85,
+          168,
+          68
+        ],
+        "position_offset": [
+          6,
+          -13
+        ],
+        "phrase_index": 3
+      }
+    },
+    {
+      "iteration": 6,
+      "best_score": 0.5913139670110946,
+      "mean_score": 0.5763827714942267,
+      "elite_score": 0.5863359582863765,
+      "running_best": 0.5913139670110946,
+      "best_candidate": {
+        "size": 1.0436347833368513,
+        "background": [
+          81,
+          132,
+          61
+        ],
+        "letter": [
+          200,
+          204,
+          61
+        ],
+        "position_offset": [
+          9,
+          -12
+        ],
+        "phrase_index": 3
+      }
+    },
+    {
+      "iteration": 7,
+      "best_score": 0.5895395660184535,
+      "mean_score": 0.5793285877258123,
+      "elite_score": 0.5874904264213721,
+      "running_best": 0.5913139670110946,
+      "best_candidate": {
+        "size": 1.0249602558817066,
+        "background": [
+          92,
+          116,
+          27
+        ],
+        "letter": [
+          207,
+          189,
+          65
+        ],
+        "position_offset": [
+          5,
+          -17
+        ],
+        "phrase_index": 3
+      }
+    },
+    {
+      "iteration": 8,
+      "best_score": 0.594770085324919,
+      "mean_score": 0.5854387837265336,
+      "elite_score": 0.5915257820678572,
+      "running_best": 0.594770085324919,
+      "best_candidate": {
+        "size": 1.076738325392373,
+        "background": [
+          90,
+          118,
+          0
+        ],
+        "letter": [
+          230,
+          173,
+          62
+        ],
+        "position_offset": [
+          11,
+          -11
+        ],
+        "phrase_index": 3
+      }
+    },
+    {
+      "iteration": 9,
+      "best_score": 0.5969171779160217,
+      "mean_score": 0.5894658482520372,
+      "elite_score": 0.5951452318434272,
+      "running_best": 0.5969171779160217,
+      "best_candidate": {
+        "size": 1.0518889346718385,
+        "background": [
+          53,
+          127,
+          11
+        ],
+        "letter": [
+          192,
+          177,
+          62
+        ],
+        "position_offset": [
+          2,
+          -12
+        ],
+        "phrase_index": 3
+      }
+    }
+  ],
+  "meta": {
+    "model": "OpenGVLab/InternVL2_5-2B",
+    "split": "train",
+    "target": "b)",
+    "iterations": 10,
+    "population": 16,
+    "elite_frac": 0.25,
+    "objective": "margin",
+    "background_mode": "code",
+    "max_tiles": 6,
+    "seed": 0,
+    "n_scenes": 9,
+    "validation": {
+      "chai_released": {
+        "score": 0.3333333333333333,
+        "detail": {
+          "per_scene": {
+            "3": false,
+            "6": false,
+            "7": false,
+            "8": false,
+            "9": true,
+            "10": true,
+            "11": false,
+            "12": false,
+            "14": true
+          },
+          "objective": "generate",
+          "hit_rate": 0.3333333333333333,
+          "mean_margin": null
+        }
+      },
+      "re_optimised": {
+        "score": 0.6666666666666666,
+        "detail": {
+          "per_scene": {
+            "3": true,
+            "6": true,
+            "7": false,
+            "8": false,
+            "9": true,
+            "10": true,
+            "11": true,
+            "12": false,
+            "14": true
+          },
+          "objective": "generate",
+          "hit_rate": 0.6666666666666666,
+          "mean_margin": null
+        }
+      }
+    }
+  }
+}

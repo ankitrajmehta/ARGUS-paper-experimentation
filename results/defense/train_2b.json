@@ -1,0 +1,9 @@
+{
+  "layer": 14,
+  "gate_layer": 21,
+  "gate_b": -0.3206523358821869,
+  "margin": 5.549656391143799,
+  "model": "models/InternVL2_5-2B",
+  "notes": "fitted on 330 vectors: {'attack': 150, 'benign_text': 150, 'clean': 30}",
+  "subspace_dim": 5
+}

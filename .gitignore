@@ -8,8 +8,13 @@ venv/
 # Vendored upstream code (cloned, not ours — see scripts/setup_vendor.sh)
 vendor/
 
-# Experiment outputs
-results/**/*.json
+# Experiment outputs. The per-scene result JSONs are small (123 files, 4.6 MB
+# across every run) and are the actual evidence behind every number in the
+# report, so they are tracked. What is excluded is the bulk: fetched archives
+# and raw activation tensors, both regenerable, and both over GitHub's 100 MB
+# per-file limit.
+results/**/*.zip
+results/**/*.npz
 results/**/*.csv
 results/**/*.png
 results/**/*.jpg

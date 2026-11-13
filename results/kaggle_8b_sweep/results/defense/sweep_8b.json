@@ -1,0 +1,66 @@
+[
+  {
+    "strength": 0.0,
+    "top_layers": 1,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": null,
+    "n": 15
+  },
+  {
+    "strength": 0.5,
+    "top_layers": 1,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": 1.0,
+    "n": 15
+  },
+  {
+    "strength": 1.0,
+    "top_layers": 1,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": 1.0,
+    "n": 15
+  },
+  {
+    "strength": 2.0,
+    "top_layers": 1,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": 1.0,
+    "n": 15
+  },
+  {
+    "strength": 0.0,
+    "top_layers": 5,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": null,
+    "n": 15
+  },
+  {
+    "strength": 0.5,
+    "top_layers": 5,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": 1.0,
+    "n": 15
+  },
+  {
+    "strength": 1.0,
+    "top_layers": 5,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": 1.0,
+    "n": 15
+  },
+  {
+    "strength": 2.0,
+    "top_layers": 5,
+    "attack_rate": 0.4,
+    "clean_keep": 1.0,
+    "gate_fire_rate": 1.0,
+    "n": 15
+  }
+]
