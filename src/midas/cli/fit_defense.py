@@ -131,13 +131,43 @@ def main(argv: list[str] | None = None) -> int:
             "the defense would steer every frame. Re-run extraction with --controls."
         )
 
+    gate_validation = "scene+phrase"
     if args.gate_layer:
         gate_layer = args.gate_layer
+        gate_validation = "not validated (--gate-layer given)"
     else:
         gate_ranked = _ranked_layers(gate_set, "is_attack", "scene+phrase")
+        if not gate_ranked:
+            # The strict split needs a fold whose held-out phrases include both
+            # an attack wording and a non-attack one. A sweep extracted with
+            # --phrases 1 has four phrase values in total (one attack, one
+            # empty for clean, two controls) spread over five folds, so every
+            # fold holds out at most one and no test fold ever has both
+            # classes. Phrase generalisation is then simply not measurable --
+            # which is worth saying plainly rather than crashing on an empty
+            # list, as this used to.
+            n_attack_phrases = len(
+                np.unique(gate_set.column("phrase")[gate_set.column("condition") == "attack"])
+            )
+            print(
+                f"    WARNING: no scene+phrase fold had both classes "
+                f"({n_attack_phrases} attack wording(s) in this sweep), so the gate's "
+                "generalisation to unseen wording cannot be measured here. Falling back "
+                "to held-out scenes only; re-extract with --phrases 3 or more for the "
+                "stricter number."
+            )
+            gate_validation = "scene only (phrase holdout not possible)"
+            gate_ranked = _ranked_layers(gate_set, "is_attack", "scene")
+        if not gate_ranked:
+            raise SystemExit(
+                "the gate probe scored nan at every layer, so no gate layer can be "
+                "chosen. Usually this means one class has too few scenes to split: "
+                f"attack={int((gate_y == 1).sum())} non-attack={int((gate_y == 0).sum())} "
+                f"over {len(np.unique(gate_set.column('scene')))} scenes."
+            )
         gate_layer = gate_ranked[0].layer
         print(f"    best gate layer {gate_layer} at {gate_ranked[0].accuracy:.1%} "
-              f"(held-out scene+phrase)")
+              f"(held-out {gate_validation})")
     gate_X = gate_set.vectors[:, gate_layer, :]
     gate_clf, gate_scaler = _fit_probe(gate_X, gate_y)
 
@@ -149,7 +179,11 @@ def main(argv: list[str] | None = None) -> int:
         gate_mean=gate_scaler.mean_,
         gate_scale=gate_scaler.scale_,
         model=acts.model,
-        notes=f"fitted on {len(acts.rows)} vectors: {counts}",
+        # The gate's validation strength travels with the artifact: a gate
+        # whose wording generalisation was never tested should not be reported
+        # as though it had been.
+        notes=f"fitted on {len(acts.rows)} vectors: {counts}; "
+              f"gate validation: {gate_validation}",
     )
     path = artifact.save(args.out)
     print(f"\nsaved -> {path}\n         {path.with_suffix('.json')}")

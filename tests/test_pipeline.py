@@ -1458,3 +1458,103 @@ def test_activation_staging_carries_the_metadata_sidecar(tmp_path):
     assert deploy.find_activations(empty, roots=[]) is None
     assert deploy.find_activations(tmp_path / "nope", roots=[]) is None
     assert deploy.find_activations(True, roots=[source]) == source
+
+
+def _synthetic_sweep(path, *, prompt_only, scenes=12, phrases=1, controls=2,
+                     layers=6, hidden=32, seed=0):
+    """An activation sweep in midas-activations' own output format.
+
+    Shaped like the real DriveLM/Qwen extraction -- one attack wording, two
+    benign controls -- so the fitting path can be exercised without a GPU.
+    """
+    rng = np.random.default_rng(seed)
+    direction = rng.normal(size=hidden)
+    direction /= np.linalg.norm(direction)
+    gate_dir = rng.normal(size=hidden)
+    gate_dir /= np.linalg.norm(gate_dir)
+
+    rows, vecs = [], []
+    for s in range(scenes):
+        keys = ["__prompt__"] if prompt_only else ["b)", "a)"]
+
+        def add(cond, attacked, phrase, answer, follows):
+            v = rng.normal(size=(layers, hidden))
+            if follows:
+                v[layers // 2:] += direction * 4.0
+            if cond == "attack":
+                v[layers // 3:] += gate_dir * 4.0
+            vecs.append(v.astype(np.float32))
+            rows.append(dict(scene=s, split="drivelm", attacked=attacked,
+                             condition=cond, style="chai", phrase=phrase,
+                             answer=answer, follows_injection=follows,
+                             is_target_answer=follows))
+
+        for k in keys:
+            add("clean", False, "", k, 0)
+        for p in range(phrases):
+            for k in keys:
+                add("attack", True, f"phrase{p}", k, 0 if prompt_only else int(k == "a)"))
+        for c in range(controls):
+            for k in keys:
+                add("benign_text", True, f"control{c}", k, 0)
+
+    np.savez_compressed(path, activations=np.stack(vecs))
+    path.with_suffix(".json").write_text(json.dumps(
+        {"model": "Qwen/Qwen2.5-VL-3B-Instruct", "split": "drivelm",
+         "readout": "last" if prompt_only else "answer", "rows": rows}))
+    return path
+
+
+def test_fit_defense_survives_a_single_attack_wording(tmp_path, capsys):
+    """midas-activations --phrases 1 used to crash the gate layer selection.
+
+    The strict scene+phrase split needs a fold whose held-out phrases include
+    both an attack wording and a non-attack one. With one attack phrase there
+    are four phrase values over five folds, so every fold holds out at most one
+    and no test fold ever has both classes -- gate_ranked came back empty and
+    indexing it raised IndexError. That is the exact extraction the DriveLM run
+    uses, so this crashed on real data, after the sweeps had been computed.
+    """
+    from midas.cli import fit_defense
+
+    main_path = _synthetic_sweep(tmp_path / "acts_drivelm.npz", prompt_only=False)
+    gate_path = _synthetic_sweep(tmp_path / "acts_promptonly_drivelm.npz", prompt_only=True)
+
+    rc = fit_defense.main([
+        str(main_path), "--gate-activations", str(gate_path),
+        "--top-n", "2", "--out", str(tmp_path / "defense" / "qwen"),
+    ])
+    assert rc == 0
+
+    out = capsys.readouterr().out
+    # It must say why the weaker validation was used, not quietly downgrade.
+    assert "cannot be measured" in out
+    assert "1 attack wording" in out
+
+    from midas.steering import DefenseArtifact
+
+    art = DefenseArtifact.load(tmp_path / "defense" / "qwen.npz")
+    assert len(art.layers) == 2
+    # The weaker validation travels with the artifact, so a gate whose wording
+    # generalisation was never tested is not later reported as though it had been.
+    assert "phrase holdout not possible" in art.notes
+    # And the probe norms are real, so the ARGUS step size is reconstructible.
+    assert all(d.probe_norm != 1.0 for d in art.layers)
+
+
+def test_fit_defense_reports_three_wordings_as_strictly_validated(tmp_path, capsys):
+    """With enough wordings the strict split must still be the one used."""
+    from midas.cli import fit_defense
+
+    main_path = _synthetic_sweep(tmp_path / "a.npz", prompt_only=False, phrases=4, scenes=16)
+    gate_path = _synthetic_sweep(
+        tmp_path / "a_promptonly.npz", prompt_only=True, phrases=4, scenes=16
+    )
+    rc = fit_defense.main([
+        str(main_path), "--gate-activations", str(gate_path),
+        "--top-n", "1", "--out", str(tmp_path / "d" / "q"),
+    ])
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "cannot be measured" not in out, out
+    assert "held-out scene+phrase" in out

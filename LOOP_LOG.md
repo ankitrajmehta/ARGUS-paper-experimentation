@@ -284,3 +284,81 @@ Added `upload --activations [DIR]`, defaulting to a search of
 
 Pulled out as `find_activations` / `stage_activations` so it is testable without
 a live upload, and tested. 80 -> 81.
+
+---
+
+## Iteration 5 — 2026-11-13 16:02 UTC — pre-flight found a crash on the real data
+
+Kernel v16 `RUNNING` at 2 h 59 m. Rather than wait idle, I ran the whole
+steering chain on **synthetic activations shaped exactly like the real ones**
+(36 layers, 2048 hidden, one attack wording, two benign controls -- what
+`--phrases 1 --controls 2` produces). Two findings, one of them a blocker.
+
+### `midas-fit-defense` crashed on this extraction
+
+```
+gate_layer = gate_ranked[0].layer
+IndexError: list index out of range
+```
+
+The gate layer is chosen by the strict `scene+phrase` split, which needs a fold
+whose held-out phrases contain **both** an attack wording and a non-attack one.
+With `--phrases 1` the sweep has four phrase values in total -- one attack, one
+empty (clean), two controls -- spread over five folds, so every fold holds out at
+most one and **no test fold ever has both classes**. Every layer scores `nan`,
+the ranked list comes back empty, and indexing it raises.
+
+This is not a synthetic-data artefact: it is the exact extraction the running
+kernel is performing. The crash would have happened *after* the sweeps were
+computed, in the next session, with nothing to show for the GPU time.
+
+Fixed by falling back to held-out *scenes* and **saying so**:
+
+```
+WARNING: no scene+phrase fold had both classes (1 attack wording(s) in this
+sweep), so the gate's generalisation to unseen wording cannot be measured here.
+Falling back to held-out scenes only; re-extract with --phrases 3 or more.
+```
+
+The weaker validation is written into the artifact's own notes
+(`gate validation: scene only (phrase holdout not possible)`), so a gate whose
+wording generalisation was never tested cannot later be reported as though it
+had been. A genuinely degenerate case -- nan at every layer under *both* splits
+-- now exits with the class counts rather than an IndexError.
+
+**The honest limitation to carry forward:** with one attack wording, the gate can
+only ever be tested on the wording it trained on. It may be detecting *that
+phrase's pixels* rather than "an injected instruction". Measuring the difference
+needs `--phrases 3`, which is a separate extraction.
+
+### The hook path works, but our ||w|| is nothing like theirs
+
+Ran the fitted artifact through the real `Steerer` on a toy torch model:
+
+```
+gate score attack-like  +8.98 -> steer True
+gate score clean-like  -14.90 -> steer False
+prefill: last-position move = 9.900   (asked for 9.9)
+         position 0 move      = 0.000   (must be 0)
+decode steps: 0.0000, 0.1008, 0.0000
+```
+
+Gate discriminates, step 0 lands on its stated norm, other positions untouched,
+later steps tiny -- the schedule behaves as designed.
+
+**But the fitted `||w||` is ~1.9, where ARGUS measured ~46.** Eq. 7 divides by
+`||w||^2` and the step is `alpha/||w||`, so each of our tail steps closes about
+**50%** of the probe score where theirs closed **2%**. We reproduce their
+*formula* faithfully and still get a tail that is ~25x more aggressive, because
+sklearn's `LogisticRegression(C=1.0)` on 2048 standardised dimensions produces a
+much smaller-norm weight than whatever they trained.
+
+This does not threaten the structural claim -- 0.1 against a first step of 9.9
+means the first step still does essentially all the work, which is the thing
+section 12 lacked. But it does mean "faithful to Eq. 7" and "same effective step
+size" are not the same statement, and the ||w|| from the real activations should
+be read off before the result is described as a reproduction. `midas-eval` now
+prints it per layer.
+
+81 -> 83 tests. Both the crash and the single-wording fallback are pinned, plus
+the case with four wordings, which must still use the strict split.
