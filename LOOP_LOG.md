@@ -97,3 +97,51 @@ Three checks before pushing, since the repo is **public**:
    key file present, 122 result JSONs tracked, 68 tests passing.
 
 The archives and tensors remain on local disk; only git stopped tracking them.
+
+## ARGUS steering — design, read off the sibling repo's source
+
+Recorded before building, because the sign convention is the one detail that
+silently inverts the result: their own layer sweep measured AIA 53% steering
+toward the attack against 6% steering away, from the same vector.
+
+**Label convention** (`ARGUS/src/argus/probes.py:32-45`). The edit probe is
+trained on pairs from one scene: `first_activation` is the **user's** answer and
+carries label 0; `second_activation` is the **attacker's** answer and carries
+label 1. So the probe weight `w` points *toward* attacker-following, and
+`normalized_probe_vector` returns `-coef/‖coef‖` with the comment "Defense
+direction points from attacker-following back to user-following."
+
+Our `follows_injection = 1` means following the sign, i.e. the attacker. **Same
+convention**, so `probes.fit_direction` is directly reusable and the defense
+direction is `−w/‖w‖`.
+
+**Two probes, not one** (`defense.py`):
+
+| Probe | Read at | Used for |
+|---|---|---|
+| detection | last prompt token, step 0 | gate: steer at all or not |
+| edit | forced answer token | basis for the step-0 vector |
+| final_steering | forced answer token | the Eq. 7 adaptive steps |
+
+**The intervention is two-phase**, which is where our earlier attempt differed:
+
+* **step 0** — `h[:, -1, :] += vector`, at full magnitude, **no adaptive scaling
+  and no cap**. Their run measured ‖vector‖ ≈ 9.9.
+* **steps ≥ 1** — `alpha = relu((w·h + b + ε)/‖w‖²)`, step `alpha · (−w/‖w‖)`.
+  Their run measured ≈ 1.1, and with ‖w‖ ≈ 46 each step closes only ~2% of the
+  score.
+* **last token position only**, never the whole sequence.
+
+So the first token does nearly all the work, and their own note says attacks
+look "all-or-nothing from the first token". Our section 12 result -- 136,725
+activations modified, 1.6 nats of margin shift, attack rate unchanged at exactly
+40.0% -- applied *moderate capped* steps at *every* position and token. That is
+close to the opposite of this design, and is the most likely reason it was
+inert.
+
+**The trained vector is a mixture** of the edit probe and three auxiliary
+probes, `strength · softmax(a) · basis` with four learned weights per layer. The
+sibling project measured it ending ≈99% on the edit probe, within 0.65° of it,
+so for a first implementation `strength · (−w_edit/‖w_edit‖)` is faithful to
+what the released code actually produces. `strength` is whatever the preliminary
+layer/alpha search selects; theirs chose layers [13, 12] at α = 10.
