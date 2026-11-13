@@ -76,3 +76,23 @@ and tensors are not, and stay on disk. The remaining obstacle is that the
 oversized blobs are still in *history*, so a rewrite is needed before any push.
 Deferred until the experiment result is in, rather than interleaving a history
 rewrite with experiment monitoring.
+
+**Pushed to the team repo.** `ankitrajmehta/ARGUS-paper-experimentation`,
+branch **`midas/main`** -- mirroring their `argus/main` convention so nothing of
+theirs is touched. Their eight `argus/*` branches and `main` are unchanged, and
+`main` here now tracks `team/midas/main`.
+
+Three checks before pushing, since the repo is **public**:
+
+1. *Write access.* The API reports `push: true` for this account, so it is a
+   real collaborator permission rather than a fork-and-PR situation.
+2. *Credential scan* over the working tree **and all 55 commits** of history:
+   no Kaggle, Hugging Face, GitHub or AWS tokens. The only `KGAT_` matches are
+   the literal placeholder `KGAT_...` in help text.
+3. *Size.* GitHub rejects any push containing a blob over 100 MB anywhere in
+   history, and three exceeded it. `git filter-repo` dropped every `*.zip` and
+   `*.npz`, taking `.git` from **476 MB to 62 MB**. A full copy was taken to
+   `/tmp/midas_git_backup` first. Verified afterwards: 55 commits intact, every
+   key file present, 122 result JSONs tracked, 68 tests passing.
+
+The archives and tensors remain on local disk; only git stopped tracking them.
