@@ -78,8 +78,9 @@ Deferred until the experiment result is in, rather than interleaving a history
 rewrite with experiment monitoring.
 
 **Pushed to the team repo.** `ankitrajmehta/ARGUS-paper-experimentation`,
-branch **`midas/main`** -- mirroring their `argus/main` convention so nothing of
-theirs is touched. Their eight `argus/*` branches and `main` are unchanged, and
+branch **`chai/main`** -- mirroring their `argus/main` convention so nothing of
+theirs is touched. (First pushed as `midas/main`; renamed on request, since the
+work is a CHAI reproduction and MIDAS was only the proposal's name.) Their eight `argus/*` branches and `main` are unchanged, and
 `main` here now tracks `team/midas/main`.
 
 Three checks before pushing, since the repo is **public**:
