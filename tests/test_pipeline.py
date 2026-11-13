@@ -1558,3 +1558,33 @@ def test_fit_defense_reports_three_wordings_as_strictly_validated(tmp_path, caps
     out = capsys.readouterr().out
     assert "cannot be measured" not in out, out
     assert "held-out scene+phrase" in out
+
+
+def test_steerer_falls_back_to_the_internvl_nesting():
+    """A runner with no _layers() must still resolve, at offset 1.
+
+    The accessor was added for Qwen, whose nesting differs by transformers
+    version. InternVL has no such method, so it takes the hardcoded path --
+    and that path plus the offset default is what keeps every previously
+    fitted 8B artifact steering the same block it always did.
+    """
+    from midas.steering import SteerConfig, Steerer
+
+    class Blocks(list):
+        pass
+
+    blocks = Blocks(range(20))
+
+    # model.model.language_model.model.layers
+    inner = type("Inner", (), {"layers": blocks})()
+    lm = type("LM", (), {"model": inner})()
+    hf = type("HF", (), {"language_model": lm})()
+    runner = type("Runner", (), {"model": hf})()
+
+    steerer = Steerer(runner, _argus_artifact(), SteerConfig())
+    assert steerer._decoder_layers() is blocks
+    # No ACTIVATION_LAYER_OFFSET declared, so the default applies: 1, the
+    # InternVL convention, which is what keeps previously fitted 8B artifacts
+    # hooking the block they always did.
+    assert not hasattr(runner, "ACTIVATION_LAYER_OFFSET")
+    assert getattr(runner, "ACTIVATION_LAYER_OFFSET", 1) == 1
