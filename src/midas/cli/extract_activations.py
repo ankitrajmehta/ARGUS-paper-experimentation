@@ -33,7 +33,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("--split", choices=["train", "test"], default="train")
+    parser.add_argument(
+        "--split",
+        default="train",
+        help="train | test (CHAI's 23 scenes) | drivelm (built by "
+        "midas-build-scenes) | a path to a scene JSON",
+    )
     parser.add_argument("--model", default="models/InternVL2_5-2B")
     parser.add_argument("--device", default="auto")
     parser.add_argument("--dtype", default="auto")
@@ -209,7 +214,7 @@ def main(argv: list[str] | None = None) -> int:
             )
 
     args.out.mkdir(parents=True, exist_ok=True)
-    stem = f"{args.split}_{Path(args.model).name}_tiles{args.max_tiles}_{args.readout}"
+    stem = f"{data.split_slug(args.split)}_{Path(args.model).name}_tiles{args.max_tiles}_{args.readout}"
     if args.style:
         stem += f"_style-{args.style}"
     if args.controls:

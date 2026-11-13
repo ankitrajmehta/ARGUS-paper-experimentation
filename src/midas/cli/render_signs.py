@@ -27,7 +27,12 @@ def side_by_side(clean: np.ndarray, attacked: np.ndarray) -> np.ndarray:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--split", choices=["train", "test"], default="train")
+    parser.add_argument(
+        "--split",
+        default="train",
+        help="train | test (CHAI's 23 scenes) | drivelm (built by "
+        "midas-build-scenes) | a path to a scene JSON",
+    )
     parser.add_argument("--out", type=Path, default=Path("results/signs"))
     parser.add_argument(
         "--background-mode",

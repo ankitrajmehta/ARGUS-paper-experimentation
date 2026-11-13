@@ -65,6 +65,16 @@ class Scene:
         "accelerate toward a pedestrian when the benign output would have been
         brake". Every scene becomes usable and none is degenerate.
         """
+        if self.correct_internvl is None:
+            # Scenes built from DriveLM carry no label until one is derived for
+            # the model under test. Defaulting here would silently make the
+            # target "b)" everywhere and the resulting ASR meaningless.
+            raise ValueError(
+                f"scene {self.index} ({self.split}) has no benign label. "
+                "Derive one first:  midas-labels --split "
+                f"{self.split} --model <model> --runs 5   then pass it to "
+                "midas-eval with --labels."
+            )
         return "a)" if self.correct_internvl == "b)" else "b)"
 
     def load_images(self) -> list[np.ndarray]:
@@ -79,6 +89,19 @@ class Scene:
                 raise FileNotFoundError(f"could not read frame: {path}")
             images.append(cv2.cvtColor(raw, cv2.COLOR_BGR2RGB))
         return images
+
+
+def split_slug(split: str) -> str:
+    """A filesystem-safe name for a scene set.
+
+    ``--split`` accepts a path to a scene JSON as well as a registered name, and
+    a path embedded in an output filename produces directories that do not
+    exist. Registered names pass through unchanged so existing result files keep
+    their names.
+    """
+    if split in config.SCENE_SETS:
+        return split
+    return Path(split).stem or "scenes"
 
 
 def load_labels(path: Path) -> dict[int, str]:
@@ -97,31 +120,40 @@ def load_scenes(split: str = "train", labels: Path | None = None) -> list[Scene]
     ``labels`` optionally replaces CHAI's stored benign action with one derived
     from the model under test.
     """
-    if split == "train":
-        json_path = config.CHAI_TRAIN_JSON
-    elif split == "test":
-        json_path = config.CHAI_TEST_JSON
+    if split in config.SCENE_SETS:
+        json_path, image_root = config.SCENE_SETS[split]
+    elif str(split).endswith(".json"):
+        # A scene file built elsewhere; its own directory is the image root.
+        json_path = Path(split)
+        image_root = json_path.parent
     else:
-        raise ValueError(f"split must be 'train' or 'test', got {split!r}")
+        raise ValueError(
+            f"unknown split {split!r}; expected one of {sorted(config.SCENE_SETS)} "
+            "or a path to a scene JSON"
+        )
 
     if not json_path.exists():
-        raise FileNotFoundError(
-            f"{json_path} not found. Run scripts/setup_vendor.sh to clone CHAI's drivelm branch."
+        hint = (
+            "Run scripts/setup_vendor.sh to clone CHAI's drivelm branch."
+            if image_root == config.VENDOR_CHAI
+            else "Run scripts/fetch_drivelm.py, then midas-build-scenes."
         )
+        raise FileNotFoundError(f"{json_path} not found. {hint}")
 
     records = json.loads(json_path.read_text())
     overrides = load_labels(labels) if labels else {}
     scenes = []
     for i, rec in enumerate(records):
-        # Paths in the JSON are relative to the CHAI repo root.
-        paths = [config.VENDOR_CHAI / p for p in rec["image"]]
+        # Paths in the JSON are relative to that scene set's root.
+        paths = [image_root / p for p in rec["image"]]
         scenes.append(
             Scene(
                 index=i,
                 split=split,
                 image_paths=paths,
                 correct_internvl=overrides.get(i, rec["correct_internvl"]),
-                correct_gpt=rec["correct_gpt"],
+                # DriveLM-built scenes have no GPT four-way label.
+                correct_gpt=rec.get("correct_gpt"),
                 target=rec["target"],
                 _position=rec["position"],
                 size=float(rec["size"]),

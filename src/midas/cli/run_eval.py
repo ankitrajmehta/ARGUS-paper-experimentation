@@ -135,7 +135,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("--split", choices=["train", "test"], default="train")
+    parser.add_argument(
+        "--split",
+        default="train",
+        help="train | test (CHAI's 23 scenes) | drivelm (built by "
+        "midas-build-scenes) | a path to a scene JSON",
+    )
 
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--attack", action="store_true", help="attacked frames only")
@@ -143,6 +148,20 @@ def main(argv: list[str] | None = None) -> int:
     mode.add_argument("--both", action="store_true", help="clean then attacked, and compare")
 
     parser.add_argument("--model", default=config.MODEL_ID)
+    parser.add_argument(
+        "--backend", choices=["auto", "internvl", "qwen"], default="auto",
+        help="model family; inferred from the checkpoint name by default",
+    )
+    parser.add_argument(
+        "--vision-dtype", default="auto",
+        help="Qwen only. The vision tower emits NaN in float16 on frames "
+        "carrying rendered text, so float32 is chosen automatically under a "
+        "float16 language model.",
+    )
+    parser.add_argument(
+        "--max-pixels", type=int, default=None,
+        help="Qwen only; the equivalent of --max-tiles. Default 409600.",
+    )
     parser.add_argument("--device", default="auto", help="auto | cuda | mps | cpu")
     parser.add_argument(
         "--dtype",
@@ -268,19 +287,22 @@ def main(argv: list[str] | None = None) -> int:
     else:
         # Imported here so --help, --dry-run and the data checks above work
         # without torch installed.
-        from midas.models.internvl import InternVLDriveLM
+        from midas.models import load_model
 
-        print(f"loading {args.model} ...")
-        model = InternVLDriveLM(
-            model_id=args.model,
+        print(f"loading {args.model} (backend {args.backend}) ...")
+        model = load_model(
+            args.model,
+            backend=args.backend,
             device=args.device,
             dtype=args.dtype,
+            vision_dtype=args.vision_dtype,
             load_4bit=args.load_4bit,
             use_flash_attn=not args.no_flash_attn,
             device_map=args.device_map,
             max_new_tokens=args.max_new_tokens,
             do_sample=args.sample,
             max_tiles=args.max_tiles,
+            max_pixels=args.max_pixels,
             swap_summarise_options=args.swap_summarise,
         )
 
@@ -319,7 +341,7 @@ def main(argv: list[str] | None = None) -> int:
     for label, attacked in conditions:
         print(f"\n=== {label} ({args.split}, {len(scenes)} scenes) ===", flush=True)
         args.out.mkdir(parents=True, exist_ok=True)
-        journal = args.out / f"{label}_{args.split}.jsonl"
+        journal = args.out / f"{label}_{data.split_slug(args.split)}.jsonl"
         journal.unlink(missing_ok=True)
         results = _run_condition(
             model,

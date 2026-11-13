@@ -38,7 +38,12 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("artifact", type=Path)
-    parser.add_argument("--split", choices=["train", "test"], default="train")
+    parser.add_argument(
+        "--split",
+        default="train",
+        help="train | test (CHAI's 23 scenes) | drivelm (built by "
+        "midas-build-scenes) | a path to a scene JSON",
+    )
     parser.add_argument("--model", default="models/InternVL2_5-2B")
     parser.add_argument("--max-tiles", type=int, default=6)
     parser.add_argument("--device-map", default=None, help="e.g. 'auto' to shard over GPUs")

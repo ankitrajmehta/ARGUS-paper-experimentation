@@ -22,6 +22,18 @@ CHAI_ATTACK_DICT = VENDOR_CHAI / "attack_dicts_internvl.json"
 CHAI_OPTIMAL = VENDOR_CHAI / "optimal_attacks" / "optimal.json"
 CHAI_ATTACKER_PY = VENDOR_CHAI / "attack" / "create_attack.py"
 
+# Scenes built from the full DriveLM release rather than CHAI's 23-scene subset.
+# Image paths inside this JSON are relative to DRIVELM_ROOT.
+DRIVELM_ROOT = ROOT / "data" / "drivelm"
+DRIVELM_SCENES = DRIVELM_ROOT / "scenes.json"
+
+# split name -> (scene JSON, root the image paths are relative to)
+SCENE_SETS: dict[str, tuple[Path, Path]] = {
+    "train": (CHAI_TRAIN_JSON, VENDOR_CHAI),
+    "test": (CHAI_TEST_JSON, VENDOR_CHAI),
+    "drivelm": (DRIVELM_SCENES, DRIVELM_ROOT),
+}
+
 # InternVL2.5-8B is CHAI's open-weight target; its released signs are tuned for it.
 MODEL_ID = os.environ.get("MIDAS_MODEL", "OpenGVLab/InternVL2_5-8B")
 

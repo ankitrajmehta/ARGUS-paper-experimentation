@@ -38,6 +38,7 @@ STAGES = (
     "scale",
     "control",
     "styles",
+    "drivelm",
     "paramsource",
     "optimize",
     "defense",
@@ -159,7 +160,7 @@ reasons that look unrelated.
 """)
 
 code('''
-%pip install -q "transformers>=4.37,<4.50" "sentencepiece==0.2.1" protobuf \\
+%pip install -q "transformers>=4.49,<4.50" "sentencepiece==0.2.1" protobuf qwen-vl-utils \\
     "accelerate>=0.26" timm einops opencv-python-headless scikit-learn pytest
 
 import importlib, sentencepiece, transformers, accelerate
@@ -721,6 +722,104 @@ for train_style in names:
         scored = (X - X.mean(0)) @ direction
         acc = max((scored > 0) == (y == 1), (scored < 0) == (y == 1), key=np.mean).mean()
         print(f"{train_style:10s} -> {test_style:10s} {acc:8.1%}")
+''')
+
+# ---------------------------------------------------------------- step 9f
+stage("drivelm")
+md("""
+## 9f. A second model family, at ten times the sample size
+
+Two limitations bound everything above: **one model family** (InternVL2.5) and
+**23 scenes**. This stage addresses both at once.
+
+* **Scenes** come from the full DriveLM release rather than CHAI's subset,
+  built by `midas-build-scenes` and attached as part of the source dataset.
+  One key frame per nuScenes scene, so the set stays visually diverse.
+* **Model** is Qwen2.5-VL-3B-Instruct, a different architecture, tokenizer and
+  image pipeline. If the attack holds here it is not an InternVL quirk.
+
+**Labels first.** DriveLM scenes carry no benign action, and inventing one would
+repeat the ground-truth problem of section 9b. They are derived for this model
+by running it unattacked and taking the mode, which is CHAI's own procedure.
+`midas-eval` refuses to run on unlabelled scenes rather than defaulting.
+
+**Two settings that cost a session if wrong**, both carried over from a sibling
+project that ran these models on the same hardware:
+
+* the vision tower runs in **float32**; in float16 it emits NaN on frames
+  carrying rendered text, which is every attacked frame here. `midas-eval`
+  selects this automatically under a float16 language model;
+* **transformers 4.49.x** is the only version where Qwen2.5-VL (needs >= 4.49)
+  and InternVL2.5 (breaks on >= 4.50) both work.
+""")
+
+code('''
+DRIVELM_MODEL = "Qwen/Qwen2.5-VL-3B-Instruct"
+DRIVELM_SPLIT = "drivelm"
+
+scenes = glob.glob("/kaggle/input/**/drivelm/scenes.json", recursive=True)
+if not scenes:
+    raise SystemExit(
+        "no DriveLM scenes in the attached dataset. Build them locally and "
+        "re-upload:  midas-build-scenes --limit 100 "
+        "&& python scripts/kaggle_deploy.py upload --drivelm"
+    )
+DRIVELM_SCENES = scenes[0]
+print("scenes:", DRIVELM_SCENES)
+print("count :", len(json.load(open(DRIVELM_SCENES))))
+''')
+
+code('''
+# Derive the benign action for this model. Sampled, not greedy: with greedy
+# decoding every run is identical and the mode over N runs is just one run.
+subprocess.run(
+    ["midas-labels", "--split", DRIVELM_SCENES, "--model", DRIVELM_MODEL,
+     "--backend", "qwen", "--runs", "5",
+     "--out", "/kaggle/working/results/drivelm/labels"],
+    check=True,
+)
+labels = sorted(glob.glob("/kaggle/working/results/drivelm/labels/*.json"))
+print("labels:", labels)
+''')
+
+code('''
+# Baseline, CHAI's wording, then the framings that beat it on the 2B.
+for style in [None] + STYLES:
+    name = style or "baseline"
+    print(f"\\n{'=' * 70}\\nDriveLM / {DRIVELM_MODEL.split('/')[-1]} / {name}\\n{'=' * 70}",
+          flush=True)
+    cmd = ["midas-eval", "--split", DRIVELM_SCENES, "--model", DRIVELM_MODEL,
+           "--backend", "qwen", "--labels", labels[0], "--save-long",
+           "--out", f"/kaggle/working/results/drivelm/{name}"]
+    cmd += ["--baseline"] if style is None else ["--attack", "--style", style]
+    subprocess.run(cmd, check=True)
+''')
+
+code('''
+base = None
+for f in glob.glob("/kaggle/working/results/drivelm/baseline/*.json"):
+    base = json.load(open(f))["summary"]
+
+print(f"{'condition':22s} {'ASR':>8s} {'CHAI rule':>10s} {'vs clean':>9s} "
+      f"{'unreadable':>11s} {'n':>4s}")
+if base:
+    print(f"{'no sign':22s} {base['asr']:8.1%} {base['asr_chai']:10.1%} "
+          f"{'--':>9s} {base['unreadable_rate']:11.1%} {base['n']:4d}")
+for style in STYLES:
+    files = glob.glob(f"/kaggle/working/results/drivelm/{style}/*.json")
+    if not files:
+        continue
+    s = json.load(open(files[0]))["summary"]
+    delta = f"{s['asr_chai'] - base['asr_chai']:+.1%}" if base else "-"
+    print(f"{style:22s} {s['asr']:8.1%} {s['asr_chai']:10.1%} {delta:>9s} "
+          f"{s['unreadable_rate']:11.1%} {s['n']:4d}")
+
+if base:
+    n = base["n"]
+    print("")
+    print(f"n = {n}, so one scene is {1 / n:.1%} and the 95% interval is about "
+          f"+/-{98 / (n ** 0.5):.0f} points.")
+    print("Compare with the 23-scene numbers above, where one scene was 6.7.")
 ''')
 
 # ---------------------------------------------------------------- step 9e

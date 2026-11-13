@@ -28,7 +28,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("--split", choices=["train", "test"], default="train")
+    parser.add_argument(
+        "--split",
+        default="train",
+        help="train | test (CHAI's 23 scenes) | drivelm (built by "
+        "midas-build-scenes) | a path to a scene JSON",
+    )
     parser.add_argument("--model", default="OpenGVLab/InternVL2_5-2B")
     parser.add_argument("--device", default="auto")
     parser.add_argument("--dtype", default="auto")
@@ -164,7 +169,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"\n  re-optimised minus released: {delta:+.1%}")
         print(f"  one scene is {1 / len(usable):.1%}, so read this against n={len(usable)}")
 
-    stem = f"{args.split}_{Path(args.model).name}_target{args.target.rstrip(')')}"
+    stem = f"{data.split_slug(args.split)}_{Path(args.model).name}_target{args.target.rstrip(')')}"
     path = optimize.save_search(args.out / f"{stem}.json", best, history, meta)
     print(f"\nsaved -> {path}")
     return 0

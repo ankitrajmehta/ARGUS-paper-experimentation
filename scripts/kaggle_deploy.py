@@ -117,6 +117,36 @@ def cmd_upload(args: argparse.Namespace) -> None:
     # evaluate against our own labels without repeating the derivation, which is
     # 11 unattacked runs per scene -- 4.6 GPU-hours, and sign-independent, so
     # there is never a reason to redo it.
+    # DriveLM scenes, if built. Only the images those scenes reference are
+    # staged -- the full release is 3.5 GB, while 100 scenes is about 600
+    # frames, which fits a Kaggle dataset comfortably.
+    scenes_json = ROOT / "data" / "drivelm" / "scenes.json"
+    if args.drivelm and scenes_json.exists():
+        import json as _json
+
+        records = _json.loads(scenes_json.read_text())
+        dest = STAGING / "drivelm"
+        dest.mkdir(parents=True)
+        shutil.copy2(scenes_json, dest / "scenes.json")
+        copied = missing = 0
+        for rec in records:
+            for rel in rec["image"]:
+                src = ROOT / "data" / "drivelm" / rel
+                if not src.exists():
+                    missing += 1
+                    continue
+                out = dest / rel
+                out.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(src, out)
+                copied += 1
+        size = sum(f.stat().st_size for f in dest.rglob("*") if f.is_file())
+        print(f"  staged: drivelm ({len(records)} scenes, {copied} frames, "
+              f"{size / 1e6:.0f} MB)")
+        if missing:
+            print(f"    WARNING: {missing} frames missing on disk")
+    elif args.drivelm:
+        print(f"  skip (absent): {scenes_json} -- run midas-build-scenes first")
+
     labels = ROOT / "results" / "kaggle_8b" / "results" / "labels"
     if labels.exists():
         shutil.copytree(labels, STAGING / "labels")
@@ -314,6 +344,10 @@ def main(argv: list[str] | None = None) -> int:
 
     up = sub.add_parser("upload", help="push code and CHAI artefacts as a private dataset")
     up.add_argument("-m", "--message", default="update source")
+    up.add_argument(
+        "--drivelm", action="store_true",
+        help="also stage data/drivelm/scenes.json and the frames it references",
+    )
     up.set_defaults(func=cmd_upload)
 
     run = sub.add_parser("run", help="push the notebook and start it on T4 x2")

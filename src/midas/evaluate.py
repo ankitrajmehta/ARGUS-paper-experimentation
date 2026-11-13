@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 from dataclasses import asdict, dataclass, field
 
+from midas.data import split_slug
 from midas.tasks import drivelm
 from datetime import datetime, timezone
 from pathlib import Path
@@ -129,7 +130,7 @@ class RunRecord:
     def save(self, out_dir: Path) -> Path:
         out_dir.mkdir(parents=True, exist_ok=True)
         stamp = self.started_at.replace(":", "").replace("-", "")[:15]
-        path = out_dir / f"{self.label}_{self.split}_{stamp}.json"
+        path = out_dir / f"{self.label}_{split_slug(self.split)}_{stamp}.json"
         payload = asdict(self)
         payload["summary"] = asdict(summarise(self.results))
         path.write_text(json.dumps(payload, indent=2))

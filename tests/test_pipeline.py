@@ -311,7 +311,9 @@ def test_kaggle_notebook_is_valid_and_configured():
     assert joined.count("--device-map auto") >= 4, "GPU commands must shard across both T4s"
     # 0.2.2 breaks InternVL's tokenizer; 0.1.99 has no Python 3.13 wheel.
     assert "sentencepiece==0.2.1" in joined, "the tokenizer pin must be installed"
-    assert "transformers>=4.37,<4.50" in joined, "transformers must be capped below 4.50"
+    # 4.49.x is the only version serving both families: Qwen2.5-VL needs >=4.49,
+    # InternVL2.5's remote code breaks on >=4.50.
+    assert "transformers>=4.49,<4.50" in joined, "transformers must be pinned to 4.49.x"
 
 
 def test_bfloat16_gated_on_compute_capability_not_torch_helper():
@@ -859,3 +861,160 @@ def test_margin_objective_still_records_the_hit_rate():
     assert ev.detail["hit_rate"] == 1.0
     assert ev.detail["mean_margin"] == pytest.approx(1.5)
     assert 0.0 < ev.score < 1.0, "squashed, not a rate"
+
+
+# ------------------------------------------------- DriveLM scenes, Qwen backend
+
+
+def test_backend_detected_from_checkpoint_name():
+    from midas.models import detect_backend
+
+    assert detect_backend("OpenGVLab/InternVL2_5-8B") == "internvl"
+    assert detect_backend("Qwen/Qwen2.5-VL-3B-Instruct") == "qwen"
+    assert detect_backend("Qwen/Qwen2-VL-7B-Instruct") == "qwen"
+    with pytest.raises(ValueError, match="--backend"):
+        detect_backend("some/local-checkpoint")
+
+
+def test_load_model_drops_options_the_backend_cannot_take():
+    """One parser serves both families, so each backend must be handed only the
+    flags it understands rather than every flag defined."""
+    from midas.models import _keep
+
+    kwargs = {"max_tiles": 6, "max_pixels": 409600, "device": "cpu", "junk": 1,
+              "vision_dtype": None}
+    assert _keep(kwargs, {"max_tiles", "device"}) == {"max_tiles": 6, "device": "cpu"}
+    # None means "not supplied" and must not override a backend default.
+    assert "vision_dtype" not in _keep(kwargs, {"vision_dtype"})
+
+
+def test_unlabelled_scene_refuses_to_invent_a_target():
+    """DriveLM scenes ship with no benign label. Defaulting would silently make
+    every target "b)" and the resulting attack rate meaningless."""
+    scene = data.Scene(
+        index=0, split="drivelm", image_paths=[],
+        correct_internvl=None, correct_gpt=None, target=None,
+        _position={"pos_x": 450, "pos_y": 1050}, size=2.0,
+    )
+    with pytest.raises(ValueError, match="no benign label"):
+        _ = scene.internvl_target
+
+
+def _fake_drivelm_qa(n_scenes: int, cameras=None):
+    """A QA file shaped like DriveLM's release."""
+    cameras = cameras or [
+        "CAM_FRONT", "CAM_FRONT_LEFT", "CAM_FRONT_RIGHT",
+        "CAM_BACK", "CAM_BACK_LEFT", "CAM_BACK_RIGHT",
+    ]
+    qa = {}
+    for s in range(n_scenes):
+        qa[f"scene{s}"] = {
+            "scene_description": "driving",
+            "key_frames": {
+                f"frame{s}_{k}": {
+                    "QA": {"behavior": [{"Q": "behaviour?", "A": "going straight, fast"}]},
+                    "image_paths": {
+                        cam: f"../nuscenes/samples/{cam}/s{s}_f{k}.jpg" for cam in cameras
+                    },
+                }
+                for k in range(2)
+            },
+        }
+    return qa
+
+
+def test_build_scenes_emits_chai_format(tmp_path):
+    """The builder's output must load through the existing pipeline unchanged."""
+    import json
+    from midas.cli import build_scenes
+
+    qa_path = tmp_path / "qa.json"
+    qa_path.write_text(json.dumps(_fake_drivelm_qa(4)))
+    out = tmp_path / "scenes.json"
+
+    rc = build_scenes.main([
+        "--qa", str(qa_path), "--root", str(tmp_path),
+        "--limit", "3", "--out", str(out), "--no-require-images",
+    ])
+    assert rc == 0
+
+    records = json.loads(out.read_text())
+    assert len(records) == 3
+    # One key frame per nuScenes scene by default: frames seconds apart are
+    # near-duplicates and would inflate n without adding information.
+    assert len({r["drivelm"]["scene_token"] for r in records}) == 3
+
+    for rec in records:
+        assert len(rec["image"]) == 6
+        assert not rec["image"][0].startswith("..")
+        assert rec["correct_internvl"] is None
+        assert set(rec["position"]) == {"pos_x", "pos_y"}
+        assert rec["size"] > 0
+
+
+def test_built_scenes_load_through_load_scenes(tmp_path):
+    import json
+    from midas.cli import build_scenes
+
+    qa_path = tmp_path / "qa.json"
+    qa_path.write_text(json.dumps(_fake_drivelm_qa(2)))
+    out = tmp_path / "scenes.json"
+    build_scenes.main([
+        "--qa", str(qa_path), "--root", str(tmp_path),
+        "--limit", "2", "--out", str(out), "--no-require-images",
+    ])
+
+    scenes = data.load_scenes(str(out))
+    assert len(scenes) == 2
+    # Image paths resolve against the scene file's own directory, not CHAI's.
+    assert scenes[0].image_paths[0].is_relative_to(tmp_path)
+    assert scenes[0].attacked_camera == 0
+
+
+def test_build_scenes_skips_frames_missing_a_camera(tmp_path):
+    """A frame without all six cameras cannot be evaluated; it must be dropped,
+    not padded."""
+    import json
+    from midas.cli import build_scenes
+
+    qa = _fake_drivelm_qa(3)
+    for frame in qa["scene1"]["key_frames"].values():
+        del frame["image_paths"]["CAM_BACK"]
+
+    qa_path = tmp_path / "qa.json"
+    qa_path.write_text(json.dumps(qa))
+    out = tmp_path / "scenes.json"
+    build_scenes.main([
+        "--qa", str(qa_path), "--root", str(tmp_path),
+        "--limit", "10", "--out", str(out), "--no-require-images",
+    ])
+    tokens = {r["drivelm"]["scene_token"] for r in json.loads(out.read_text())}
+    assert tokens == {"scene0", "scene2"}
+
+
+def test_qwen_vision_dtype_defaults_to_float32_under_float16():
+    """The fp16 vision tower emits NaN on frames carrying rendered text, which
+    is every attacked frame we evaluate. Catch a regression statically rather
+    than after a wasted GPU session."""
+    import ast
+    from pathlib import Path
+
+    source = Path("src/midas/models/qwen.py").read_text()
+    tree = ast.parse(source)
+    fn = next(
+        n for n in ast.walk(tree)
+        if isinstance(n, ast.FunctionDef) and n.name == "_resolve_vision_dtype"
+    )
+    body = ast.unparse(fn)
+    assert "float32" in body and "float16" in body
+
+
+def test_qwen_shows_the_same_two_cameras_as_internvl():
+    """CHAI feed CAM_FRONT and CAM_BACK. A different pair would not be the same
+    experiment."""
+    import ast
+    from pathlib import Path
+
+    source = Path("src/midas/models/qwen.py").read_text()
+    assert "drivelm.CAMERA_INDICES" in source
+    assert ast.parse(source)

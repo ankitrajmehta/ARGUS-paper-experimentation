@@ -31,8 +31,16 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("--split", choices=["train", "test"], default="train")
+    parser.add_argument(
+        "--split",
+        default="train",
+        help="train | test (CHAI's 23 scenes) | drivelm (built by "
+        "midas-build-scenes) | a path to a scene JSON",
+    )
     parser.add_argument("--model", default=config.MODEL_ID)
+    parser.add_argument("--backend", choices=["auto", "internvl", "qwen"], default="auto")
+    parser.add_argument("--vision-dtype", default="auto", help="Qwen only; see midas-eval")
+    parser.add_argument("--max-pixels", type=int, default=None, help="Qwen only")
     parser.add_argument("--device", default="auto")
     parser.add_argument("--dtype", default="auto")
     parser.add_argument("--device-map", default=None)
@@ -50,15 +58,18 @@ def main(argv: list[str] | None = None) -> int:
     if args.limit:
         scenes = scenes[: args.limit]
 
-    from midas.models.internvl import InternVLDriveLM
+    from midas.models import load_model
 
-    print(f"loading {args.model} ...")
-    model = InternVLDriveLM(
-        model_id=args.model,
+    print(f"loading {args.model} (backend {args.backend}) ...")
+    model = load_model(
+        args.model,
+        backend=args.backend,
         device=args.device,
         dtype=args.dtype,
+        vision_dtype=args.vision_dtype,
         device_map=args.device_map,
         max_tiles=args.max_tiles,
+        max_pixels=args.max_pixels,
         max_new_tokens=args.max_new_tokens,
         # Sampling, not greedy: with greedy decoding every run is identical and
         # the mode over eleven runs is just one run. CHAI sample here too.
@@ -98,7 +109,7 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     args.out.mkdir(parents=True, exist_ok=True)
-    path = args.out / f"{args.split}_{Path(args.model).name}_tiles{args.max_tiles}.json"
+    path = args.out / f"{data.split_slug(args.split)}_{Path(args.model).name}_tiles{args.max_tiles}.json"
     path.write_text(
         json.dumps(
             {
