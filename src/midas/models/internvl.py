@@ -209,6 +209,11 @@ def preprocess(image: np.ndarray | Image.Image, input_size: int = 448, max_num: 
 class InternVLDriveLM:
     """CHAI's DriveLM agent backed by InternVL2.5-8B."""
 
+    # ``activations()`` reads ``out.hidden_states``, whose index 0 is the
+    # embedding output, so layer *i* in an artifact fitted here is the output of
+    # decoder block *i-1*. See QwenVLDriveLM.ACTIVATION_LAYER_OFFSET.
+    ACTIVATION_LAYER_OFFSET = 1
+
     def __init__(
         self,
         model_id: str = config.MODEL_ID,

@@ -78,7 +78,8 @@ def main(argv: list[str] | None = None) -> int:
         X = attacked.vectors[:, layer, :]
         y = attacked.column("follows_injection").astype(int)
         clf, scaler = _fit_probe(X, y)
-        direction = clf.coef_[0] / np.linalg.norm(clf.coef_[0])
+        probe_norm = float(np.linalg.norm(clf.coef_[0]))
+        direction = clf.coef_[0] / probe_norm
 
         # Distance of the "following the scene" class from the boundary, in the
         # standardised space the probe lives in; adaptive steering aims for it.
@@ -88,7 +89,7 @@ def main(argv: list[str] | None = None) -> int:
         subspace = probes.safety_subspace(attacked, layer, dim=args.subspace_dim)
         energy = float(np.linalg.norm(subspace @ direction))
         print(f"    layer {layer:2d}  probe {accuracy:6.1%}  margin {margin:5.2f}  "
-              f"subspace energy {energy:5.1%}")
+              f"subspace energy {energy:5.1%}  ||w|| {probe_norm:5.1f}")
 
         layer_defenses.append(
             LayerDefense(
@@ -99,6 +100,8 @@ def main(argv: list[str] | None = None) -> int:
                 scale=scaler.scale_,
                 margin=margin,
                 accuracy=accuracy,
+                probe_norm=probe_norm,
+                bias=float(clf.intercept_[0]),
             )
         )
 

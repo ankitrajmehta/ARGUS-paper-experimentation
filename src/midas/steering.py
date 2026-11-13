@@ -42,6 +42,12 @@ class LayerDefense:
     # adaptive steering aims to land there rather than just over the boundary.
     margin: float
     accuracy: float = float("nan")  # held-out probe accuracy, for ranking layers
+    # Norm and intercept of the *un-normalised* probe weight, in the same
+    # standardised space. ``direction`` has these divided out, which is all the
+    # uniform schedule needs -- but ARGUS's step size is
+    # ``relu((w.h + b)/||w||^2)``, so reproducing it needs ||w|| and b back.
+    probe_norm: float = 1.0
+    bias: float = 0.0
 
     @property
     def refined_direction(self) -> np.ndarray:
@@ -54,6 +60,18 @@ class LayerDefense:
         """Signed distance from the probe; > 0 means following the sign."""
         z = (activation - self.mean) / self.scale
         return float(z @ self.direction)
+
+    def argus_alpha(self, score: float, epsilon: float = 0.0) -> float:
+        """ARGUS's Eq. 7 step size, from a signed distance along ``direction``.
+
+        Theirs is ``relu((w.h + b + eps)/||w||^2)`` on a raw activation. Here
+        ``score`` is ``z.direction``, so ``w.h + b`` is ``probe_norm * score +
+        bias``. The remaining ``1/||w||^2`` is why their measured steps were
+        ~1.1 against a ||w|| of ~46: each one closes about 2% of the score,
+        which is what makes the uncapped first step do nearly all the work.
+        """
+        raw = self.probe_norm * score + self.bias + epsilon
+        return max(0.0, raw / max(self.probe_norm**2, 1e-12))
 
 
 @dataclass
@@ -97,7 +115,13 @@ class DefenseArtifact:
             json.dumps(
                 {
                     "layers": [
-                        {"layer": d.layer, "margin": d.margin, "accuracy": d.accuracy}
+                        {
+                            "layer": d.layer,
+                            "margin": d.margin,
+                            "accuracy": d.accuracy,
+                            "probe_norm": d.probe_norm,
+                            "bias": d.bias,
+                        }
                         for d in self.layers
                     ],
                     "gate_layer": self.gate_layer,
@@ -126,6 +150,12 @@ class DefenseArtifact:
                 scale=arrays["scale"][i],
                 margin=entry["margin"],
                 accuracy=entry.get("accuracy", float("nan")),
+                # Artifacts fitted before the ARGUS schedule existed carry no
+                # probe norm. 1.0 leaves the uniform schedule identical and
+                # makes the ARGUS schedule fall back to a plain signed
+                # distance, which is at least not silently wrong.
+                probe_norm=entry.get("probe_norm", 1.0),
+                bias=entry.get("bias", 0.0),
             )
             for i, entry in enumerate(meta["layers"])
         ]
@@ -165,6 +195,33 @@ class SteerConfig:
     # Steer only this many layers, best probe first. None means all fitted layers.
     top_layers: int | None = None
 
+    # Which step schedule to use.
+    #
+    # ``uniform``  every forward pass gets the same adaptive, capped step. This
+    #              is what section 12 measured, and it was inert: 136,725
+    #              activations moved, 1.6 nats of margin shift, attack rate
+    #              unchanged at exactly 40.0%.
+    # ``argus``    the released ARGUS schedule. One **uncapped full-magnitude**
+    #              step at the first generated token, then tiny Eq. 7 steps.
+    #              Their own note is that attacks look "all-or-nothing from the
+    #              first token", so the first step is the intervention and the
+    #              rest only hold the line.
+    schedule: str = "uniform"
+    # ARGUS step-0 magnitude, in activation-space norm. Their run measured 9.9.
+    # None falls back to ``strength``.
+    first_step_norm: float | None = None
+    # ARGUS's epsilon: pushes past the boundary rather than onto it.
+    epsilon: float = 0.0
+
+    def __post_init__(self) -> None:
+        if self.schedule not in ("uniform", "argus"):
+            raise ValueError(f"unknown schedule {self.schedule!r}")
+        if self.schedule == "argus" and self.all_positions:
+            # Their hook indexes [:, -1, :] unconditionally. Steering every
+            # position is a different intervention, and conflating the two is
+            # exactly how section 12's result became uninterpretable.
+            raise ValueError("schedule='argus' steers the last position only")
+
 
 class Steerer:
     """Applies a DefenseArtifact to a live InternVL model via forward hooks."""
@@ -179,11 +236,23 @@ class Steerer:
         self.last_gate_score: float | None = None
         self.n_steps_steered = 0
         self.n_steps_clipped = 0
+        # Forward-pass index per layer, so the ARGUS schedule can tell the
+        # first generated token from the rest.
+        self._step: dict[int, int] = {}
+        self.first_step_norms: list[float] = []
 
     # -- layer access ----------------------------------------------------
 
     def _decoder_layers(self):
-        """InternVL wraps an InternLM2/Qwen2 causal LM; its blocks live here."""
+        """The decoder block list of whichever runner we were handed.
+
+        The Qwen runner already locates these (its nesting differs by
+        transformers version), so prefer its own accessor and keep the
+        InternVL path as the fallback.
+        """
+        getter = getattr(self.model, "_layers", None)
+        if callable(getter):
+            return getter()
         return self.model.model.language_model.model.layers
 
     def selected(self) -> list[LayerDefense]:
@@ -200,6 +269,8 @@ class Steerer:
         """Decide whether to steer this sample, from a gate-layer activation."""
         self.n_steps_steered = 0
         self.n_steps_clipped = 0
+        self._step.clear()
+        self.first_step_norms = []
         if not self.config.use_gate or activation is None:
             self._active = True
             self.last_gate_score = None
@@ -232,11 +303,19 @@ class Steerer:
                     np.ascontiguousarray(array, dtype=np.float32), device=device
                 )
 
+            # The step in activation space. A shift of t along the probe in
+            # standardised space is t * scale * direction here; the unit
+            # version lets the ARGUS schedule set an exact activation-space
+            # norm, which is how their strength is reported.
+            step = defense.scale * direction
+            unit = step / max(float(np.linalg.norm(step)), 1e-12)
+
             self._tensors[key] = (
                 to(defense.mean),
                 to(defense.scale),
                 to(direction),
-                to(defense.scale * direction),
+                to(step),
+                to(unit),
             )
         return self._tensors[key]
 
@@ -257,7 +336,7 @@ class Steerer:
             index = torch.tensor([n - 1], device=hidden.device)
 
         rows = hidden[0, index, :].to(torch.float32)
-        mean, scale, direction, step_dir = self._cached(defense, hidden.device)
+        mean, scale, direction, step_dir, _unit = self._cached(defense, hidden.device)
 
         if self.config.adaptive:
             scores = ((rows - mean) / scale) @ direction
@@ -280,12 +359,64 @@ class Steerer:
         hidden[0, index, :] = (rows + delta).to(hidden.dtype)
         self.n_steps_steered += int(index.numel())
 
+    def _steer_argus(self, hidden, defense: LayerDefense, step: int) -> None:
+        """The released ARGUS intervention: one big step, then small ones.
+
+        Phase one, at the first generated token, adds the steering vector at
+        **full magnitude with no cap and no adaptive scaling**. Phase two, every
+        token after, takes Eq. 7 steps that each close only a few percent of the
+        probe score -- they hold the state on the safe side rather than moving
+        it there.
+
+        Always the last position only. During decoding the last position *is*
+        the current token, so this is the whole generated sequence, one token at
+        a time; during the prefill it is the final prompt token, which is where
+        the first generated token's logits come from.
+        """
+        import torch
+
+        n = hidden.shape[1]
+        index = torch.tensor([n - 1], device=hidden.device)
+        rows = hidden[0, index, :].to(torch.float32)
+        mean, scale, direction, _step_dir, unit = self._cached(defense, hidden.device)
+
+        if step == 0:
+            magnitude = self.config.first_step_norm
+            if magnitude is None:
+                magnitude = self.config.strength
+            t = torch.full((rows.shape[0],), float(magnitude), device=hidden.device)
+            self.first_step_norms.append(float(magnitude))
+        else:
+            scores = ((rows - mean) / scale) @ direction
+            raw = defense.probe_norm * scores + defense.bias + self.config.epsilon
+            t = torch.clamp(raw / max(defense.probe_norm**2, 1e-12), min=0.0)
+            t = t * self.config.strength
+
+        # ``unit`` has activation-space norm 1, so ||delta|| == t exactly, which
+        # is the quantity ARGUS report. No clipping: the uncapped first step is
+        # the part of their design our section 12 attempt did not have.
+        hidden[0, index, :] = (rows - t.unsqueeze(1) * unit.unsqueeze(0)).to(hidden.dtype)
+        self.n_steps_steered += int(index.numel())
+
     def _make_hook(self, defense: LayerDefense):
         def hook(module, args, output):
             if not self._active:
                 return output
             hidden = output[0] if isinstance(output, tuple) else output
-            self._steer(hidden, defense)
+
+            if self.config.schedule == "argus":
+                # A pass over more than one position is a prefill, which starts
+                # a fresh generation -- and ``ask`` runs three of them per
+                # scene. Resetting here keeps "step 0" meaning the first
+                # generated token of each turn rather than of the whole scene.
+                if hidden.shape[1] > 1:
+                    self._step[defense.layer] = 0
+                step = self._step.get(defense.layer, 0)
+                self._step[defense.layer] = step + 1
+                self._steer_argus(hidden, defense, step)
+            else:
+                self._steer(hidden, defense)
+
             return (hidden,) + output[1:] if isinstance(output, tuple) else hidden
 
         return hook
@@ -294,10 +425,14 @@ class Steerer:
 
     def __enter__(self) -> "Steerer":
         blocks = self._decoder_layers()
+        # How a fitted layer index maps to a decoder block depends on how the
+        # runner read activations in the first place: 1 for InternVL, whose
+        # hidden_states[0] is the embedding output, 0 for Qwen, which hooks the
+        # blocks directly. Defaulting to 1 keeps every InternVL artifact
+        # behaving exactly as before.
+        offset = getattr(self.model, "ACTIVATION_LAYER_OFFSET", 1)
         for defense in self.selected():
-            # Activations are indexed with layer 0 = embeddings, so
-            # hidden_states[i] is the output of decoder block i-1.
-            idx = defense.layer - 1
+            idx = defense.layer - offset
             if not 0 <= idx < len(blocks):
                 raise IndexError(
                     f"layer {defense.layer} out of range for {len(blocks)} decoder blocks"

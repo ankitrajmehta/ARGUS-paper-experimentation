@@ -75,6 +75,14 @@ def model_class_for(model_id: str):
 class QwenVLDriveLM:
     """CHAI's two-turn DriveLM exchange on a Qwen-VL model."""
 
+    # ``activations()`` here hooks ``decoder[i]`` directly, so layer *i* in an
+    # artifact fitted on this runner is the output of decoder block *i*. The
+    # InternVL runner reads ``out.hidden_states``, whose index 0 is the
+    # embedding output, so block *i* is layer *i+1* there. The Steerer reads
+    # this to know which block a fitted layer index refers to -- get it wrong
+    # and the defense silently steers a neighbouring layer.
+    ACTIVATION_LAYER_OFFSET = 0
+
     def __init__(
         self,
         model_id: str,
@@ -210,31 +218,48 @@ class QwenVLDriveLM:
         retry_on_unreadable: bool = True,
         steerer=None,
     ) -> Reply:
-        """The two-turn exchange: chain of thought, then the one-word summary."""
+        """The two-turn exchange: chain of thought, then the one-word summary.
+
+        With a ``steerer`` the gate runs first on the open-turn state -- the
+        same position it was fitted on, before any answer token exists -- and
+        the hooks then stay installed for both turns.
+        """
+        import contextlib
+
+        gate_score = None
+        steered = False
         if steerer is not None:
-            raise NotImplementedError(
-                "steering hooks are fitted for InternVL; see PROJECT_RECORD section 12"
-            )
+            gate_activation = None
+            if steerer.config.use_gate:
+                layer = steerer.artifact.gate_layer
+                gate_activation = self.activations(images, None, layers=[layer])[layer].numpy()
+            steered = steerer.prepare(gate_activation)
+            gate_score = steerer.last_gate_score
+            self.free_cache()
 
-        inputs = self._encode(images, self._messages(images, drivelm.build_prompt()))
-        long = self._generate(inputs)
-
-        retried = False
-        if retry_on_unreadable and drivelm.chai_needs_retry(long):
-            # CHAI re-query once when the reply names no action.
-            retried = True
+        context = steerer if (steerer is not None and steered) else contextlib.nullcontext()
+        with context:
+            inputs = self._encode(images, self._messages(images, drivelm.build_prompt()))
             long = self._generate(inputs)
 
-        # Second turn: a fresh exchange carrying the first answer's tail, which
-        # is what CHAI do rather than continuing the conversation.
-        summarise = drivelm.build_summarise_prompt(long, self.swap_summarise_options)
-        short = self._generate(self._encode(images, self._messages(images, summarise)))
+            retried = False
+            if retry_on_unreadable and drivelm.chai_needs_retry(long):
+                # CHAI re-query once when the reply names no action.
+                retried = True
+                long = self._generate(inputs)
+
+            # Second turn: a fresh exchange carrying the first answer's tail,
+            # which is what CHAI do rather than continuing the conversation.
+            summarise = drivelm.build_summarise_prompt(long, self.swap_summarise_options)
+            short = self._generate(self._encode(images, self._messages(images, summarise)))
 
         return Reply(
             long=long,
             short=short,
             action=drivelm.parse_action(short),
             retried=retried,
+            gate_score=gate_score,
+            steered=steered,
         )
 
     def score_answers(
@@ -248,8 +273,25 @@ class QwenVLDriveLM:
         The forced-choice proxy the sign search uses: two forward passes rather
         than generating a full chain of thought per candidate.
         """
+        import contextlib
+
         if steerer is not None:
-            raise NotImplementedError("steering is InternVL-only here")
+            if steerer.config.schedule == "argus":
+                # This is one prefill over a complete sequence, so the answer
+                # tokens' logits come from *earlier* positions. The ARGUS
+                # schedule only ever touches the last one, which is after every
+                # token being scored -- the returned log-probs would be
+                # identical to the unsteered ones and look like "the defense
+                # does nothing". Refuse rather than report that.
+                raise ValueError(
+                    "schedule='argus' steers the last position only, which cannot affect "
+                    "forced-choice scores; evaluate it with ask() instead"
+                )
+            gate_activation = None
+            if steerer.config.use_gate:
+                layer = steerer.artifact.gate_layer
+                gate_activation = self.activations(images, None, layers=[layer])[layer].numpy()
+            steerer.prepare(gate_activation)
 
         messages = self._messages(images, drivelm.build_prompt())
         prefix = self.processor.apply_chat_template(
@@ -271,7 +313,8 @@ class QwenVLDriveLM:
 
             labels = batch["input_ids"].clone()
             labels[:, :n_prompt] = -100
-            with torch.inference_mode():
+            context = steerer if steerer is not None else contextlib.nullcontext()
+            with context, torch.inference_mode():
                 out = self.model(**batch, labels=labels)
             # loss is the mean NLL over scored tokens.
             scores[key] = float(-out.loss.item())

@@ -8,6 +8,7 @@ rendered off-frame, a scene whose attack target equals its benign answer.
 
 from __future__ import annotations
 
+import json
 import numpy as np
 import pytest
 
@@ -1090,3 +1091,318 @@ def test_drivelm_labelled_scenes_yield_targets(tmp_path):
     assert [s.correct_internvl for s in scenes] == ["b)", "b)"]
     # Target is the opposite of the benign action.
     assert all(s.internvl_target == "a)" for s in scenes)
+
+
+# --------------------------------------------------------------- ARGUS schedule
+#
+# Section 12 measured a steering run that moved 136,725 activations, shifted the
+# margin by 1.6 nats and left the attack rate at exactly 40.0%. The reason is
+# now believed to be the *schedule*: that run took moderate capped steps at
+# every position, where the released ARGUS code takes one uncapped
+# full-magnitude step at the first generated token and then tiny ones at the
+# last position only. These tests pin the difference, because a steering bug is
+# invisible in the output -- it looks like a defense that does not work.
+
+
+def _argus_artifact(h=6, probe_norm=40.0, bias=0.0):
+    from midas.steering import DefenseArtifact, LayerDefense
+
+    direction = np.zeros(h)
+    direction[0] = 1.0
+    return DefenseArtifact(
+        layers=[
+            LayerDefense(
+                layer=3,
+                direction=direction,
+                subspace=np.eye(1, h),
+                mean=np.zeros(h),
+                scale=np.ones(h),
+                margin=1.0,
+                accuracy=0.9,
+                probe_norm=probe_norm,
+                bias=bias,
+            )
+        ],
+        gate_layer=1,
+        gate_w=np.ones(h),
+        gate_b=0.0,
+        gate_mean=np.zeros(h),
+        gate_scale=np.ones(h),
+    )
+
+
+def test_argus_schedule_rejects_all_positions():
+    """Their hook indexes [:, -1, :]; steering everything is a different thing."""
+    import pytest
+
+    from midas.steering import SteerConfig
+
+    with pytest.raises(ValueError, match="last position"):
+        SteerConfig(schedule="argus", all_positions=True)
+    with pytest.raises(ValueError, match="unknown schedule"):
+        SteerConfig(schedule="safesteer")
+
+
+def test_argus_first_step_is_full_magnitude_and_uncapped():
+    """Step 0 must ignore max_step_ratio, which is the whole point of it.
+
+    With a cap of 0.25 and an activation norm of 1, the uniform schedule could
+    never move further than 0.25. ARGUS's first step is 9.9 in their run.
+    """
+    import torch
+
+    from midas.steering import SteerConfig, Steerer
+
+    art = _argus_artifact()
+    steerer = Steerer(
+        model=None,
+        artifact=art,
+        config=SteerConfig(
+            schedule="argus", first_step_norm=9.9, max_step_ratio=0.25, use_gate=False
+        ),
+    )
+    steerer.prepare(None)
+
+    hidden = torch.zeros(1, 1, 6)
+    steerer._steer_argus(hidden, art.layers[0], step=0)
+    moved = hidden[0, -1, :]
+    assert abs(float(moved.norm()) - 9.9) < 1e-4, "first step must have the stated norm"
+    # Against the direction: the probe points toward following the sign.
+    assert float(moved[0]) < 0
+
+
+def test_argus_later_steps_close_only_a_few_percent():
+    """Eq. 7 divides by ||w||^2, so each step after the first is tiny.
+
+    This is what makes the first step do the work. If the division were
+    dropped, step 1 would jump straight to the boundary and the two phases
+    would be indistinguishable -- so assert the ratio, not just "small".
+    """
+    import torch
+
+    from midas.steering import SteerConfig, Steerer
+
+    probe_norm = 40.0
+    art = _argus_artifact(probe_norm=probe_norm)
+    steerer = Steerer(
+        model=None, artifact=art, config=SteerConfig(schedule="argus", use_gate=False)
+    )
+    steerer.prepare(None)
+
+    score = 2.0
+    hidden = torch.zeros(1, 1, 6)
+    hidden[0, 0, 0] = score  # mean 0, scale 1, so z.direction == score
+    steerer._steer_argus(hidden, art.layers[0], step=1)
+
+    expected = score / probe_norm  # (||w||*s + b) / ||w||^2
+    assert abs(float(hidden[0, 0, 0]) - (score - expected)) < 1e-5
+    assert expected / score == 1.0 / probe_norm
+
+
+def test_argus_alpha_is_never_negative():
+    """relu: a state already on the safe side is left alone, not pushed over."""
+    art = _argus_artifact(probe_norm=10.0)
+    defense = art.layers[0]
+    assert defense.argus_alpha(-5.0) == 0.0
+    assert defense.argus_alpha(5.0) > 0.0
+
+
+def test_argus_step_counter_resets_on_each_prefill():
+    """``ask`` runs three generations per scene; each needs its own step 0.
+
+    A counter that only ever increments would give the big first step to the
+    chain-of-thought turn and nothing to the summarise turn, which is the turn
+    the action is actually parsed from.
+    """
+    import torch
+
+    from midas.steering import SteerConfig, Steerer
+
+    art = _argus_artifact()
+    steerer = Steerer(
+        model=None,
+        artifact=art,
+        config=SteerConfig(schedule="argus", first_step_norm=5.0, use_gate=False),
+    )
+    steerer.prepare(None)
+    hook = steerer._make_hook(art.layers[0])
+    steerer._active = True
+
+    # Prefill (many positions), then two decode steps, then a second prefill.
+    hook(None, None, torch.zeros(1, 7, 6))
+    hook(None, None, torch.zeros(1, 1, 6))
+    hook(None, None, torch.zeros(1, 1, 6))
+    assert steerer._step[3] == 3
+    hook(None, None, torch.zeros(1, 7, 6))
+    assert steerer._step[3] == 1, "a new prefill must restart the schedule"
+    # Two full-magnitude steps: one per generation, not one per scene.
+    assert steerer.first_step_norms == [5.0, 5.0]
+
+
+def test_steerer_layer_offset_follows_the_runner():
+    """Qwen indexes decoder blocks directly; InternVL's layer 0 is embeddings.
+
+    Reusing one offset for both steers a neighbouring layer, which produces a
+    plausible-looking null result rather than an error.
+    """
+    from midas.steering import SteerConfig, Steerer
+
+    class FakeBlock:
+        def __init__(self):
+            self.hooked = False
+
+        def register_forward_hook(self, _fn):
+            self.hooked = True
+
+            class Handle:
+                def remove(self_inner):
+                    pass
+
+            return Handle()
+
+    class FakeRunner:
+        ACTIVATION_LAYER_OFFSET = 0
+
+        def __init__(self):
+            self.blocks = [FakeBlock() for _ in range(6)]
+
+        def _layers(self):
+            return self.blocks
+
+    art = _argus_artifact()  # fitted layer 3
+    runner = FakeRunner()
+    with Steerer(runner, art, SteerConfig(schedule="argus")):
+        pass
+    assert runner.blocks[3].hooked, "offset 0 must hook block 3"
+    assert not runner.blocks[2].hooked
+
+    runner2 = FakeRunner()
+    runner2.ACTIVATION_LAYER_OFFSET = 1
+    with Steerer(runner2, art, SteerConfig(schedule="argus")):
+        pass
+    assert runner2.blocks[2].hooked, "offset 1 must hook block 2"
+    assert not runner2.blocks[3].hooked
+
+
+def test_probe_norm_survives_the_artifact_roundtrip(tmp_path):
+    """Without ||w|| and b, the ARGUS step size cannot be reconstructed."""
+    from midas.steering import DefenseArtifact
+
+    art = _argus_artifact(probe_norm=37.5, bias=-0.25)
+    written = art.save(tmp_path / "argus")
+    back = DefenseArtifact.load(written)
+    assert back.layers[0].probe_norm == 37.5
+    assert back.layers[0].bias == -0.25
+
+
+def test_old_artifacts_without_probe_norm_still_load(tmp_path):
+    """Artifacts fitted before this existed must not become unloadable."""
+    import json
+
+    from midas.steering import DefenseArtifact
+
+    art = _argus_artifact()
+    written = art.save(tmp_path / "legacy")
+    meta_path = written.with_suffix(".json")
+    meta = json.loads(meta_path.read_text())
+    for entry in meta["layers"]:
+        entry.pop("probe_norm")
+        entry.pop("bias")
+    meta_path.write_text(json.dumps(meta))
+
+    back = DefenseArtifact.load(written)
+    assert back.layers[0].probe_norm == 1.0
+    assert back.layers[0].bias == 0.0
+
+
+def test_qwen_refuses_forced_choice_scoring_under_the_argus_schedule():
+    """Last-position steering cannot change an answer token's log-prob.
+
+    A silent zero here would read as "the defense does nothing", which is the
+    same shape as the section 12 result and must not be reproducible by
+    accident.
+    """
+    import pytest
+
+    from midas.models.qwen import QwenVLDriveLM
+    from midas.steering import SteerConfig, Steerer
+
+    steerer = Steerer(model=None, artifact=_argus_artifact(), config=SteerConfig(schedule="argus"))
+    runner = QwenVLDriveLM.__new__(QwenVLDriveLM)  # no weights needed
+    with pytest.raises(ValueError, match="forced-choice"):
+        runner.score_answers([], {"a": "a)"}, steerer=steerer)
+
+
+def test_qwen_ask_no_longer_refuses_a_steerer():
+    """The NotImplementedError guard must be gone, or the defense cannot run."""
+    import inspect
+
+    from midas.models.qwen import QwenVLDriveLM
+
+    source = inspect.getsource(QwenVLDriveLM.ask)
+    assert "NotImplementedError" not in source
+    assert "steerer.prepare" in source
+
+
+def test_dry_run_can_pre_flight_the_defense_path(tmp_path):
+    """--dry-run --defend used to crash with a TypeError on the stub's ask().
+
+    The dry run exists to catch wiring faults on a laptop instead of ten
+    minutes into a GPU session, and the defense path was the one path it could
+    not check.
+    """
+    import subprocess
+    import sys
+
+    from midas.steering import DefenseArtifact, LayerDefense
+
+    h = 8
+    art = DefenseArtifact(
+        layers=[
+            LayerDefense(
+                layer=3,
+                direction=np.eye(h)[0],
+                subspace=np.eye(1, h),
+                mean=np.zeros(h),
+                scale=np.ones(h),
+                margin=1.0,
+                accuracy=0.9,
+                probe_norm=44.2,
+                bias=-0.3,
+            )
+        ],
+        gate_layer=2,
+        gate_w=np.ones(h),
+        gate_b=0.4,
+        gate_mean=np.zeros(h),
+        gate_scale=np.ones(h),
+    )
+    path = art.save(tmp_path / "artifact")
+
+    out = subprocess.run(
+        [sys.executable, "-m", "midas.cli.run_eval", "--split", "train", "--attack",
+         "--limit", "2", "--dry-run", "--defend", str(path), "--schedule", "argus",
+         "--first-step-norm", "9.9", "--out", str(tmp_path / "runs")],
+        capture_output=True, text=True,
+    )
+    assert out.returncode == 0, out.stderr[-2000:]
+    assert "schedule=argus" in out.stdout
+    # The ||w|| line proves the artifact's probe norms reached the config.
+    assert "L3=44.2" in out.stdout
+
+    written = list((tmp_path / "runs").glob("*.json"))
+    assert written, "no run record saved"
+    record = json.loads(written[0].read_text())
+    # Gate telemetry must survive into the output, not just be computed.
+    assert record["results"][0]["gate_score"] == 0.4
+    assert record["summary"]["steer_rate"] == 1.0
+
+
+def test_stale_artifact_warns_instead_of_silently_misscaling():
+    """A probe_norm of 1.0 makes Eq. 7 steps ~||w|| times too large."""
+    import inspect
+
+    from midas.cli import run_eval
+
+    source = inspect.getsource(run_eval.main)
+    assert "predates" in source and "probe_norm == 1.0" in source

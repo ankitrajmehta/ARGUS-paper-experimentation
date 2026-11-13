@@ -29,17 +29,48 @@ class _StubModel:
     Answers the benign action on clean frames and flips to the target on roughly
     two thirds of attacked frames, so the plumbing, scoring and output files can
     be checked on a laptop before touching the real model.
+
+    It also accepts a ``steerer`` and runs its gate. There are no real
+    activations to gate on, so the decision is meaningless -- but every other
+    part of the defense path (artifact loading, layer selection, the gate call,
+    recording ``gate_score`` and ``steered`` in the output) is real, and those
+    are what used to fail minutes into a GPU session.
     """
 
-    def __init__(self, seed: int = 0) -> None:
+    # The stub has no decoder blocks, so a Steerer must never try to hook it.
+    ACTIVATION_LAYER_OFFSET = 0
+
+    def __init__(self, seed: int = 0, hidden: int = 8) -> None:
         self._rng = random.Random(seed)
         self.pending: tuple[str, str, bool] | None = None
+        self.hidden = hidden
 
-    def ask(self, images, retry_on_unreadable: bool = True) -> Reply:
+    def _layers(self):
+        return []
+
+    def ask(self, images, retry_on_unreadable: bool = True, steerer=None) -> Reply:
+        gate_score = None
+        steered = False
+        if steerer is not None:
+            activation = None
+            if steerer.config.use_gate:
+                # Shape, not content: a mismatch against the fitted gate is a
+                # real error worth catching here rather than on the GPU.
+                activation = np.zeros_like(steerer.artifact.gate_mean)
+            steered = steerer.prepare(activation)
+            gate_score = steerer.last_gate_score
+
         benign, target, attacked = self.pending or ("b)", "a)", False)
         action = target if attacked and self._rng.random() < 0.67 else benign
         word = "proceed" if action == "a)" else "brake"
-        return Reply(long=f"[dry-run] ... {word}", short=word, action=action, retried=False)
+        return Reply(
+            long=f"[dry-run] ... {word}",
+            short=word,
+            action=action,
+            retried=False,
+            gate_score=gate_score,
+            steered=steered,
+        )
 
 
 def _seed_everything(seed: int) -> None:
@@ -246,6 +277,22 @@ def main(argv: list[str] | None = None) -> int:
         help="path to a fitted defense artifact; steers generation when the gate fires",
     )
     parser.add_argument("--strength", type=float, default=1.0)
+    parser.add_argument(
+        "--schedule", choices=["uniform", "argus"], default="uniform",
+        help="uniform: the same adaptive capped step every pass (what section 12 "
+        "measured, and it was inert). argus: the released schedule -- one uncapped "
+        "full-magnitude step at the first generated token, then Eq. 7 steps, last "
+        "position only.",
+    )
+    parser.add_argument(
+        "--first-step-norm", type=float, default=None,
+        help="with --schedule argus, the activation-space norm of the step-0 vector. "
+        "The sibling project's run measured 9.9. Defaults to --strength.",
+    )
+    parser.add_argument(
+        "--epsilon", type=float, default=0.0,
+        help="with --schedule argus, push past the probe boundary rather than onto it",
+    )
     parser.add_argument("--no-subspace", action="store_true", help="ablate: raw direction")
     parser.add_argument("--no-adaptive", action="store_true", help="ablate: fixed strength")
     parser.add_argument("--no-gate", action="store_true", help="ablate: always steer")
@@ -320,14 +367,31 @@ def main(argv: list[str] | None = None) -> int:
                 adaptive=not args.no_adaptive,
                 use_gate=not args.no_gate,
                 top_layers=args.top_layers,
+                schedule=args.schedule,
+                first_step_norm=args.first_step_norm,
+                epsilon=args.epsilon,
             ),
         )
         print(
             f"defense: layers {steerer.selected() and [d.layer for d in steerer.selected()]}, "
             f"gate layer {artifact.gate_layer}, "
+            f"schedule={args.schedule} "
             f"subspace={not args.no_subspace} adaptive={not args.no_adaptive} "
             f"gate={not args.no_gate} strength={args.strength}"
         )
+        if args.schedule == "argus":
+            print(
+                f"         step 0 norm {args.first_step_norm or args.strength} uncapped, "
+                f"then relu((||w||s+b+{args.epsilon})/||w||^2); "
+                f"||w|| per layer: "
+                + " ".join(f"L{d.layer}={d.probe_norm:.1f}" for d in steerer.selected())
+            )
+            if all(d.probe_norm == 1.0 for d in steerer.selected()):
+                print(
+                    "         WARNING: every ||w|| is exactly 1.0, so this artifact predates "
+                    "probe-norm recording and the Eq. 7 steps will be ~||w|| times too large. "
+                    "Refit with midas-fit-defense."
+                )
 
     conditions = []
     if args.both:
