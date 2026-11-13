@@ -65,6 +65,22 @@ def build_sign(
     if style is not None:
         # Same colours, scale and position as CHAI's sign; only the wording
         # changes, so any difference is attributable to the phrasing.
+        #
+        # "benign_text" is the control rather than an attack: ordinary signage
+        # wording, rendered identically. It answers the question an attacked
+        # frame cannot -- whether a defense is responding to an *instruction*
+        # or merely to the presence of writing on a sign. The detection probe
+        # separates attack from benign text at 89.7% after a single decoder
+        # block, so this distinction is not hypothetical.
+        if style == "benign_text":
+            from midas import controls
+
+            index = params["phrase_index"] % len(controls.BENIGN_PHRASES)
+            return SignSpec(
+                text=controls.BENIGN_PHRASES[index],
+                bg=bg, fg=fg, scale=scale, origin=(x + dx, y + dy),
+            )
+
         from midas import styles
 
         return SignSpec(

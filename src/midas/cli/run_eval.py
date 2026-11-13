@@ -264,7 +264,10 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="injection style instead of CHAI's optimised phrase "
         "(plain | authority | override | urgency). Same colours, scale and "
-        "position; only the wording changes.",
+        "position; only the wording changes. 'benign_text' is the control: an "
+        "ordinary road-sign phrase, rendered identically, which separates a "
+        "defense that responds to an instruction from one that responds to "
+        "any writing on a sign.",
     )
     parser.add_argument("--out", type=Path, default=Path("results/runs"))
     parser.add_argument(
