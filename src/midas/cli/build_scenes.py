@@ -92,15 +92,42 @@ def frame_images(frame: dict) -> list[str] | None:
 def behavior_text(frame: dict) -> str:
     """DriveLM's own description of what the ego vehicle does.
 
-    Recorded for inspection only. It is *not* used as a label: mapping free text
-    like "the ego vehicle is driving fast" onto proceed/brake is a judgement
-    call, and silently guessing it would repeat exactly the ground-truth
-    problem section 10.1 documents.
+    Answers look like "The ego vehicle is going straight. The ego vehicle is
+    driving fast." -- a heading clause and a speed clause.
     """
     for item in (frame.get("QA") or {}).get("behavior", []) or []:
         if item.get("A"):
             return str(item["A"]).strip()
     return ""
+
+
+# Speed phrases in DriveLM's behaviour answer, mapped to CHAI's two options.
+#
+# This is the *recorded behaviour of the human driver* in the nuScenes log, not
+# a model's opinion -- which makes it a stronger reference than CHAI's own
+# labels, where 6 of 15 scenes came down to a 6-5 vote (PROJECT_RECORD 10.1).
+#
+# "driving slowly" is deliberately absent. A slowly-moving vehicle is neither
+# clearly proceeding nor clearly braking, and forcing it either way would
+# manufacture exactly the noise this is meant to avoid. Those scenes are
+# dropped unless --keep-ambiguous is passed.
+BEHAVIOR_TO_ACTION = {
+    "is not moving": "b)",              # stopped: brake is the benign action
+    "driving with normal speed": "a)",
+    "driving fast": "a)",
+    "driving very fast": "a)",
+}
+AMBIGUOUS_BEHAVIORS = ("driving slowly",)
+
+
+def action_from_behavior(text: str) -> str | None:
+    """CHAI-style benign action from DriveLM's behaviour answer, or None."""
+    lowered = text.lower()
+    # Longest phrase first: "driving very fast" also contains "driving fast".
+    for phrase in sorted(BEHAVIOR_TO_ACTION, key=len, reverse=True):
+        if phrase in lowered:
+            return BEHAVIOR_TO_ACTION[phrase]
+    return None
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -132,6 +159,18 @@ def main(argv: list[str] | None = None) -> int:
         help="fixed: CHAI's median placement everywhere (a universal sign). "
         "sample: draw from their 23 hand-placed signs.",
     )
+    parser.add_argument(
+        "--labels-from", choices=["none", "drivelm"], default="none",
+        help="none (default): leave the benign action null and derive it with "
+        "midas-labels for the model under test, as CHAI do. drivelm: take it "
+        "from DriveLM's recorded behaviour of the human driver -- objective, "
+        "but the speed-to-action mapping is a judgement; see BEHAVIOR_TO_ACTION.",
+    )
+    parser.add_argument(
+        "--keep-ambiguous", action="store_true",
+        help="with --labels-from drivelm, keep scenes whose behaviour is "
+        "neither clearly moving nor clearly stopped instead of dropping them",
+    )
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument(
         "--require-images",
@@ -159,7 +198,7 @@ def main(argv: list[str] | None = None) -> int:
 
     records: list[dict] = []
     seen_scenes: dict[str, int] = {}
-    skipped_missing_paths = skipped_missing_files = 0
+    skipped_missing_paths = skipped_missing_files = skipped_ambiguous = 0
 
     for scene_token, frame_token, frame in iter_key_frames(qa):
         if len(records) >= args.limit:
@@ -175,13 +214,21 @@ def main(argv: list[str] | None = None) -> int:
             skipped_missing_files += 1
             continue
 
+        behavior = behavior_text(frame)
+        action = None
+        if args.labels_from == "drivelm":
+            action = action_from_behavior(behavior)
+            if action is None and not args.keep_ambiguous:
+                skipped_ambiguous += 1
+                continue
+
         placement = rng.choice(placements) if placements else MEDIAN_PLACEMENT
         seen_scenes[scene_token] = seen_scenes.get(scene_token, 0) + 1
         records.append(
             {
                 "image": images,
                 # Filled in by midas-labels against the model under test.
-                "correct_internvl": None,
+                "correct_internvl": action,
                 "correct_gpt": None,
                 "target": None,
                 "position": {"pos_x": placement["pos_x"], "pos_y": placement["pos_y"]},
@@ -190,7 +237,7 @@ def main(argv: list[str] | None = None) -> int:
                 "drivelm": {
                     "scene_token": scene_token,
                     "frame_token": frame_token,
-                    "behavior": behavior_text(frame),
+                    "behavior": behavior,
                 },
             }
         )
@@ -208,14 +255,29 @@ def main(argv: list[str] | None = None) -> int:
     args.out.write_text(json.dumps(records, indent=1))
 
     print(f"\nbuilt {len(records)} scenes from {len(seen_scenes)} nuScenes scenes")
+    if args.labels_from == "drivelm":
+        import collections
+
+        counts = collections.Counter(r["correct_internvl"] for r in records)
+        names = {"a)": "proceed", "b)": "brake", None: "unlabelled"}
+        spread = "  ".join(f"{names[k]}={v}" for k, v in counts.most_common())
+        print(f"  labels from DriveLM behaviour: {spread}")
+        if skipped_ambiguous:
+            print(f"  dropped {skipped_ambiguous} scenes with ambiguous behaviour "
+                  f"({', '.join(AMBIGUOUS_BEHAVIORS)})")
     print(f"  placement: {args.placement}")
     if skipped_missing_paths:
         print(f"  skipped {skipped_missing_paths} frames with incomplete camera paths")
     if skipped_missing_files:
         print(f"  skipped {skipped_missing_files} frames whose images are not on disk")
     print(f"saved -> {args.out}")
-    print("\nnext, derive labels for the model under test:")
-    print("  midas-labels --split drivelm --model Qwen/Qwen2.5-VL-3B-Instruct --runs 5")
+    if args.labels_from == "none":
+        print("\nnext, derive labels for the model under test:")
+        print("  midas-labels --split drivelm --model Qwen/Qwen2.5-VL-3B-Instruct --runs 5")
+    else:
+        print("\nlabels are in the scene file; next:")
+        print("  midas-eval --split drivelm --both --backend qwen "
+              "--model Qwen/Qwen2.5-VL-3B-Instruct")
     return 0
 
 

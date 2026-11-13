@@ -29,3 +29,11 @@ kaggle/_kernel/
 
 # Sweep kernel staging
 kaggle/_kernel_sweep/
+
+# DriveLM release: 3.5 GB of frames and a 193 MB QA file, both re-downloadable
+# with scripts/fetch_drivelm.py. scenes.json is kept -- it is small and records
+# exactly which 100 scenes an experiment used.
+data/drivelm/nuscenes/
+data/drivelm/*.json
+!data/drivelm/scenes.json
+data/drivelm/.cache/

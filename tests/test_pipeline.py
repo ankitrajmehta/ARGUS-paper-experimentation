@@ -1018,3 +1018,75 @@ def test_qwen_shows_the_same_two_cameras_as_internvl():
     source = Path("src/midas/models/qwen.py").read_text()
     assert "drivelm.CAMERA_INDICES" in source
     assert ast.parse(source)
+
+
+def test_behaviour_to_action_mapping():
+    """DriveLM records the human driver's behaviour; the speed clause is what
+    maps onto CHAI's two options."""
+    from midas.cli.build_scenes import action_from_behavior
+
+    assert action_from_behavior("The ego vehicle is not moving.") == "b)"
+    assert action_from_behavior("The ego vehicle is driving fast.") == "a)"
+    assert action_from_behavior("The ego vehicle is driving with normal speed.") == "a)"
+    # "driving very fast" also contains "driving fast"; longest phrase must win,
+    # and here both map to a) so the test guards the ordering, not the outcome.
+    assert action_from_behavior("The ego vehicle is driving very fast.") == "a)"
+    # Deliberately unmapped: neither clearly proceeding nor clearly braking.
+    assert action_from_behavior("The ego vehicle is driving slowly.") is None
+    assert action_from_behavior("") is None
+
+
+def test_ambiguous_behaviour_is_dropped_not_guessed(tmp_path):
+    """Forcing a slowly-moving vehicle into proceed or brake would manufacture
+    exactly the label noise this label source exists to avoid."""
+    import json
+    from midas.cli import build_scenes
+
+    qa = _fake_drivelm_qa(3)
+    speeds = ["is not moving", "driving slowly", "driving fast"]
+    for scene, speed in zip(qa.values(), speeds):
+        for frame in scene["key_frames"].values():
+            frame["QA"]["behavior"] = [{"Q": "b?", "A": f"Going straight. The ego vehicle {speed}."}]
+
+    qa_path = tmp_path / "qa.json"
+    qa_path.write_text(json.dumps(qa))
+
+    out = tmp_path / "strict.json"
+    build_scenes.main([
+        "--qa", str(qa_path), "--root", str(tmp_path), "--limit", "10",
+        "--labels-from", "drivelm", "--out", str(out), "--no-require-images",
+    ])
+    strict = json.loads(out.read_text())
+    assert [r["correct_internvl"] for r in strict] == ["b)", "a)"]
+
+    kept = tmp_path / "kept.json"
+    build_scenes.main([
+        "--qa", str(qa_path), "--root", str(tmp_path), "--limit", "10",
+        "--labels-from", "drivelm", "--keep-ambiguous",
+        "--out", str(kept), "--no-require-images",
+    ])
+    assert len(json.loads(kept.read_text())) == 3
+
+
+def test_drivelm_labelled_scenes_yield_targets(tmp_path):
+    """A labelled scene must produce a target without needing midas-labels."""
+    import json
+    from midas.cli import build_scenes
+
+    qa = _fake_drivelm_qa(2)
+    for scene in qa.values():
+        for frame in scene["key_frames"].values():
+            frame["QA"]["behavior"] = [{"Q": "b?", "A": "The ego vehicle is not moving."}]
+
+    qa_path = tmp_path / "qa.json"
+    qa_path.write_text(json.dumps(qa))
+    out = tmp_path / "scenes.json"
+    build_scenes.main([
+        "--qa", str(qa_path), "--root", str(tmp_path), "--limit", "2",
+        "--labels-from", "drivelm", "--out", str(out), "--no-require-images",
+    ])
+
+    scenes = data.load_scenes(str(out))
+    assert [s.correct_internvl for s in scenes] == ["b)", "b)"]
+    # Target is the opposite of the benign action.
+    assert all(s.internvl_target == "a)" for s in scenes)

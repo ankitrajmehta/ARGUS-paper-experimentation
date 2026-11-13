@@ -1,0 +1,2302 @@
+[
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-13-10-39-0400__CAM_FRONT__1537291010612404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-13-10-39-0400__CAM_FRONT_LEFT__1537291010604799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-13-10-39-0400__CAM_FRONT_RIGHT__1537291010620482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-13-10-39-0400__CAM_BACK__1537291010637558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-13-10-39-0400__CAM_BACK_LEFT__1537291010647405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-13-10-39-0400__CAM_BACK_RIGHT__1537291010628113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "f0f120e4d4b0441da90ec53b16ee169d",
+   "frame_token": "4a0798f849ca477ab18009c3a20b7df2",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-00-36+0800__CAM_FRONT__1533280042612460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-08-03-15-00-36+0800__CAM_FRONT_LEFT__1533280042604844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-08-03-15-00-36+0800__CAM_FRONT_RIGHT__1533280042620339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-08-03-15-00-36+0800__CAM_BACK__1533280042637525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-08-03-15-00-36+0800__CAM_BACK_LEFT__1533280042647423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-08-03-15-00-36+0800__CAM_BACK_RIGHT__1533280042627893.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "54cdaaae372d421fa4734d66f51a8c48",
+   "frame_token": "1b45a97a0e5e49fe9cd345dd4bd729c3",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-07-27-12-07-38-0400__CAM_FRONT__1532708670912404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-07-27-12-07-38-0400__CAM_FRONT_LEFT__1532708670904799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-07-27-12-07-38-0400__CAM_FRONT_RIGHT__1532708670920482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-07-27-12-07-38-0400__CAM_BACK__1532708670937558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-07-27-12-07-38-0400__CAM_BACK_LEFT__1532708670947405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-07-27-12-07-38-0400__CAM_BACK_RIGHT__1532708670928118.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "1977a1c98a6c4eb79fbc2a6dc0da9b0f",
+   "frame_token": "bd8a5e326b804b069d497d29dbf19c2b",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-08-01-17-04-15+0800__CAM_FRONT__1533114327612460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-08-01-17-04-15+0800__CAM_FRONT_LEFT__1533114327604844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-08-01-17-04-15+0800__CAM_FRONT_RIGHT__1533114327620339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-08-01-17-04-15+0800__CAM_BACK__1533114327637525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-08-01-17-04-15+0800__CAM_BACK_LEFT__1533114327647434.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-08-01-17-04-15+0800__CAM_BACK_RIGHT__1533114327627893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "ba76f4185aa34ed3bff467ac640da902",
+   "frame_token": "b48b532c3e1943578c4cf9e1a8230541",
+   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-07-26-0400__CAM_FRONT__1537287302412404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-12-07-26-0400__CAM_FRONT_LEFT__1537287302404799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-12-07-26-0400__CAM_FRONT_RIGHT__1537287302420490.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-12-07-26-0400__CAM_BACK__1537287302437558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-12-07-26-0400__CAM_BACK_LEFT__1537287302447405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-12-07-26-0400__CAM_BACK_RIGHT__1537287302428113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "e0b14a8e11994763acba690bbcc3f56a",
+   "frame_token": "7138a5bb5798486d82d170558c4bd90d",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-09-25-11-10-38+0800__CAM_FRONT__1537845385262460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-09-25-11-10-38+0800__CAM_FRONT_LEFT__1537845385254844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-09-25-11-10-38+0800__CAM_FRONT_RIGHT__1537845385270339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-09-25-11-10-38+0800__CAM_BACK__1537845385287525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-09-25-11-10-38+0800__CAM_BACK_LEFT__1537845385297423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-09-25-11-10-38+0800__CAM_BACK_RIGHT__1537845385277893.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "2422d2652f4f42298a389a6e0dfef307",
+   "frame_token": "f765c2cac300448abca6cf1496140331",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535574108912404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_LEFT__1535574108904799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_RIGHT__1535574108920482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-29-16-04-13-0400__CAM_BACK__1535574108937558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-29-16-04-13-0400__CAM_BACK_LEFT__1535574108947500.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_BACK_RIGHT__1535574108928113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "df8dfada99a04a81bd1b102eeb84e9bc",
+   "frame_token": "3a171478d2d448ba9f8fc44c7df60a5a",
+   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-09-25-11-10-38+0800__CAM_FRONT__1537845414662460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-09-25-11-10-38+0800__CAM_FRONT_LEFT__1537845414654844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-09-25-11-10-38+0800__CAM_FRONT_RIGHT__1537845414670339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-09-25-11-10-38+0800__CAM_BACK__1537845414687525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-09-25-11-10-38+0800__CAM_BACK_LEFT__1537845414697423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-09-25-11-10-38+0800__CAM_BACK_RIGHT__1537845414677893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "76c632788f8c4516bef1c4297f2002f6",
+   "frame_token": "182b5e160c6f44e096380a9f9f8c41f4",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535573258612404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_LEFT__1535573258604799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_RIGHT__1535573258620482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-29-16-04-13-0400__CAM_BACK__1535573258637558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-29-16-04-13-0400__CAM_BACK_LEFT__1535573258647405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_BACK_RIGHT__1535573258628113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "1891b66d9f58463399aa242f3b521232",
+   "frame_token": "eff4ca737a73408d80274afda5b9019b",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-11-21-19-38-26+0800__CAM_FRONT__1542800630112460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-11-21-19-38-26+0800__CAM_FRONT_LEFT__1542800630104844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-11-21-19-38-26+0800__CAM_FRONT_RIGHT__1542800630120339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-11-21-19-38-26+0800__CAM_BACK__1542800630137525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-11-21-19-38-26+0800__CAM_BACK_LEFT__1542800630147423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-11-21-19-38-26+0800__CAM_BACK_RIGHT__1542800630127893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "fe4fdd7a28754baeac7074ad78f55a52",
+   "frame_token": "8f4d3fb0381d4125950c0120a6982db4",
+   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-09-26-11-17-24+0800__CAM_FRONT__1537932222412460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-09-26-11-17-24+0800__CAM_FRONT_LEFT__1537932222404844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-09-26-11-17-24+0800__CAM_FRONT_RIGHT__1537932222420414.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-09-26-11-17-24+0800__CAM_BACK__1537932222437525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-09-26-11-17-24+0800__CAM_BACK_LEFT__1537932222447624.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-09-26-11-17-24+0800__CAM_BACK_RIGHT__1537932222427893.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "75548269eb0a4614a6f84ab8d7713196",
+   "frame_token": "648d919295694e0db78ab688679fa6fa",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-00-36+0800__CAM_FRONT__1533280161662461.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-08-03-15-00-36+0800__CAM_FRONT_LEFT__1533280161654844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-08-03-15-00-36+0800__CAM_FRONT_RIGHT__1533280161670339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-08-03-15-00-36+0800__CAM_BACK__1533280161687525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-08-03-15-00-36+0800__CAM_BACK_LEFT__1533280161697423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-08-03-15-00-36+0800__CAM_BACK_RIGHT__1533280161677893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "17302a41218442ffbb0b094adb0669ab",
+   "frame_token": "dd86d69f1061442eb01c4fb93caff946",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-06-15-06-32-0400__CAM_FRONT__1533582505112404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-06-15-06-32-0400__CAM_FRONT_LEFT__1533582505104799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-06-15-06-32-0400__CAM_FRONT_RIGHT__1533582505120482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-06-15-06-32-0400__CAM_BACK__1533582505137558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-06-15-06-32-0400__CAM_BACK_LEFT__1533582505147405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-06-15-06-32-0400__CAM_BACK_RIGHT__1533582505128113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "6207269cb9474c14b01f9610b2ee30aa",
+   "frame_token": "505fe98faa2843a8b11e082e6b2274a3",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-28-16-16-48-0400__CAM_FRONT__1535488040612404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-28-16-16-48-0400__CAM_FRONT_LEFT__1535488040604799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-28-16-16-48-0400__CAM_FRONT_RIGHT__1535488040620482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-28-16-16-48-0400__CAM_BACK__1535488040637558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-28-16-16-48-0400__CAM_BACK_LEFT__1535488040647405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-28-16-16-48-0400__CAM_BACK_RIGHT__1535488040628113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "3469d30a6e2a4d878fb0ff899346b7de",
+   "frame_token": "30c1e76b5d91415d8803fd019bfd24bf",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-13-41-50-0400__CAM_FRONT__1537293224262404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-13-41-50-0400__CAM_FRONT_LEFT__1537293224254799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-13-41-50-0400__CAM_FRONT_RIGHT__1537293224270482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-13-41-50-0400__CAM_BACK__1537293224287558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-13-41-50-0400__CAM_BACK_LEFT__1537293224297405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-13-41-50-0400__CAM_BACK_RIGHT__1537293224278113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "b829278aae2747959f2a95423455bbcb",
+   "frame_token": "634cc5f8d02740ec877154a67599d159",
+   "behavior": "The ego vehicle is slightly steering to the left. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537290219412404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-12-53-31-0400__CAM_FRONT_LEFT__1537290219404799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-12-53-31-0400__CAM_FRONT_RIGHT__1537290219420482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-12-53-31-0400__CAM_BACK__1537290219437791.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-12-53-31-0400__CAM_BACK_LEFT__1537290219447405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-12-53-31-0400__CAM_BACK_RIGHT__1537290219428113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "c7780850596641b8ab5f352d16b178e4",
+   "frame_token": "99d6859e15d7471fb19dbfc4afa26d14",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297549912404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-14-54-39-0400__CAM_FRONT_LEFT__1537297549904799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-14-54-39-0400__CAM_FRONT_RIGHT__1537297549920482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-14-54-39-0400__CAM_BACK__1537297549937558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-14-54-39-0400__CAM_BACK_LEFT__1537297549947405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-14-54-39-0400__CAM_BACK_RIGHT__1537297549928113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "c77e6ecf108c4c8b80d35d84642c805f",
+   "frame_token": "96b14882b5e94679b6dd2a4fcc79caa3",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-11-21-19-38-26+0800__CAM_FRONT__1542801345412460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-11-21-19-38-26+0800__CAM_FRONT_LEFT__1542801345404844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-11-21-19-38-26+0800__CAM_FRONT_RIGHT__1542801345420339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-11-21-19-38-26+0800__CAM_BACK__1542801345437525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-11-21-19-38-26+0800__CAM_BACK_LEFT__1542801345447423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-11-21-19-38-26+0800__CAM_BACK_RIGHT__1542801345427893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "692fe09aecae4b1a94f8a3bceedd9b7c",
+   "frame_token": "38c4644a31bf4b7a9dc5493c3511edb6",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-09-25-11-10-38+0800__CAM_FRONT__1537845628112460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-09-25-11-10-38+0800__CAM_FRONT_LEFT__1537845628104844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-09-25-11-10-38+0800__CAM_FRONT_RIGHT__1537845628120339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-09-25-11-10-38+0800__CAM_BACK__1537845628137525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-09-25-11-10-38+0800__CAM_BACK_LEFT__1537845628147423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-09-25-11-10-38+0800__CAM_BACK_RIGHT__1537845628127893.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "c2d5a5e7f7dc4e12b967fff22a0e1bf1",
+   "frame_token": "d73f323655ca4879a0eb96f54f5ceaae",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535573415862404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_LEFT__1535573415854799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_RIGHT__1535573415870482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-29-16-04-13-0400__CAM_BACK__1535573415887558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-29-16-04-13-0400__CAM_BACK_LEFT__1535573415897405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_BACK_RIGHT__1535573415878113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "0c13be31e9854d97960d1af570db433f",
+   "frame_token": "6918560124ca486a978326bd1be0f24a",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535573299412404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_LEFT__1535573299404799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_RIGHT__1535573299420482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-29-16-04-13-0400__CAM_BACK__1535573299437558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-29-16-04-13-0400__CAM_BACK_LEFT__1535573299447464.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_BACK_RIGHT__1535573299428113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "23e33c8bba1f411ba5871dc074f8dbf8",
+   "frame_token": "6100862b51064cf4a556f8246bbb9300",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535656880262404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-30-15-16-55-0400__CAM_FRONT_LEFT__1535656880254799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-30-15-16-55-0400__CAM_FRONT_RIGHT__1535656880270482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-30-15-16-55-0400__CAM_BACK__1535656880287558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-30-15-16-55-0400__CAM_BACK_LEFT__1535656880297405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-30-15-16-55-0400__CAM_BACK_RIGHT__1535656880278113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "82240fd6d5ba4375815f8a7fa1561361",
+   "frame_token": "7b9156018ca6495796bff088b09370e3",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-00-36+0800__CAM_FRONT__1533279670662460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-08-03-15-00-36+0800__CAM_FRONT_LEFT__1533279670654844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-08-03-15-00-36+0800__CAM_FRONT_RIGHT__1533279670670339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-08-03-15-00-36+0800__CAM_BACK__1533279670687525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-08-03-15-00-36+0800__CAM_BACK_LEFT__1533279670697423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-08-03-15-00-36+0800__CAM_BACK_RIGHT__1533279670677893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "212b65c558254e2084489bf76e371e1a",
+   "frame_token": "a88ae4d1538f43009feb402c65ed2827",
+   "behavior": "The ego vehicle is steering to the left. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-31-11-19-57-0400__CAM_FRONT__1535729565412404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-31-11-19-57-0400__CAM_FRONT_LEFT__1535729565404799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-31-11-19-57-0400__CAM_FRONT_RIGHT__1535729565420482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-31-11-19-57-0400__CAM_BACK__1535729565437558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-31-11-19-57-0400__CAM_BACK_LEFT__1535729565447405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-31-11-19-57-0400__CAM_BACK_RIGHT__1535729565428113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "7540f31d12f1439db67a50be7726c70d",
+   "frame_token": "7323900077cf41a2b05c345adcd3ca05",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537289971262404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-12-53-31-0400__CAM_FRONT_LEFT__1537289971254799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-12-53-31-0400__CAM_FRONT_RIGHT__1537289971270482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-12-53-31-0400__CAM_BACK__1537289971287558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-12-53-31-0400__CAM_BACK_LEFT__1537289971297405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-12-53-31-0400__CAM_BACK_RIGHT__1537289971278113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "453453c849304ad69741891946d46453",
+   "frame_token": "9739a792fd764f50b12e9e86471c8401",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-13-10-39-0400__CAM_FRONT__1537290883362404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-13-10-39-0400__CAM_FRONT_LEFT__1537290883354799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-13-10-39-0400__CAM_FRONT_RIGHT__1537290883370482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-13-10-39-0400__CAM_BACK__1537290883387558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-13-10-39-0400__CAM_BACK_LEFT__1537290883397419.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-13-10-39-0400__CAM_BACK_RIGHT__1537290883378113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "e329b73341204af7a9de29e65291ce1c",
+   "frame_token": "cffc0e2b8c78429191e64ca85660f9eb",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-09-25-11-10-38+0800__CAM_FRONT__1537845562262462.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-09-25-11-10-38+0800__CAM_FRONT_LEFT__1537845562254844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-09-25-11-10-38+0800__CAM_FRONT_RIGHT__1537845562270339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-09-25-11-10-38+0800__CAM_BACK__1537845562287525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-09-25-11-10-38+0800__CAM_BACK_LEFT__1537845562297423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-09-25-11-10-38+0800__CAM_BACK_RIGHT__1537845562277893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "7f6043918b234b68a61e6caab7a33346",
+   "frame_token": "b9ea5753895f4d97bc3023b3dfeb4813",
+   "behavior": "The ego vehicle is steering to the right. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-15-26-58-0400__CAM_FRONT__1537298988512404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-15-26-58-0400__CAM_FRONT_LEFT__1537298988504799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-15-26-58-0400__CAM_FRONT_RIGHT__1537298988520482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-15-26-58-0400__CAM_BACK__1537298988537558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-15-26-58-0400__CAM_BACK_LEFT__1537298988547405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-15-26-58-0400__CAM_BACK_RIGHT__1537298988528113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "e1e664292aa144bc8d0d5d6441df084c",
+   "frame_token": "57459491309345d88dd6f8b85d5a6c9d",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-10-08-15-52-24+0800__CAM_FRONT__1538985559112462.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-10-08-15-52-24+0800__CAM_FRONT_LEFT__1538985559104844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-10-08-15-52-24+0800__CAM_FRONT_RIGHT__1538985559120339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-10-08-15-52-24+0800__CAM_BACK__1538985559137525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-10-08-15-52-24+0800__CAM_BACK_LEFT__1538985559147423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-10-08-15-52-24+0800__CAM_BACK_RIGHT__1538985559127893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "e0a212aafd574781b122a6ba66599a1e",
+   "frame_token": "93d4a5ef1d0146a8af2953d8178d22bd",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-13-10-39-0400__CAM_FRONT__1537291078162404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-13-10-39-0400__CAM_FRONT_LEFT__1537291078154799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-13-10-39-0400__CAM_FRONT_RIGHT__1537291078170482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-13-10-39-0400__CAM_BACK__1537291078187558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-13-10-39-0400__CAM_BACK_LEFT__1537291078197405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-13-10-39-0400__CAM_BACK_RIGHT__1537291078178113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "73b16c26a0d24c7a841e4cbe5d0d7878",
+   "frame_token": "858559433d1e49498c50db548e19cadd",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-10-08-16-03-24+0800__CAM_FRONT__1538985846662460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-10-08-16-03-24+0800__CAM_FRONT_LEFT__1538985846654844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-10-08-16-03-24+0800__CAM_FRONT_RIGHT__1538985846670339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-10-08-16-03-24+0800__CAM_BACK__1538985846687525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-10-08-16-03-24+0800__CAM_BACK_LEFT__1538985846697423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-10-08-16-03-24+0800__CAM_BACK_RIGHT__1538985846677893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "bf753f22bc524274bc359467e0be149c",
+   "frame_token": "94c846fdf50244a0b30b88b58c9b9a6c",
+   "behavior": "The ego vehicle is slightly steering to the left. The ego vehicle is driving very fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-08-01-16-41-59+0800__CAM_FRONT__1533112939912460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-08-01-16-41-59+0800__CAM_FRONT_LEFT__1533112939904844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-08-01-16-41-59+0800__CAM_FRONT_RIGHT__1533112939920339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-08-01-16-41-59+0800__CAM_BACK__1533112939937529.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-08-01-16-41-59+0800__CAM_BACK_LEFT__1533112939947433.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-08-01-16-41-59+0800__CAM_BACK_RIGHT__1533112939927893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "dc6235e2281943548084c484cb38b876",
+   "frame_token": "78e7729b8de44e6a82fc0799f1f51bd6",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-07-18-11-18-34+0800__CAM_FRONT__1531883988362460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-07-18-11-18-34+0800__CAM_FRONT_LEFT__1531883988354844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-07-18-11-18-34+0800__CAM_FRONT_RIGHT__1531883988370339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-07-18-11-18-34+0800__CAM_BACK__1531883988387525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-07-18-11-18-34+0800__CAM_BACK_LEFT__1531883988397423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-07-18-11-18-34+0800__CAM_BACK_RIGHT__1531883988377893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "25496f19ffd14bd088cb430bfc01a4d7",
+   "frame_token": "4e5e68d8f6c14b9685cb129fce75da81",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-09-25-11-10-38+0800__CAM_FRONT__1537845405662460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-09-25-11-10-38+0800__CAM_FRONT_LEFT__1537845405654844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-09-25-11-10-38+0800__CAM_FRONT_RIGHT__1537845405670339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-09-25-11-10-38+0800__CAM_BACK__1537845405687525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-09-25-11-10-38+0800__CAM_BACK_LEFT__1537845405697423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-09-25-11-10-38+0800__CAM_BACK_RIGHT__1537845405677893.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "8fe2dd6f533646b39c8e81316597c52b",
+   "frame_token": "d1f1b648072f44a0a7a0acf7eac202a6",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-07-27-12-07-38-0400__CAM_FRONT__1532707812912404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-07-27-12-07-38-0400__CAM_FRONT_LEFT__1532707812904799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-07-27-12-07-38-0400__CAM_FRONT_RIGHT__1532707812920482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-07-27-12-07-38-0400__CAM_BACK__1532707812937558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-07-27-12-07-38-0400__CAM_BACK_LEFT__1532707812947405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-07-27-12-07-38-0400__CAM_BACK_RIGHT__1532707812928113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "81227a12571240e0b9d537165f57e177",
+   "frame_token": "1761196e896746d3a9009d0884772a6d",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535573486162404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_LEFT__1535573486154799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_RIGHT__1535573486170482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-29-16-04-13-0400__CAM_BACK__1535573486187558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-29-16-04-13-0400__CAM_BACK_LEFT__1535573486197405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_BACK_RIGHT__1535573486178113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "5674c9e612cc4f7793330a361755830a",
+   "frame_token": "e99a5658e236426abc7534ad3e2a3c4d",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-07-24-11-13-19+0800__CAM_FRONT__1532402005762460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-07-24-11-13-19+0800__CAM_FRONT_LEFT__1532402005754844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-07-24-11-13-19+0800__CAM_FRONT_RIGHT__1532402005770339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-07-24-11-13-19+0800__CAM_BACK__1532402005787525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-07-24-11-13-19+0800__CAM_BACK_LEFT__1532402005797423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-07-24-11-13-19+0800__CAM_BACK_RIGHT__1532402005777893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "eac3102e4cc24d4b95532bcc711a902f",
+   "frame_token": "680c3298b4f746fa921261a21c929fa2",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-11-14-18-57-54+0800__CAM_FRONT__1542193536612460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-11-14-18-57-54+0800__CAM_FRONT_LEFT__1542193536604844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-11-14-18-57-54+0800__CAM_FRONT_RIGHT__1542193536620339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-11-14-18-57-54+0800__CAM_BACK__1542193536637525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-11-14-18-57-54+0800__CAM_BACK_LEFT__1542193536647423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-11-14-18-57-54+0800__CAM_BACK_RIGHT__1542193536627893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "3032b651c72e4b5c86d4dea1b4930689",
+   "frame_token": "917ab65ffff94f578337e944ce5a1980",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-13-10-39-0400__CAM_FRONT__1537290840662404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-13-10-39-0400__CAM_FRONT_LEFT__1537290840654799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-13-10-39-0400__CAM_FRONT_RIGHT__1537290840670482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-13-10-39-0400__CAM_BACK__1537290840687558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-13-10-39-0400__CAM_BACK_LEFT__1537290840697405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-13-10-39-0400__CAM_BACK_RIGHT__1537290840678113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "47a73fb6a41a4c4b9fe2897254dd3671",
+   "frame_token": "417f71c9fc01405a9d485f3dc67b698e",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535573097912404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_LEFT__1535573097904799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_RIGHT__1535573097920482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-29-16-04-13-0400__CAM_BACK__1535573097937558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-29-16-04-13-0400__CAM_BACK_LEFT__1535573097947405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_BACK_RIGHT__1535573097928113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "f36162eac28641a0978032ff89e0f752",
+   "frame_token": "14914e7dadec49138e69f340f0e0304a",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-21-40+0800__CAM_FRONT__1533281050162460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-08-03-15-21-40+0800__CAM_FRONT_LEFT__1533281050154844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-08-03-15-21-40+0800__CAM_FRONT_RIGHT__1533281050170339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-08-03-15-21-40+0800__CAM_BACK__1533281050187525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-08-03-15-21-40+0800__CAM_BACK_LEFT__1533281050197423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-08-03-15-21-40+0800__CAM_BACK_RIGHT__1533281050177893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "fdf4384c1fce4a16aad939d8417bccd6",
+   "frame_token": "f545f67f3a454144b11fffa4ab7cf46b",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385198662404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-27-11-48-51-0400__CAM_FRONT_LEFT__1535385198654799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-27-11-48-51-0400__CAM_FRONT_RIGHT__1535385198670482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-27-11-48-51-0400__CAM_BACK__1535385198687579.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-27-11-48-51-0400__CAM_BACK_LEFT__1535385198697405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-27-11-48-51-0400__CAM_BACK_RIGHT__1535385198678113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "35c3bc100e4b4e5089820986d3f50fa3",
+   "frame_token": "c52249c053b044c29505f66ab7ff262f",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-07-26-12-13-50-0400__CAM_FRONT__1532621806662404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-07-26-12-13-50-0400__CAM_FRONT_LEFT__1532621806654799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-07-26-12-13-50-0400__CAM_FRONT_RIGHT__1532621806670482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-07-26-12-13-50-0400__CAM_BACK__1532621806687558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-07-26-12-13-50-0400__CAM_BACK_LEFT__1532621806697405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-07-26-12-13-50-0400__CAM_BACK_RIGHT__1532621806678113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "53c92676ef334011bd4689494ac11fa0",
+   "frame_token": "3f7bc5b5109c46c09b6bfb483be03ab7",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-28-13-40-50-0400__CAM_FRONT__1535478649012404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-28-13-40-50-0400__CAM_FRONT_LEFT__1535478649004799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-28-13-40-50-0400__CAM_FRONT_RIGHT__1535478649020482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-28-13-40-50-0400__CAM_BACK__1535478649037558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-28-13-40-50-0400__CAM_BACK_LEFT__1535478649047405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-28-13-40-50-0400__CAM_BACK_RIGHT__1535478649028113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "27dc2edfb6524c7d8997ac3573ed2f3d",
+   "frame_token": "1a5dfe8afa974d8a92e480c7f9010e66",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297035612404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-14-54-39-0400__CAM_FRONT_LEFT__1537297035604799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-14-54-39-0400__CAM_FRONT_RIGHT__1537297035620482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-14-54-39-0400__CAM_BACK__1537297035637558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-14-54-39-0400__CAM_BACK_LEFT__1537297035647405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-14-54-39-0400__CAM_BACK_RIGHT__1537297035628113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "40516b7f46e548d19dfee580e9a5afa6",
+   "frame_token": "e18fd6d5027f4ce1bb2fce1e6059e809",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-07-18-11-18-34+0800__CAM_FRONT__1531884534862460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-07-18-11-18-34+0800__CAM_FRONT_LEFT__1531884534854844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-07-18-11-18-34+0800__CAM_FRONT_RIGHT__1531884534870339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-07-18-11-18-34+0800__CAM_BACK__1531884534887525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-07-18-11-18-34+0800__CAM_BACK_LEFT__1531884534897423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-07-18-11-18-34+0800__CAM_BACK_RIGHT__1531884534878032.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "c075fbdd97124beaba95bc5c25149f30",
+   "frame_token": "6bf3216a14194deda5a2e73df826e3e0",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-01-15-52-19-0400__CAM_FRONT__1533153636662404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-01-15-52-19-0400__CAM_FRONT_LEFT__1533153636654799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-01-15-52-19-0400__CAM_FRONT_RIGHT__1533153636670482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-01-15-52-19-0400__CAM_BACK__1533153636687628.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-01-15-52-19-0400__CAM_BACK_LEFT__1533153636697405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-01-15-52-19-0400__CAM_BACK_RIGHT__1533153636678113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "fbf27198b3424e28ab1de2a12eb3dc4a",
+   "frame_token": "69b813061efe46729c2e9535ab8ab9c2",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-11-21-19-11-29+0800__CAM_FRONT__1542799153612460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-11-21-19-11-29+0800__CAM_FRONT_LEFT__1542799153604844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-11-21-19-11-29+0800__CAM_FRONT_RIGHT__1542799153620350.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-11-21-19-11-29+0800__CAM_BACK__1542799153637525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-11-21-19-11-29+0800__CAM_BACK_LEFT__1542799153647423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-11-21-19-11-29+0800__CAM_BACK_RIGHT__1542799153627893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "bfe368f8c6a44efcb323a82f6974a9a6",
+   "frame_token": "ec5cd7ded8bc475389b960944fcac979",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-13-10-39-0400__CAM_FRONT__1537291137862404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-13-10-39-0400__CAM_FRONT_LEFT__1537291137854799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-13-10-39-0400__CAM_FRONT_RIGHT__1537291137870482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-13-10-39-0400__CAM_BACK__1537291137887558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-13-10-39-0400__CAM_BACK_LEFT__1537291137897405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-13-10-39-0400__CAM_BACK_RIGHT__1537291137878113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "45fc8a7a26c5469a88db999ae8468777",
+   "frame_token": "f2e6651ab4974a0cb1a68f5031339fb9",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-08-01-16-32-59+0800__CAM_FRONT__1533112832162460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-08-01-16-32-59+0800__CAM_FRONT_LEFT__1533112832154844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-08-01-16-32-59+0800__CAM_FRONT_RIGHT__1533112832170339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-08-01-16-32-59+0800__CAM_BACK__1533112832187525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-08-01-16-32-59+0800__CAM_BACK_LEFT__1533112832197423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-08-01-16-32-59+0800__CAM_BACK_RIGHT__1533112832177893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "5c9bd7ead37e4aa9989f7909f3a78baa",
+   "frame_token": "57c9e0442de248479d02a77a1e44a992",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-43-59-0400__CAM_FRONT__1537296333412404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-14-43-59-0400__CAM_FRONT_LEFT__1537296333404799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-14-43-59-0400__CAM_FRONT_RIGHT__1537296333420482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-14-43-59-0400__CAM_BACK__1537296333437558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-14-43-59-0400__CAM_BACK_LEFT__1537296333447405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-14-43-59-0400__CAM_BACK_RIGHT__1537296333428113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "66134aebdaca4aca82aec91ec8c6245e",
+   "frame_token": "ef984c99cb3e40b79aa45e352e9b8d16",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-31-11-56-46-0400__CAM_FRONT__1535731417862404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-31-11-56-46-0400__CAM_FRONT_LEFT__1535731417854927.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-31-11-56-46-0400__CAM_FRONT_RIGHT__1535731417870482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-31-11-56-46-0400__CAM_BACK__1535731417887558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-31-11-56-46-0400__CAM_BACK_LEFT__1535731417897405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-31-11-56-46-0400__CAM_BACK_RIGHT__1535731417878113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "b519ec833e23450a8bd3340b67f2516b",
+   "frame_token": "255d5c5c0c3e4d7387ce4a7e9812cb82",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-09-25-11-10-38+0800__CAM_FRONT__1537845245262460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-09-25-11-10-38+0800__CAM_FRONT_LEFT__1537845245254844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-09-25-11-10-38+0800__CAM_FRONT_RIGHT__1537845245270339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-09-25-11-10-38+0800__CAM_BACK__1537845245287525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-09-25-11-10-38+0800__CAM_BACK_LEFT__1537845245297423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-09-25-11-10-38+0800__CAM_BACK_RIGHT__1537845245277893.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "7f03cd19d9cc4381a591fca00666d7ed",
+   "frame_token": "79fd3c2d19b644719aeeb32e12b4c446",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-13-41-50-0400__CAM_FRONT__1537293334112404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-13-41-50-0400__CAM_FRONT_LEFT__1537293334104799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-13-41-50-0400__CAM_FRONT_RIGHT__1537293334120482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-13-41-50-0400__CAM_BACK__1537293334137558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-13-41-50-0400__CAM_BACK_LEFT__1537293334147405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-13-41-50-0400__CAM_BACK_RIGHT__1537293334128113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "bd22f197e9f648cba8e307869479629b",
+   "frame_token": "524379c410a542e9b7063bea4f94bbb7",
+   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-11-14-19-09-14+0800__CAM_FRONT__1542194153912460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-11-14-19-09-14+0800__CAM_FRONT_LEFT__1542194153904844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-11-14-19-09-14+0800__CAM_FRONT_RIGHT__1542194153920339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-11-14-19-09-14+0800__CAM_BACK__1542194153937525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-11-14-19-09-14+0800__CAM_BACK_LEFT__1542194153947423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-11-14-19-09-14+0800__CAM_BACK_RIGHT__1542194153927893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "fee7ac5f5c1e4943877cd20d6e069427",
+   "frame_token": "9b07677f96dc426bb8029177c038a291",
+   "behavior": "The ego vehicle is slightly steering to the left. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-31-50+0800__CAM_FRONT__1533281540162460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-08-03-15-31-50+0800__CAM_FRONT_LEFT__1533281540154850.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-08-03-15-31-50+0800__CAM_FRONT_RIGHT__1533281540170339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-08-03-15-31-50+0800__CAM_BACK__1533281540187525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-08-03-15-31-50+0800__CAM_BACK_LEFT__1533281540197423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-08-03-15-31-50+0800__CAM_BACK_RIGHT__1533281540177893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "e0a22086a94f48e5bbd4c4e7916b2106",
+   "frame_token": "518d60bf329a4cb586aecb1356e9c1aa",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-11-14-18-57-54+0800__CAM_FRONT__1542193284612460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-11-14-18-57-54+0800__CAM_FRONT_LEFT__1542193284604858.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-11-14-18-57-54+0800__CAM_FRONT_RIGHT__1542193284620339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-11-14-18-57-54+0800__CAM_BACK__1542193284637537.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-11-14-18-57-54+0800__CAM_BACK_LEFT__1542193284647423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-11-14-18-57-54+0800__CAM_BACK_RIGHT__1542193284627893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "f30849d00388491fa6997a13d56c73fd",
+   "frame_token": "344a77dc91594b6791801958c1c02adf",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-28-16-57-39-0400__CAM_FRONT__1535490017762404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-28-16-57-39-0400__CAM_FRONT_LEFT__1535490017754799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-28-16-57-39-0400__CAM_FRONT_RIGHT__1535490017770482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-28-16-57-39-0400__CAM_BACK__1535490017787558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-28-16-57-39-0400__CAM_BACK_LEFT__1535490017797405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-28-16-57-39-0400__CAM_BACK_RIGHT__1535490017778113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "1c76efe7d0b048bc815c0445eeaa76ab",
+   "frame_token": "8ae837b713ca4c17b150a15e6fcdaa49",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-11-14-19-09-14+0800__CAM_FRONT__1542194133862460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-11-14-19-09-14+0800__CAM_FRONT_LEFT__1542194133854844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-11-14-19-09-14+0800__CAM_FRONT_RIGHT__1542194133870339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-11-14-19-09-14+0800__CAM_BACK__1542194133887525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-11-14-19-09-14+0800__CAM_BACK_LEFT__1542194133897423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-11-14-19-09-14+0800__CAM_BACK_RIGHT__1542194133877893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "7bbc6931b39b4ba3834240618fc4a4c2",
+   "frame_token": "79090511ba43488688d470f1474279e8",
+   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-05-21-11-06-59-0400__CAM_FRONT__1526915381512465.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-05-21-11-06-59-0400__CAM_FRONT_LEFT__1526915381504917.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-05-21-11-06-59-0400__CAM_FRONT_RIGHT__1526915381519956.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-05-21-11-06-59-0400__CAM_BACK__1526915381537570.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-05-21-11-06-59-0400__CAM_BACK_LEFT__1526915381547295.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-05-21-11-06-59-0400__CAM_BACK_RIGHT__1526915381527813.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "15e1fa06e30e438a98430cc1fd0e8a69",
+   "frame_token": "d64f9d23a6ac4d808dde46bfaf7069d5",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-11-14-18-57-54+0800__CAM_FRONT__1542193395362460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-11-14-18-57-54+0800__CAM_FRONT_LEFT__1542193395354844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-11-14-18-57-54+0800__CAM_FRONT_RIGHT__1542193395370339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-11-14-18-57-54+0800__CAM_BACK__1542193395387525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-11-14-18-57-54+0800__CAM_BACK_LEFT__1542193395397423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-11-14-18-57-54+0800__CAM_BACK_RIGHT__1542193395377893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "fdf27bbde3e345bd9ac83cbe9a3c813a",
+   "frame_token": "b3b29fa2928c4bdba8b657112c1cc222",
+   "behavior": "The ego vehicle is steering to the left. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535573394862404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_LEFT__1535573394854799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_RIGHT__1535573394870482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-29-16-04-13-0400__CAM_BACK__1535573394887558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-29-16-04-13-0400__CAM_BACK_LEFT__1535573394897405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_BACK_RIGHT__1535573394878113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "cd122d67c51c4fa4902486897cad91ad",
+   "frame_token": "d8cf9c7ff31f4d0d86cc0977de22653b",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535656757362404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-30-15-16-55-0400__CAM_FRONT_LEFT__1535656757354799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-30-15-16-55-0400__CAM_FRONT_RIGHT__1535656757370482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-30-15-16-55-0400__CAM_BACK__1535656757387558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-30-15-16-55-0400__CAM_BACK_LEFT__1535656757397405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-30-15-16-55-0400__CAM_BACK_RIGHT__1535656757378113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "1d25e9071ea94891b5eb7554e77a11bb",
+   "frame_token": "b80fdd1d2fb845ffbcc65e3785339777",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-07-18-11-50-34+0800__CAM_FRONT__1531886073512464.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-07-18-11-50-34+0800__CAM_FRONT_LEFT__1531886073504844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-07-18-11-50-34+0800__CAM_FRONT_RIGHT__1531886073520339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-07-18-11-50-34+0800__CAM_BACK__1531886073537525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-07-18-11-50-34+0800__CAM_BACK_LEFT__1531886073547423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-07-18-11-50-34+0800__CAM_BACK_RIGHT__1531886073527893.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "0c601ff2bf004fccafec366b08bf29e2",
+   "frame_token": "15ab3872150347678f4efca8c640ce75",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-10-08-16-03-24+0800__CAM_FRONT__1538986160262460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-10-08-16-03-24+0800__CAM_FRONT_LEFT__1538986160254844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-10-08-16-03-24+0800__CAM_FRONT_RIGHT__1538986160270339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-10-08-16-03-24+0800__CAM_BACK__1538986160287525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-10-08-16-03-24+0800__CAM_BACK_LEFT__1538986160297423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-10-08-16-03-24+0800__CAM_BACK_RIGHT__1538986160277893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "c6072dd4f7cc47efaad77889aa465ad6",
+   "frame_token": "edabe2c041384d4592e8319b967b37ca",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-11-14-18-57-54+0800__CAM_FRONT__1542193216412460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-11-14-18-57-54+0800__CAM_FRONT_LEFT__1542193216404844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-11-14-18-57-54+0800__CAM_FRONT_RIGHT__1542193216420339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-11-14-18-57-54+0800__CAM_BACK__1542193216437558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-11-14-18-57-54+0800__CAM_BACK_LEFT__1542193216447423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-11-14-18-57-54+0800__CAM_BACK_RIGHT__1542193216427893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "796e7ae080984a0ab2b96ce80f18ca3b",
+   "frame_token": "b8bcdb35431a43039b068cbc49a4b40e",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297522012404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-14-54-39-0400__CAM_FRONT_LEFT__1537297522004799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-14-54-39-0400__CAM_FRONT_RIGHT__1537297522020482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-14-54-39-0400__CAM_BACK__1537297522037558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-14-54-39-0400__CAM_BACK_LEFT__1537297522047405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-14-54-39-0400__CAM_BACK_RIGHT__1537297522028113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "53e8446852bf488bb1b09ae032918bbd",
+   "frame_token": "688ae1fba913476d8858aca61a124e2c",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-07-18-11-18-34+0800__CAM_FRONT__1531884314662460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-07-18-11-18-34+0800__CAM_FRONT_LEFT__1531884314654844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-07-18-11-18-34+0800__CAM_FRONT_RIGHT__1531884314670353.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-07-18-11-18-34+0800__CAM_BACK__1531884314687525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-07-18-11-18-34+0800__CAM_BACK_LEFT__1531884314697423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-07-18-11-18-34+0800__CAM_BACK_RIGHT__1531884314677893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "dd61533869aa48f2aaa7e8a6418bdbe6",
+   "frame_token": "6611ad2d1fe44459b9a1bad7d64fd55b",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-08-02-17-28-51+0800__CAM_FRONT__1533202405412460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-08-02-17-28-51+0800__CAM_FRONT_LEFT__1533202405404844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-08-02-17-28-51+0800__CAM_FRONT_RIGHT__1533202405420339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-08-02-17-28-51+0800__CAM_BACK__1533202405437525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-08-02-17-28-51+0800__CAM_BACK_LEFT__1533202405447423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-08-02-17-28-51+0800__CAM_BACK_RIGHT__1533202405427893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "a99120daccb24bcd941b33e6e03bf718",
+   "frame_token": "33d1c7fcf9744877a6b0dc2b4d26340e",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-21-11-53-44-0400__CAM_FRONT__1534867338512404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-21-11-53-44-0400__CAM_FRONT_LEFT__1534867338504799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-21-11-53-44-0400__CAM_FRONT_RIGHT__1534867338520487.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-21-11-53-44-0400__CAM_BACK__1534867338537558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-21-11-53-44-0400__CAM_BACK_LEFT__1534867338547405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-21-11-53-44-0400__CAM_BACK_RIGHT__1534867338528113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "35ecd252b8ee4cbc83376148e192a803",
+   "frame_token": "a593a62aa9b54234ae666f3006b4d9f5",
+   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537289745862404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-12-53-31-0400__CAM_FRONT_LEFT__1537289745854799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-12-53-31-0400__CAM_FRONT_RIGHT__1537289745870482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-12-53-31-0400__CAM_BACK__1537289745887558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-12-53-31-0400__CAM_BACK_LEFT__1537289745897405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-12-53-31-0400__CAM_BACK_RIGHT__1537289745878113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "96a410b8fe5e4b57bf69b844bfd4d28c",
+   "frame_token": "8dc4aa3300b74fb98a5cd95d4774d90a",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-31-11-19-57-0400__CAM_FRONT__1535729087862404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-31-11-19-57-0400__CAM_FRONT_LEFT__1535729087854799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-31-11-19-57-0400__CAM_FRONT_RIGHT__1535729087870482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-31-11-19-57-0400__CAM_BACK__1535729087887558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-31-11-19-57-0400__CAM_BACK_LEFT__1535729087897405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-31-11-19-57-0400__CAM_BACK_RIGHT__1535729087878113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "bd850592cd2541288b177b8e20baa31e",
+   "frame_token": "ac13dc1c2e76494d98093d33935c40d8",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535573605412404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_LEFT__1535573605404799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_RIGHT__1535573605420482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-29-16-04-13-0400__CAM_BACK__1535573605437558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-29-16-04-13-0400__CAM_BACK_LEFT__1535573605447405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-29-16-04-13-0400__CAM_BACK_RIGHT__1535573605428113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "5aa5225d0ef440519a31c1dde075dab7",
+   "frame_token": "35ff9260e5a24d6a85a0512e32ef9e14",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-07-18-11-18-34+0800__CAM_FRONT__1531884261012463.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-07-18-11-18-34+0800__CAM_FRONT_LEFT__1531884261004844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-07-18-11-18-34+0800__CAM_FRONT_RIGHT__1531884261020339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-07-18-11-18-34+0800__CAM_BACK__1531884261037533.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-07-18-11-18-34+0800__CAM_BACK_LEFT__1531884261047423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-07-18-11-18-34+0800__CAM_BACK_RIGHT__1531884261027893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "bc219c0fa63b43b4b9dddab47fce1fef",
+   "frame_token": "bff71490972b4bb48657dc23eda191fd",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-09-27-15-33-17+0800__CAM_FRONT__1538033828612460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-09-27-15-33-17+0800__CAM_FRONT_LEFT__1538033828604844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-09-27-15-33-17+0800__CAM_FRONT_RIGHT__1538033828620339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-09-27-15-33-17+0800__CAM_BACK__1538033828637525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-09-27-15-33-17+0800__CAM_BACK_LEFT__1538033828647423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-09-27-15-33-17+0800__CAM_BACK_RIGHT__1538033828627893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "268099669c954f429087081530094337",
+   "frame_token": "9752d9cc73064be6ad359a9779c5999a",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-01-15-52-19-0400__CAM_FRONT__1533153521762404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-01-15-52-19-0400__CAM_FRONT_LEFT__1533153521754799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-01-15-52-19-0400__CAM_FRONT_RIGHT__1533153521770482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-01-15-52-19-0400__CAM_BACK__1533153521787558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-01-15-52-19-0400__CAM_BACK_LEFT__1533153521797405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-01-15-52-19-0400__CAM_BACK_RIGHT__1533153521778113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "c0cb50847c3949a0b4baf2e200ac897c",
+   "frame_token": "bc6f82d1a9c5435c991b9a2e807c2feb",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-07-26-0400__CAM_FRONT__1537287358412404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-12-07-26-0400__CAM_FRONT_LEFT__1537287358404799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-12-07-26-0400__CAM_FRONT_RIGHT__1537287358420482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-12-07-26-0400__CAM_BACK__1537287358437558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-12-07-26-0400__CAM_BACK_LEFT__1537287358447405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-12-07-26-0400__CAM_BACK_RIGHT__1537287358428113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "97ba0e14805b42f292db7f06b6d1121b",
+   "frame_token": "84d48a54bbf44cf5acf62fa9b9c93cc2",
+   "behavior": "The ego vehicle is steering to the right. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537289820162404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-12-53-31-0400__CAM_FRONT_LEFT__1537289820154799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-12-53-31-0400__CAM_FRONT_RIGHT__1537289820170482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-12-53-31-0400__CAM_BACK__1537289820187558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-12-53-31-0400__CAM_BACK_LEFT__1537289820197405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-12-53-31-0400__CAM_BACK_RIGHT__1537289820178113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "4a4d09496d594c7385a1ec227bdb3a7f",
+   "frame_token": "a2bbe30b96dd4c5f95ead8e7a70287d7",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537289868512404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-12-53-31-0400__CAM_FRONT_LEFT__1537289868504799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-12-53-31-0400__CAM_FRONT_RIGHT__1537289868520482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-12-53-31-0400__CAM_BACK__1537289868537558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-12-53-31-0400__CAM_BACK_LEFT__1537289868547405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-12-53-31-0400__CAM_BACK_RIGHT__1537289868528113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "48ba943c3d19463a81281bf6a7078eac",
+   "frame_token": "ba217f57fe2249b88e7f91eeaefc4a4a",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385307362404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-27-11-48-51-0400__CAM_FRONT_LEFT__1535385307354799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-27-11-48-51-0400__CAM_FRONT_RIGHT__1535385307370482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-27-11-48-51-0400__CAM_BACK__1535385307387558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-27-11-48-51-0400__CAM_BACK_LEFT__1535385307397405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-27-11-48-51-0400__CAM_BACK_RIGHT__1535385307378113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "5b9c64f03f8b4a4f8189a18d74f866c2",
+   "frame_token": "0cdd3658b4e14f75b946be2d69399223",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297438412404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-14-54-39-0400__CAM_FRONT_LEFT__1537297438404799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-14-54-39-0400__CAM_FRONT_RIGHT__1537297438420482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-14-54-39-0400__CAM_BACK__1537297438437558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-14-54-39-0400__CAM_BACK_LEFT__1537297438447425.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-14-54-39-0400__CAM_BACK_RIGHT__1537297438428113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "d58468c6097c425e89671a7b3f480acf",
+   "frame_token": "4f2589a2df5c47b292947dd7f76b8c72",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-09-27-15-33-17+0800__CAM_FRONT__1538033857862460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-09-27-15-33-17+0800__CAM_FRONT_LEFT__1538033857854844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-09-27-15-33-17+0800__CAM_FRONT_RIGHT__1538033857870339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-09-27-15-33-17+0800__CAM_BACK__1538033857887525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-09-27-15-33-17+0800__CAM_BACK_LEFT__1538033857897423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-09-27-15-33-17+0800__CAM_BACK_RIGHT__1538033857877893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "5c6620829a1f492b8482218670aa0541",
+   "frame_token": "0c57bb7dc3ea47fab28386d61b838118",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-31-50+0800__CAM_FRONT__1533281607112460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-08-03-15-31-50+0800__CAM_FRONT_LEFT__1533281607104844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-08-03-15-31-50+0800__CAM_FRONT_RIGHT__1533281607120339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-08-03-15-31-50+0800__CAM_BACK__1533281607137525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-08-03-15-31-50+0800__CAM_BACK_LEFT__1533281607147423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-08-03-15-31-50+0800__CAM_BACK_RIGHT__1533281607127893.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "25f40f7316954a3e978e24d691e1a117",
+   "frame_token": "2c76aa464992418f80380f4e25ad97f6",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-07-27-12-07-38-0400__CAM_FRONT__1532708549862404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-07-27-12-07-38-0400__CAM_FRONT_LEFT__1532708549854799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-07-27-12-07-38-0400__CAM_FRONT_RIGHT__1532708549870482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-07-27-12-07-38-0400__CAM_BACK__1532708549887558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-07-27-12-07-38-0400__CAM_BACK_LEFT__1532708549897405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-07-27-12-07-38-0400__CAM_BACK_RIGHT__1532708549878113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "2ba06ef7b3b44cbfad6d771981d86af9",
+   "frame_token": "e500aa32d6a64690aad16622216a6bcd",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-07-24-11-22-45+0800__CAM_FRONT__1532402727912460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-07-24-11-22-45+0800__CAM_FRONT_LEFT__1532402727904844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-07-24-11-22-45+0800__CAM_FRONT_RIGHT__1532402727920339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-07-24-11-22-45+0800__CAM_BACK__1532402727937525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-07-24-11-22-45+0800__CAM_BACK_LEFT__1532402727947423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-07-24-11-22-45+0800__CAM_BACK_RIGHT__1532402727927893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "83773bcf46ac486383529098de0542dd",
+   "frame_token": "b3f6e7cefcad4c92bd567478f1274845",
+   "behavior": "The ego vehicle is steering to the left. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-07-27-12-07-38-0400__CAM_FRONT__1532708168012404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-07-27-12-07-38-0400__CAM_FRONT_LEFT__1532708168004799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-07-27-12-07-38-0400__CAM_FRONT_RIGHT__1532708168020482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-07-27-12-07-38-0400__CAM_BACK__1532708168037558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-07-27-12-07-38-0400__CAM_BACK_LEFT__1532708168047405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-07-27-12-07-38-0400__CAM_BACK_RIGHT__1532708168028113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "aad7d3bf3c7a47ad9cb93d9b92ed38ee",
+   "frame_token": "7a32a1463a4b4bb7b84135f3c9ab0c90",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-10-02-10-56-37+0800__CAM_FRONT__1538449269862460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-10-02-10-56-37+0800__CAM_FRONT_LEFT__1538449269854844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-10-02-10-56-37+0800__CAM_FRONT_RIGHT__1538449269870339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-10-02-10-56-37+0800__CAM_BACK__1538449269887525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-10-02-10-56-37+0800__CAM_BACK_LEFT__1538449269897423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-10-02-10-56-37+0800__CAM_BACK_RIGHT__1538449269877893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "74d03e3b673f4a72a3f76e1b0c7840bd",
+   "frame_token": "5b0fbfac8e734c5391d73b1651653973",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-00-36+0800__CAM_FRONT__1533280314662460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-08-03-15-00-36+0800__CAM_FRONT_LEFT__1533280314654844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-08-03-15-00-36+0800__CAM_FRONT_RIGHT__1533280314670339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-08-03-15-00-36+0800__CAM_BACK__1533280314687525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-08-03-15-00-36+0800__CAM_BACK_LEFT__1533280314697423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-08-03-15-00-36+0800__CAM_BACK_RIGHT__1533280314677893.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "7463b2d752f0464f803b07a945ee7c5a",
+   "frame_token": "adf6eda950da49b290b0e94a8aa552a9",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-07-24-11-13-19+0800__CAM_FRONT__1532402160162460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-07-24-11-13-19+0800__CAM_FRONT_LEFT__1532402160154844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-07-24-11-13-19+0800__CAM_FRONT_RIGHT__1532402160170339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-07-24-11-13-19+0800__CAM_BACK__1532402160187525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-07-24-11-13-19+0800__CAM_BACK_LEFT__1532402160197423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-07-24-11-13-19+0800__CAM_BACK_RIGHT__1532402160177893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "cf550d9670274ac1a7f274fbacb39c48",
+   "frame_token": "cca4562b799b4fbe84bb8599ae816638",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-28-16-16-48-0400__CAM_FRONT__1535487693762404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-28-16-16-48-0400__CAM_FRONT_LEFT__1535487693754799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-28-16-16-48-0400__CAM_FRONT_RIGHT__1535487693770482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-28-16-16-48-0400__CAM_BACK__1535487693787558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-28-16-16-48-0400__CAM_BACK_LEFT__1535487693797405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-28-16-16-48-0400__CAM_BACK_RIGHT__1535487693778113.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "66be189398d74681a8b8db4b7dd52259",
+   "frame_token": "92845a0c4f1a4f2eb0340a3240a9719f",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-00-36+0800__CAM_FRONT__1533279784862460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-08-03-15-00-36+0800__CAM_FRONT_LEFT__1533279784854844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-08-03-15-00-36+0800__CAM_FRONT_RIGHT__1533279784870339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-08-03-15-00-36+0800__CAM_BACK__1533279784887525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-08-03-15-00-36+0800__CAM_BACK_LEFT__1533279784897433.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-08-03-15-00-36+0800__CAM_BACK_RIGHT__1533279784877893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "f13bd38bf9b64d579a63d4e7d750f592",
+   "frame_token": "713ba868548842b498713123c99de45b",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-09-26-11-17-24+0800__CAM_FRONT__1537932322912460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-09-26-11-17-24+0800__CAM_FRONT_LEFT__1537932322904844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-09-26-11-17-24+0800__CAM_FRONT_RIGHT__1537932322920339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-09-26-11-17-24+0800__CAM_BACK__1537932322937525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-09-26-11-17-24+0800__CAM_BACK_LEFT__1537932322947423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-09-26-11-17-24+0800__CAM_BACK_RIGHT__1537932322927893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "5a2aac9df32945d183fc81924ff148b6",
+   "frame_token": "6a34655be17d4c3189813eac1b14a1d8",
+   "behavior": "The ego vehicle is steering to the right. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-07-27-11-36-48+0800__CAM_FRONT__1532662845512460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-07-27-11-36-48+0800__CAM_FRONT_LEFT__1532662845504844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-07-27-11-36-48+0800__CAM_FRONT_RIGHT__1532662845520339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-07-27-11-36-48+0800__CAM_BACK__1532662845537525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-07-27-11-36-48+0800__CAM_BACK_LEFT__1532662845547423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-07-27-11-36-48+0800__CAM_BACK_RIGHT__1532662845527893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "2c1f2e5096434cd78919b2ae442d4ba4",
+   "frame_token": "da2788e7fee3458285cff2dd55c40753",
+   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-21-11-53-44-0400__CAM_FRONT__1534867230862404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-21-11-53-44-0400__CAM_FRONT_LEFT__1534867230854799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-21-11-53-44-0400__CAM_FRONT_RIGHT__1534867230870482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-21-11-53-44-0400__CAM_BACK__1534867230887558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-21-11-53-44-0400__CAM_BACK_LEFT__1534867230897405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-21-11-53-44-0400__CAM_BACK_RIGHT__1534867230878113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "d1ac8e27ba8944a4a42a488cf2fedd74",
+   "frame_token": "f3ba86aaa6864700a5ac9e4d655dea43",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-28-13-40-50-0400__CAM_FRONT__1535478861112404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-28-13-40-50-0400__CAM_FRONT_LEFT__1535478861104799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-28-13-40-50-0400__CAM_FRONT_RIGHT__1535478861120482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-28-13-40-50-0400__CAM_BACK__1535478861137558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-28-13-40-50-0400__CAM_BACK_LEFT__1535478861147405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-28-13-40-50-0400__CAM_BACK_RIGHT__1535478861128113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "2bd47eabb64d4499862388cec180a7d1",
+   "frame_token": "41d89b1ff2874865afdf1908620c3f61",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-43-59-0400__CAM_FRONT__1537296434412404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-09-18-14-43-59-0400__CAM_FRONT_LEFT__1537296434404799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-09-18-14-43-59-0400__CAM_FRONT_RIGHT__1537296434420921.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-09-18-14-43-59-0400__CAM_BACK__1537296434437558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-09-18-14-43-59-0400__CAM_BACK_LEFT__1537296434447405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-09-18-14-43-59-0400__CAM_BACK_RIGHT__1537296434428113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "4bcb814456f044919bc052c208dbebc5",
+   "frame_token": "60512c21ca774ea3a8fb0fed757617d4",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n008-2018-08-28-13-40-50-0400__CAM_FRONT__1535478719612404.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n008-2018-08-28-13-40-50-0400__CAM_FRONT_LEFT__1535478719604799.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n008-2018-08-28-13-40-50-0400__CAM_FRONT_RIGHT__1535478719620482.jpg",
+   "nuscenes/samples/CAM_BACK/n008-2018-08-28-13-40-50-0400__CAM_BACK__1535478719637558.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n008-2018-08-28-13-40-50-0400__CAM_BACK_LEFT__1535478719647405.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n008-2018-08-28-13-40-50-0400__CAM_BACK_RIGHT__1535478719628113.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "aee27b55da77468ba444357348f5cf88",
+   "frame_token": "405ac7d88c1840c8af4e30fd4512709e",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-09-25-11-10-38+0800__CAM_FRONT__1537845442362460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-09-25-11-10-38+0800__CAM_FRONT_LEFT__1537845442354844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-09-25-11-10-38+0800__CAM_FRONT_RIGHT__1537845442370339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-09-25-11-10-38+0800__CAM_BACK__1537845442387525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-09-25-11-10-38+0800__CAM_BACK_LEFT__1537845442397423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-09-25-11-10-38+0800__CAM_BACK_RIGHT__1537845442377893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "0be1ff07a8f148ca9535fb7f0deaf828",
+   "frame_token": "4ce5fb0f7c6c4ce38483e0be76aa1892",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-10-08-16-03-24+0800__CAM_FRONT__1538986128412462.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-10-08-16-03-24+0800__CAM_FRONT_LEFT__1538986128404844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-10-08-16-03-24+0800__CAM_FRONT_RIGHT__1538986128420339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-10-08-16-03-24+0800__CAM_BACK__1538986128437525.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-10-08-16-03-24+0800__CAM_BACK_LEFT__1538986128447423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-10-08-16-03-24+0800__CAM_BACK_RIGHT__1538986128427893.jpg"
+  ],
+  "correct_internvl": "a)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "cf652a711c8e40209132036a95162fed",
+   "frame_token": "751b62e2666e4144a1660fb962b2bd67",
+   "behavior": "The ego vehicle is steering to the left. The ego vehicle is driving with normal speed."
+  }
+ },
+ {
+  "image": [
+   "nuscenes/samples/CAM_FRONT/n015-2018-10-08-16-03-24+0800__CAM_FRONT__1538985960162460.jpg",
+   "nuscenes/samples/CAM_FRONT_LEFT/n015-2018-10-08-16-03-24+0800__CAM_FRONT_LEFT__1538985960154844.jpg",
+   "nuscenes/samples/CAM_FRONT_RIGHT/n015-2018-10-08-16-03-24+0800__CAM_FRONT_RIGHT__1538985960170339.jpg",
+   "nuscenes/samples/CAM_BACK/n015-2018-10-08-16-03-24+0800__CAM_BACK__1538985960187528.jpg",
+   "nuscenes/samples/CAM_BACK_LEFT/n015-2018-10-08-16-03-24+0800__CAM_BACK_LEFT__1538985960197423.jpg",
+   "nuscenes/samples/CAM_BACK_RIGHT/n015-2018-10-08-16-03-24+0800__CAM_BACK_RIGHT__1538985960177893.jpg"
+  ],
+  "correct_internvl": "b)",
+  "correct_gpt": null,
+  "target": null,
+  "position": {
+   "pos_x": 450,
+   "pos_y": 1050
+  },
+  "size": 2.0,
+  "drivelm": {
+   "scene_token": "01796494e25c448dadaba70cfcc3532d",
+   "frame_token": "db23ac925c264adca50f21f6c26290b5",
+   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving."
+  }
+ }
+]
