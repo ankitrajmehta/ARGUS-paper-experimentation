@@ -362,3 +362,51 @@ prints it per layer.
 
 81 -> 83 tests. Both the crash and the single-wording fallback are pinned, plus
 the case with four wordings, which must still use the strict split.
+
+---
+
+## Iteration 6 — 2026-11-13 16:36 UTC — pre-flighted the rest of the stage
+
+Kernel v16 `RUNNING` at 3 h 33 m. The ~3.5 h estimate covered the evaluation
+only; the activation block adds roughly 1,200 forward passes (100 scenes x 8
+answer-token rows + 4 prompt-only rows), so ~4 h total is the better figure.
+Nothing wrong.
+
+Pre-flighted the two remaining CLI calls in the steering stage against the
+synthetic sweep.
+
+**`midas-probes` runs, but reported a non-result as silence.** The strict
+`scene+phrase` split printed its heading and then nothing at all under it --
+which reads as "the probe learned nothing", a different claim from "this split
+could not be evaluated". Same single-wording cause as the crash in iteration 5.
+It now says which, and names the number of attack wordings that caused it.
+
+**`midas-eval --both --style plain --defend` runs clean** and writes
+`baseline_*` / `attack_*` into the config directory, which is what the summary
+table reads back.
+
+### Changed how the step sizes are chosen
+
+The sweep was going to be 5/10/20, anchored on ARGUS's measured 9.9. That is the
+wrong thing to copy: **9.9 means different things at different hidden sizes** --
+a sizeable nudge in 2048 dimensions, a small one in 4096 -- and theirs was a
+28-layer model, ours is 36 layers at 2048.
+
+The stage now reads `||mean||` at the steered layer out of the fitted artifact
+and sweeps 0.1x, 0.25x, 0.5x of it, printing what fraction ARGUS's 9.9 would
+have been. The comparison this stage exists to make -- argus against uniform at
+*matched* strength -- is unaffected, since both arms move by the same amount.
+
+Related, and the reason this matters: the fitted `||w||` is ~1.9 against ARGUS's
+~46 (iteration 5), so our Eq. 7 tail steps are already far more aggressive
+relative to the score than theirs. Two quantities now differ from the paper by
+large factors, and both are consequences of fitting our own probe rather than
+porting theirs. Worth stating plainly in any writeup: this reproduces their
+*design*, not their *hyperparameters*.
+
+Also caught a brace collision while making the change -- the cell is an
+f-string template, so `{...}` in the generated code interpolates at generation
+time. Split into two cells. The generated-notebook syntax check caught it
+immediately, which is the second time that check has paid for itself.
+
+83 tests, all passing.

@@ -1217,22 +1217,49 @@ code(f'''
 ARGUS_DEFENSE = "/kaggle/working/results/drivelm/defense/qwen"
 ARGUS_STYLE = "plain"      # the strongest framing on this model in the smoke run
 ARGUS_LIMIT = {ARGUS_LIMIT!r}
+''')
+
+code('''
+# The step sizes are set *relative to the activations we actually have*, not
+# copied across. ARGUS measured a step norm of 9.9, but on a model with a
+# different hidden size that number means something different: the same 9.9 is a
+# large nudge in 2048 dimensions and a small one in 4096. So the sweep is
+# expressed as a fraction of the typical activation norm at the steered layer,
+# read from the fitted artifact.
+import numpy as np
+
+_art = np.load(ARGUS_DEFENSE + ".npz")
+_meta = json.load(open(ARGUS_DEFENSE + ".json"))
+# ||mean|| at the best layer: the centre of the activation cloud the layers
+# above were trained to expect.
+_ref = float(np.linalg.norm(_art["mean"][0]))
+print(f"steered layers {[l['layer'] for l in _meta['layers']]}")
+print(f"typical activation norm at the first of them: {_ref:.1f}")
+print(f"ARGUS's 9.9 would be {9.9 / _ref:.1%} of that")
+
+FRACTIONS = [0.1, 0.25, 0.5]
+STEPS = {f"{f:g}x": f"{f * _ref:.2f}" for f in FRACTIONS}
+print("sweep points:", {k: float(v) for k, v in STEPS.items()})
 
 # Deliberately short: at ~24 s per scene-evaluation a 100-scene config is about
 # 80 minutes, and six of them would not fit a session. Pick the schedule on a
 # subset, then confirm the winner at full size.
-ARGUS_CONFIGS = [
-    ("none",            []),
-    ("argus s=5",       ["--schedule", "argus", "--first-step-norm", "5"]),
-    ("argus s=10",      ["--schedule", "argus", "--first-step-norm", "10"]),
-    ("argus s=20",      ["--schedule", "argus", "--first-step-norm", "20"]),
-    # The ablation that isolates the schedule: same strength, old shape.
-    ("uniform s=10",    ["--schedule", "uniform", "--strength", "10"]),
-    # And the ungated version, to show how much of the effect is the gate.
-    ("argus s=10 nogate", ["--schedule", "argus", "--first-step-norm", "10", "--no-gate"]),
+ARGUS_CONFIGS = [("none", [])]
+ARGUS_CONFIGS += [
+    (f"argus {k}", ["--schedule", "argus", "--first-step-norm", v])
+    for k, v in STEPS.items()
 ]
-print(f"{{len(ARGUS_CONFIGS)}} configurations x 2 conditions x "
-      f"{{ARGUS_LIMIT or 'all'}} scenes")
+_mid = STEPS["0.25x"]
+ARGUS_CONFIGS += [
+    # The ablation that isolates the schedule: same strength, old step shape.
+    ("uniform 0.25x", ["--schedule", "uniform", "--strength", _mid]),
+    # And ungated, to show how much of the effect is the gate rather than the
+    # steering -- an ungated defense that works is just a biased model.
+    ("argus 0.25x nogate",
+     ["--schedule", "argus", "--first-step-norm", _mid, "--no-gate"]),
+]
+print(f"\\n{len(ARGUS_CONFIGS)} configurations x 2 conditions x "
+      f"{ARGUS_LIMIT or 'all'} scenes")
 ''')
 
 code('''
@@ -1298,10 +1325,10 @@ How to read this:
 code('''
 # The single comparison this stage exists to make.
 by_name = {name: atk for name, atk, _ in rows}
-if {"none", "argus s=10", "uniform s=10"} <= set(by_name):
+if {"none", "argus 0.25x", "uniform 0.25x"} <= set(by_name):
     none_r = by_name["none"]["asr_chai"]
-    argus_r = by_name["argus s=10"]["asr_chai"]
-    unif_r = by_name["uniform s=10"]["asr_chai"]
+    argus_r = by_name["argus 0.25x"]["asr_chai"]
+    unif_r = by_name["uniform 0.25x"]["asr_chai"]
     n = by_name["none"]["n"]
     print(f"no defense     {none_r:.1%}")
     print(f"argus schedule {argus_r:.1%}  ({argus_r - none_r:+.1%})")

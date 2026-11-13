@@ -90,6 +90,21 @@ def main(argv: list[str] | None = None) -> int:
         if valid:
             best = max(valid, key=lambda s: s.accuracy)
             print(f"  best: layer {best.layer} at {best.accuracy:.1%}")
+        else:
+            # Printing an empty section under a heading reads as "the probe
+            # learned nothing", which is a different claim from "this split
+            # could not be evaluated". Say which.
+            attack_phrases = np.unique(
+                acts.column("phrase")[acts.column("condition") == "attack"]
+            )
+            print(
+                f"  no fold had both classes in its test set, so this split could not "
+                f"be scored -- nothing was measured here, which is not the same as a "
+                f"probe that failed.\n"
+                f"  the sweep has {len(attack_phrases)} attack wording(s); the strict "
+                f"split needs a fold holding out an attack wording *and* a non-attack "
+                f"one, so re-extract with --phrases 3 or more to get this number."
+            )
 
     # The subspace is only meaningful if the probe generalises; build it at the
     # best layer by held-out scene.
