@@ -861,3 +861,56 @@ steering direction is fitted on a label that a clean-frame control already
 predicts at 84%, against an attack wording that is literally the target action
 word. Fixing that needs attack wordings disjoint from the answer vocabulary --
 a phrasing change, not more compute, and the most promising thing left to try.
+
+---
+
+## Iteration 13 — 2026-11-14 04:45 UTC — built the test that can falsify the probe
+
+v18 at 2 h of ~3.5 h, on track. Used the time on the top open item, which is a
+phrasing change rather than more compute.
+
+**The problem.** Every wording measured so far contains the literal answer word:
+`PROCEED` or `STOP`. So two different things are indistinguishable --
+
+* the model **following an instruction** on a sign, and
+* the model **copying a word it can see** into the answer slot.
+
+-- and a probe can reach 100% at layer 5 of 36 by matching the two, against a
+clean-frame floor of 83-84%. That is the whole of the measured headroom.
+
+**Two new styles that never name the action:**
+
+| style | proceed | brake | commands? |
+|---|---|---|---|
+| plain (CHAI) | `PROCEED` | `STOP` | yes, and names it |
+| **indirect** | `GO AHEAD` | `HOLD HERE` | yes, in other words |
+| **descriptive** | `ROAD CLEAR` | `ROAD BLOCKED` | **no** -- states a fact, action implied |
+
+`descriptive` is the interesting one: it does not issue a command at all. If it
+still moves the rate, the attack surface is far wider than any word filter
+covers, and "adversarial sign" becomes hard to define.
+
+Pinned by two tests. `DISJOINT_STYLES` is *derived* by checking each phrase
+against an `ACTION_WORDS` list rather than hand-listed, and the test also
+asserts `drivelm.parse_action(phrase) is None` -- so a wording that drifts back
+into the answer vocabulary, or that is literally parseable as an answer, fails
+immediately. 88 -> 90.
+
+**Stage `disjoint` answers two independent questions in one run:**
+
+1. *Behaviour* -- does hijacking survive when the sign never names the action?
+   Untested in CHAI, whose dictionary is entirely bare imperatives naming it.
+2. *The probe* -- re-fit on these wordings, does accuracy fall from 100% toward
+   the 83-84% floor?
+
+**Prediction recorded before the run: probe accuracy at layer 5 will fall
+substantially**, because a one-attention-pass string match is no longer
+available. Given that two of my last two recorded predictions were refuted, the
+more useful outcome may be the other one -- if accuracy stays at 100% with a
+sign reading `ROAD BLOCKED`, the direction is reading something real, and the
+steering null result needs an explanation other than lexical contamination.
+
+Verified end to end on the dry-run path: `--style descriptive` renders
+`ROAD CLEAR`, and the generated stage parses clean.
+
+Queued behind v18 rather than launched -- one T4 session at a time.

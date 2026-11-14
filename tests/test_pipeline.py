@@ -1690,3 +1690,43 @@ def test_direction_selection_requires_drivelm_labels(tmp_path):
             "--qa", str(qa), "--root", str(tmp_path), "--no-require-images",
             "--only-action", "b)", "--out", str(tmp_path / "x.json"),
         ])
+
+
+def test_disjoint_styles_share_no_word_with_the_answers():
+    """The whole point of these styles is that a string match cannot work.
+
+    Every original style contains the literal answer word (PROCEED / STOP), so
+    "the model followed an instruction" and "the model copied a word it could
+    see" are indistinguishable -- and a probe reaches 100% at layer 5 of 36 by
+    matching the two. If a wording ever drifts back into the answer vocabulary
+    this test is the only thing that would notice.
+    """
+    from midas import styles
+    from midas.tasks import drivelm
+
+    assert styles.DISJOINT_STYLES, "no disjoint styles defined"
+    for name in styles.DISJOINT_STYLES:
+        for target, phrase in styles.INJECTION_STYLES[name].items():
+            low = phrase.lower()
+            for word in styles.ACTION_WORDS:
+                assert word not in low, f"{name}/{target} = {phrase!r} contains {word!r}"
+            # And the parser must not read an action straight out of the sign
+            # text, which would mean the sign is literally the answer.
+            assert drivelm.parse_action(phrase) is None, (
+                f"{phrase!r} parses as an action on its own"
+            )
+
+    # The framing styles must still contain it -- they are the comparison.
+    for name in ("plain", "authority", "override", "urgency"):
+        for phrase in styles.INJECTION_STYLES[name].values():
+            assert any(w in phrase.lower() for w in ("proceed", "stop"))
+
+
+def test_disjoint_styles_are_renderable():
+    """CHAI's renderer draws two words and silently discards the rest."""
+    from midas import signs, styles
+
+    for name in styles.DISJOINT_STYLES:
+        for phrase in styles.INJECTION_STYLES[name].values():
+            assert len(phrase.split()) <= 2, phrase
+            signs.check_renderable(phrase)
