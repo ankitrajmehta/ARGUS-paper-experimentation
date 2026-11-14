@@ -478,5 +478,85 @@
   "id": 95,
   "verdict": "a)",
   "evidence": "campus road clear ahead; motorcycle parked at the left kerb outside the lane"
+ },
+ {
+  "id": 96,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead with distant green signals; bus turning off at the left; works cones off the carriageway"
+ },
+ {
+  "id": 97,
+  "verdict": "b)",
+  "evidence": "two red lights clearly visible on the gantry; black sedan crossing the ego path at close range"
+ },
+ {
+  "id": 98,
+  "verdict": "a)",
+  "evidence": "green lights clearly visible over the ego lane; lane ahead clear; van oncoming on the far side; wet"
+ },
+ {
+  "id": 99,
+  "verdict": "a)",
+  "evidence": "ego lane ahead clear; Speedpost van parked at the left kerb off the running lane; MPV in the adjacent right lane"
+ },
+ {
+  "id": 100,
+  "verdict": "a)",
+  "evidence": "residential street clear ahead with a speed table; no vehicles in the ego lane"
+ },
+ {
+  "id": 101,
+  "verdict": "a)",
+  "evidence": "ego lane clear for a long distance; van parked at the right kerb; pedestrians on the footpath"
+ },
+ {
+  "id": 102,
+  "verdict": "a)",
+  "evidence": "green signal governing the exit; the way ahead to the right is clear of traffic"
+ },
+ {
+  "id": 103,
+  "verdict": "a)",
+  "evidence": "tree-lined campus road clear ahead; buses at stops off the running lane; van far off"
+ },
+ {
+  "id": 104,
+  "verdict": "b)",
+  "evidence": "tipper truck and van crossing the ego path at close range; red lights clearly visible at the junction"
+ },
+ {
+  "id": 105,
+  "verdict": "a)",
+  "evidence": "green signal governing the ego lane; lane ahead clear; Jeep at normal following distance; wet"
+ },
+ {
+  "id": 106,
+  "verdict": "a)",
+  "evidence": "dusk but lane establishable and clear round the bend; bus is on the cross road at a stop"
+ },
+ {
+  "id": 107,
+  "verdict": "a)",
+  "evidence": "ego lane clear with traffic only at distance; container lorry is in the adjacent right lane"
+ },
+ {
+  "id": 108,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; Subaru is oncoming on the far side of the double yellow; traffic only at distance"
+ },
+ {
+  "id": 109,
+  "verdict": "b)",
+  "evidence": "boom barrier lowered across the way ahead; car stopped at the right with a door open; night"
+ },
+ {
+  "id": 110,
+  "verdict": "b)",
+  "evidence": "Brinks truck crossing the ego path; red light governing plus NO TURN ON RED; wet"
+ },
+ {
+  "id": 111,
+  "verdict": "unclear",
+  "evidence": "ego faces a car park structure across the road, carriageway running left-right; no ego lane ahead"
  }
 ]
