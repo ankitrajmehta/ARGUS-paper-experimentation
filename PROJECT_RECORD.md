@@ -886,7 +886,7 @@ fractions of the measured activation norm rather than copied across.
 | argus 0.25x ungated | 83.3% | +13.3 | 3 | 7 | 0.34 | **56.7%** | 100% |
 | argus 0.25x deep L16–17 | 73.3% | +3.3 | 7 | 8 | 1.00 | 63.3% | 100% |
 
-**Nothing is significant** — smallest p is 0.34, and four of six configurations
+**Nothing is significant** — smallest p is 0.34, and five of six configurations
 make the attack *more* successful.
 
 **And 0.25x is ARGUS's own magnitude.** The measured activation norm at layer 5
