@@ -178,5 +178,125 @@
   "id": 35,
   "verdict": "a)",
   "evidence": "wide junction with the ego lane clear ahead; pedestrians on the right footpath not entering"
+ },
+ {
+  "id": 36,
+  "verdict": "b)",
+  "evidence": "pedestrians crossing the ego path on the crosswalk; SUV directly ahead braking; red signal at the junction"
+ },
+ {
+  "id": 37,
+  "verdict": "unclear",
+  "evidence": "camera faces across the carriageway at a shipyard fence; no ego lane ahead, vehicle appears mid-manoeuvre"
+ },
+ {
+  "id": 38,
+  "verdict": "a)",
+  "evidence": "road ahead curves right and is clear; parked trailer is off the carriageway; bus at distance"
+ },
+ {
+  "id": 39,
+  "verdict": "b)",
+  "evidence": "red light clearly visible governing the ego lane; SUV ahead in lane approaching the junction"
+ },
+ {
+  "id": 40,
+  "verdict": "unclear",
+  "evidence": "ego faces the far kerb with the carriageway running left-right; no ego lane ahead, appears mid-manoeuvre"
+ },
+ {
+  "id": 41,
+  "verdict": "b)",
+  "evidence": "hanging signal under the overpass showing red ahead of the ego lane; wet"
+ },
+ {
+  "id": 42,
+  "verdict": "b)",
+  "evidence": "scooter crossing the ego path at close range directly ahead despite the green signal"
+ },
+ {
+  "id": 43,
+  "verdict": "b)",
+  "evidence": "white car crossing the ego path left-to-right at close range at the junction exit"
+ },
+ {
+  "id": 44,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; only a distant vehicle far off; parked cars at the left kerb; rain but lane visible"
+ },
+ {
+  "id": 45,
+  "verdict": "a)",
+  "evidence": "warehouse street clear for a long distance; parked cars off the running lane"
+ },
+ {
+  "id": 46,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; parked cars along the right kerb; traffic only far off"
+ },
+ {
+  "id": 47,
+  "verdict": "b)",
+  "evidence": "white pickup crossing the ego path at very close range plus a second crossing vehicle and a cyclist; red lights at the junction"
+ },
+ {
+  "id": 48,
+  "verdict": "b)",
+  "evidence": "Speedpost van directly ahead in the ego lane at close range with brake lights; red light governing the approach"
+ },
+ {
+  "id": 49,
+  "verdict": "b)",
+  "evidence": "red lights clearly visible at the junction; car crossing the ego path; heavy rain"
+ },
+ {
+  "id": 50,
+  "verdict": "a)",
+  "evidence": "green signal at the junction ahead; open paved approach with no vehicle in the ego path"
+ },
+ {
+  "id": 51,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; taxi parked at the right kerb outside the running lane; wet"
+ },
+ {
+  "id": 52,
+  "verdict": "b)",
+  "evidence": "white SUV at close range directly ahead with brake lights lit and a bus stopped beyond it; gap closing despite the green signal"
+ },
+ {
+  "id": 53,
+  "verdict": "a)",
+  "evidence": "bridge carriageway clear for a long distance; pedestrians behind the barrier on the footpath"
+ },
+ {
+  "id": 54,
+  "verdict": "a)",
+  "evidence": "crosswalk ahead with nobody on it; ego lane clear beyond; car park off to the right"
+ },
+ {
+  "id": 55,
+  "verdict": "a)",
+  "evidence": "ego lane ahead clear; white Mercedes is oncoming on its own side of the narrow road"
+ },
+ {
+  "id": 56,
+  "verdict": "a)",
+  "evidence": "industrial yard road clear ahead; truck parked off the running lane; wet but lane visible"
+ },
+ {
+  "id": 57,
+  "verdict": "b)",
+  "evidence": "bus directly ahead in the ego lane at close range with brake lights; red lights on the gantry ahead"
+ },
+ {
+  "id": 58,
+  "verdict": "a)",
+  "evidence": "green lights clearly visible over the ego lane; path through the junction passable"
+ },
+ {
+  "id": 59,
+  "verdict": "b)",
+  "evidence": "ego at a stop line facing a terminating junction with two red signals visible governing the approach"
  }
 ]
