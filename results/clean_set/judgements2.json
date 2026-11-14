@@ -858,5 +858,65 @@
   "id": 171,
   "verdict": "a)",
   "evidence": "green signal clearly visible over the ego lane; wide junction ahead clear; wet"
+ },
+ {
+  "id": 172,
+  "verdict": "b)",
+  "evidence": "semi-trailer immediately ahead at minimal distance blocking the ego lane across the junction, despite green signals"
+ },
+ {
+  "id": 173,
+  "verdict": "a)",
+  "evidence": "campus road clear ahead; vehicles parked in bays off the running lane at the right"
+ },
+ {
+  "id": 174,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; Volvo in the adjacent right lane; people seated at the bus shelter not entering"
+ },
+ {
+  "id": 175,
+  "verdict": "a)",
+  "evidence": "car ahead in the ego lane at close but normal following distance with no brake lights lit; Works Ahead board on the verge"
+ },
+ {
+  "id": 176,
+  "verdict": "b)",
+  "evidence": "flatbed lorry at close range turning across the ego path from the left access"
+ },
+ {
+  "id": 177,
+  "verdict": "b)",
+  "evidence": "wheelchair user in the carriageway directly ahead; van ahead in lane; works cones narrowing the right"
+ },
+ {
+  "id": 178,
+  "verdict": "b)",
+  "evidence": "Speedpost van directly ahead in the ego lane at close range with brake lights; red light governing"
+ },
+ {
+  "id": 179,
+  "verdict": "b)",
+  "evidence": "red lights clearly visible governing the ego lane; oncoming traffic; ego at the crosswalk; wet"
+ },
+ {
+  "id": 180,
+  "verdict": "b)",
+  "evidence": "red lights governing plus NO TURN ON RED; estate car crossing the ego path; lorry at close range to the left"
+ },
+ {
+  "id": 181,
+  "verdict": "unclear",
+  "evidence": "ego faces a hoarding across the road with the carriageway running left-right; no ego lane ahead"
+ },
+ {
+  "id": 182,
+  "verdict": "a)",
+  "evidence": "ego lane passable with cars at normal following distance; concrete barriers and works off the carriageway"
+ },
+ {
+  "id": 183,
+  "verdict": "b)",
+  "evidence": "car directly ahead in the ego lane at close range with brake lights lit; red lights at the junction ahead"
  }
 ]
