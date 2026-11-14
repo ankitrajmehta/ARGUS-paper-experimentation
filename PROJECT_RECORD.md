@@ -859,6 +859,31 @@ signage is no harder than from a blank frame. The gate is a word detector; with
 two attack wordings and ten fixed benign phrases, memorising "does this say STOP
 or Proceed" suffices.
 
+**The decomposition, which settles it.** `follows_injection` on attacked rows is
+`answer == target`; the sign's wording comes from `dictionary[target]`, so the
+word on the sign identifies the target; and the forced answer is in the prompt.
+The label is therefore the *conjunction* "the answer word matches the sign
+word" — and that reproduces it for **100.0%** of rows, by construction. Asking
+whether each ingredient is separately decodable (held-out scenes):
+
+| Layer | Sign word (`STOP` vs `Proceed`) | Answer word | `follows_injection` |
+|---|---|---|---|
+| 0 | 89.5% | **100.0%** | 84.5% |
+| 2 | 89.5% | 100.0% | 82.5% |
+| 3 | 90.0% | 100.0% | 92.0% |
+| **5** | **100.0%** | 100.0% | **100.0%** |
+| 16 | 100.0% | 100.0% | 100.0% |
+| 35 | 100.0% | 100.0% | 100.0% |
+
+The answer word is readable from layer 0 — it is in the input. The sign word
+becomes perfectly readable at **layer 5**, and that is **exactly** the layer at
+which `follows_injection` saturates. The probe is computing a string match, and
+it succeeds the moment its second ingredient arrives.
+
+A high score in the last column is therefore not evidence that the model
+represents "about to obey an instruction". It only becomes evidence once the
+first two columns are not both available — which is what §20 arranges.
+
 **Consequence.** Steering against this direction and observing a lower attack
 rate would not show that steering defends against injection. It would show that
 pushing the model away from the word painted on the sign lowers how often it

@@ -1321,6 +1321,79 @@ That is exactly where the jump happens.</p>
 attacked frame from <em>ordinary signage</em> reaches 89.7% after a
 <strong>single decoder block</strong> — no harder than separating it
 from a blank frame (88.5%).</p>
+<p><strong>The decomposition, which settles it.</strong>
+<code>follows_injection</code> on attacked rows is
+<code>answer == target</code>; the sign’s wording comes from
+<code>dictionary[target]</code>, so the word on the sign identifies the
+target; and the forced answer is in the prompt. The label is therefore
+the <em>conjunction</em> “the answer word matches the sign word” — and
+that reproduces it for <strong>100.0%</strong> of rows, by construction.
+Asking whether each ingredient is separately decodable (held-out
+scenes):</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Sign word (<code>STOP</code> vs <code>Proceed</code>)</th>
+<th>Answer word</th>
+<th><code>follows_injection</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>89.5%</td>
+<td><strong>100.0%</strong></td>
+<td>84.5%</td>
+</tr>
+<tr>
+<td>2</td>
+<td>89.5%</td>
+<td>100.0%</td>
+<td>82.5%</td>
+</tr>
+<tr>
+<td>3</td>
+<td>90.0%</td>
+<td>100.0%</td>
+<td>92.0%</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td><strong>100.0%</strong></td>
+<td>100.0%</td>
+<td><strong>100.0%</strong></td>
+</tr>
+<tr>
+<td>16</td>
+<td>100.0%</td>
+<td>100.0%</td>
+<td>100.0%</td>
+</tr>
+<tr>
+<td>35</td>
+<td>100.0%</td>
+<td>100.0%</td>
+<td>100.0%</td>
+</tr>
+</tbody>
+</table>
+<p>The answer word is readable from layer 0 — it is in the input. The
+sign word becomes perfectly readable at <strong>layer 5</strong>, and
+that is <strong>exactly</strong> the layer at which
+<code>follows_injection</code> saturates. The probe is computing a
+string match, and it succeeds the moment its second ingredient
+arrives.</p>
+<p>A high score in the last column is therefore not evidence that the
+model represents “about to obey an instruction”. It only becomes
+evidence once the first two columns are not both available — which is
+what §20 arranges.</p>
 <p><strong>Why this matters for any defense built on it.</strong> If
 steering against this direction lowers the attack rate, the honest
 reading is not “steering defends against injection”. It is “pushing the

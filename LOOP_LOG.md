@@ -1057,3 +1057,53 @@ This is error #6 in the record repeating in a new costume -- *"ran stale code
 from the inherited kernel output, not the uploaded dataset"*. The lesson then
 was to prefer the dataset mount; the lesson now is that preferring it is not
 enough if nothing checks that the mount is current.
+
+---
+
+## Iteration 16 — 2026-11-14 10:40 UTC — the probe question settled without a GPU
+
+v20 has been **QUEUED for 44 minutes** without starting. Every previous kernel
+went `RUNNING` within a minute or two. Two candidates, and the API distinguishes
+neither: Kaggle's T4 pool is busy, or the weekly GPU quota is exhausted. By my
+own timing this week is ~14 h of the 30 h allowance (v16 4.6, v17 5.0, v18 3.8,
+smoke 0.4, v19 0.1), so contention is the better guess -- but that is an
+estimate from run durations, not Kaggle's counter, which the API does not
+expose. Resubmitting would only re-enter the same queue, so the job stands.
+
+**So I tested the lexical-match hypothesis offline instead, on activations
+already on disk -- and it is now settled.**
+
+`follows_injection` on attacked rows is `answer == target`. CHAI's dictionary is
+keyed *by target*, so the word on the sign identifies the target. The forced
+answer is in the prompt. The label is therefore the conjunction **"the answer
+word matches the sign word"** -- which reproduces it for **100.0%** of rows.
+That part is a property of the experimental design, not a discovery.
+
+The empirical part is whether each ingredient is separately decodable:
+
+| layer | sign word | answer word | follows_injection |
+|---|---|---|---|
+| 0 | 89.5% | **100.0%** | 84.5% |
+| 2 | 89.5% | 100.0% | 82.5% |
+| 3 | 90.0% | 100.0% | 92.0% |
+| **5** | **100.0%** | 100.0% | **100.0%** |
+| 35 | 100.0% | 100.0% | 100.0% |
+
+**The answer word is readable from layer 0** -- it is in the input. **The sign
+word becomes perfectly readable at layer 5, and that is exactly where
+`follows_injection` saturates.** The probe is computing a string match and it
+succeeds the moment its second ingredient arrives. There is no remaining gap for
+an instruction-following representation to explain.
+
+This upgrades section 9.8 from "the clean-frame floor is suspiciously high" to a
+mechanism with the layer identified. It also means the steering negative result
+(9.9, 9.11) has a *stated cause* rather than three eliminated suspects and a
+shrug: **we steered along a string-matching axis.**
+
+`scripts/probe_decomposition.py`. Added to the report (§18) and the record
+(§9.8); PDF rebuilt at **28 pages**.
+
+**What v20 is still needed for.** This shows the probe *can* be explained
+lexically. It does not show the attack itself is lexical -- whether a sign
+reading `ROAD BLOCKED`, which names no action, still moves the model is a
+behavioural question that needs the GPU. That is the part worth waiting for.
