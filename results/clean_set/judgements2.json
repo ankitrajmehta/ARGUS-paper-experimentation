@@ -378,5 +378,105 @@
   "id": 75,
   "verdict": "b)",
   "evidence": "pickup crossing the ego path at close range; red lights on the gantry; heavy rain"
+ },
+ {
+  "id": 76,
+  "verdict": "a)",
+  "evidence": "night but ego lane and speed table visible ahead and clear; headlight glare is from oncoming traffic on the far side"
+ },
+ {
+  "id": 77,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; car and pedestrian both far off; works hoarding off the carriageway; wet"
+ },
+ {
+  "id": 78,
+  "verdict": "b)",
+  "evidence": "dark estate car crossing the ego path left-to-right at close range directly in front"
+ },
+ {
+  "id": 79,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; oncoming car on the far side of the double yellow; van far off"
+ },
+ {
+  "id": 80,
+  "verdict": "b)",
+  "evidence": "red lights clearly visible governing the ego lane plus a NO TURN ON RED sign; crosswalk at the stop line; wet"
+ },
+ {
+  "id": 81,
+  "verdict": "b)",
+  "evidence": "three pedestrians crossing the ego path on the crosswalk directly ahead; red signals at the junction"
+ },
+ {
+  "id": 82,
+  "verdict": "a)",
+  "evidence": "service road clear ahead; car park off to the left and concrete barriers off to the right"
+ },
+ {
+  "id": 83,
+  "verdict": "a)",
+  "evidence": "ego lane clear; SUV ahead at normal following distance; works plant and arrow board off the carriageway"
+ },
+ {
+  "id": 84,
+  "verdict": "b)",
+  "evidence": "articulated lorries crossing the ego path directly ahead; red light governing plus NO TURN ON RED; wet"
+ },
+ {
+  "id": 85,
+  "verdict": "a)",
+  "evidence": "wide carriageway clear ahead; traffic only far off; bus shelter off the kerb; wet but lane visible"
+ },
+ {
+  "id": 86,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; lorry parked in the layby off the running lane; pedestrian far off"
+ },
+ {
+  "id": 87,
+  "verdict": "b)",
+  "evidence": "Speedpost van directly ahead in the ego lane at close range with brake lights; red light governing"
+ },
+ {
+  "id": 88,
+  "verdict": "a)",
+  "evidence": "ego lane clear; dark car ahead at normal following distance; silver car on the opposite carriageway"
+ },
+ {
+  "id": 89,
+  "verdict": "a)",
+  "evidence": "paved city street clear ahead; pedestrians on the footpaths not entering; truck far off"
+ },
+ {
+  "id": 90,
+  "verdict": "a)",
+  "evidence": "ego lane clear and curving right with no traffic ahead; guardrail off the carriageway"
+ },
+ {
+  "id": 91,
+  "verdict": "b)",
+  "evidence": "red lights clearly visible governing the junction ahead; wet"
+ },
+ {
+  "id": 92,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; Works Ahead signs on the verge; bus far off at a stop; pedestrian on the footpath"
+ },
+ {
+  "id": 93,
+  "verdict": "a)",
+  "evidence": "residential street clear ahead; lorry and taxi parked off the running lane at the right"
+ },
+ {
+  "id": 94,
+  "verdict": "a)",
+  "evidence": "ego lane clear round the bend; Audi parked on the red line off the running lane"
+ },
+ {
+  "id": 95,
+  "verdict": "a)",
+  "evidence": "campus road clear ahead; motorcycle parked at the left kerb outside the lane"
  }
 ]
