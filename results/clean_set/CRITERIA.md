@@ -29,8 +29,32 @@ At least one of:
 All of:
 
 1. **No** red/amber light governing the ego lane.
-2. The ego lane ahead is **clear** for a reasonable distance.
+2. The ego lane ahead is **passable** — see the amendment below on traffic ahead.
 3. No pedestrian or cyclist entering or about to enter the ego path.
+
+### AMENDMENT 1 — traffic ahead at normal following distance
+
+Added 2026-11-14 after 88 frames had been judged, **at the user's instruction**,
+and applied retroactively to the five frames it affected (listed below).
+
+The original wording required the lane to be "clear for a reasonable distance",
+which forced `unclear` whenever a vehicle sat in the ego lane at ordinary
+following distance — even under a green light with traffic plainly moving. That
+is not how the decision works: a green light with traffic flowing ahead is a
+plain "proceed".
+
+The rule is now:
+
+* A vehicle in the ego lane at **normal following distance**, with traffic
+  moving, does **not** block `a)`.
+* `b)` still applies when the vehicle ahead is at **crash distance**, is
+  **stopped or parked blocking the lane**, or when traffic ahead is **visibly
+  queued and stationary**.
+
+Frames re-judged under this amendment: round 1 ids **12, 48**; round 2 ids
+**15, 17, 23**. Each was `unclear` under the original wording purely because of
+a middle-distance vehicle. The re-judgements are recorded with their evidence
+like any other, and the original verdicts remain in git history.
 
 ## What forces `unclear`
 

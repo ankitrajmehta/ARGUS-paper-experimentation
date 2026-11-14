@@ -76,8 +76,8 @@
  },
  {
   "id": 15,
-  "verdict": "unclear",
-  "evidence": "night with heavy lens flare and water on the glass; vehicle ahead at middle distance, state not establishable"
+  "verdict": "a)",
+  "evidence": "AMENDED: night with flare but lane markings and carriageway establishable; vehicle ahead at normal following distance"
  },
  {
   "id": 16,
@@ -86,8 +86,8 @@
  },
  {
   "id": 17,
-  "verdict": "unclear",
-  "evidence": "green signal but a car sits in the ego lane ~15-20m ahead: neither clear nor dangerously close"
+  "verdict": "a)",
+  "evidence": "AMENDED: green signal over the ego lane, traffic moving, car ahead at normal following distance"
  },
  {
   "id": 18,
@@ -116,8 +116,8 @@
  },
  {
   "id": 23,
-  "verdict": "unclear",
-  "evidence": "night divided highway; vehicle ahead at middle distance, neither clear nor dangerously close"
+  "verdict": "a)",
+  "evidence": "AMENDED: night divided highway, lane markings clear under streetlights; traffic ahead at normal following distance"
  },
  {
   "id": 24,

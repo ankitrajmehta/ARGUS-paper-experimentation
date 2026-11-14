@@ -63,6 +63,13 @@
   "visual_evidence": "daylight; ego lane clear round the curve; motorcycle on opposite carriageway behind guardrail"
  },
  {
+  "scene_token": "edf6a55a70114f6296143ed471251804",
+  "frame_token": "598e7958803149318bed3c7c6b288833",
+  "action": "a)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
+  "visual_evidence": "AMENDED: dusk but lane establishable; give-way marking, crossing clear, pedestrians beside not on it; car ahead at normal following distance"
+ },
+ {
   "scene_token": "f05ec45554f842ccb523caf326750f13",
   "frame_token": "62e17e19f0d142f1b5a93edcad418148",
   "action": "a)",
@@ -243,6 +250,13 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red lights at the junction; bus and car crossing ahead; crosswalk directly at the ego stop line"
+ },
+ {
+  "scene_token": "b09162caded44198b149b4bce3558056",
+  "frame_token": "5eda7aefbded40b9a1b1cfdfb1de2b06",
+  "action": "a)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
+  "visual_evidence": "AMENDED: no governing signal; SUV and bus ahead at normal following distance with traffic moving, lane passable"
  },
  {
   "scene_token": "2575c1870ede486b8568279b4731e47e",

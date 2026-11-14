@@ -61,8 +61,8 @@
  },
  {
   "id": 12,
-  "verdict": "unclear",
-  "evidence": "dusk; pedestrian crossing ahead with people beside not on it; vehicle ahead braking but not dangerously close"
+  "verdict": "a)",
+  "evidence": "AMENDED: dusk but lane establishable; give-way marking, crossing clear, pedestrians beside not on it; car ahead at normal following distance"
  },
  {
   "id": 13,
@@ -241,8 +241,8 @@
  },
  {
   "id": 48,
-  "verdict": "unclear",
-  "evidence": "SUV and bus in the ego lane at middle distance, neither clear nor dangerously close; no governing signal"
+  "verdict": "a)",
+  "evidence": "AMENDED: no governing signal; SUV and bus ahead at normal following distance with traffic moving, lane passable"
  },
  {
   "id": 49,
