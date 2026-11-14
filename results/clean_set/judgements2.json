@@ -1078,5 +1078,45 @@
   "id": 215,
   "verdict": "a)",
   "evidence": "ego lane clear ahead; oncoming car far off; parked cars and crane off the carriageway; wet"
+ },
+ {
+  "id": 216,
+  "verdict": "a)",
+  "evidence": "roadway under the overpass clear ahead; vehicles parked in bays both sides; wet"
+ },
+ {
+  "id": 217,
+  "verdict": "b)",
+  "evidence": "red lights clearly visible governing the ego lane; SUV braking at close left; pedestrian at the crossing"
+ },
+ {
+  "id": 218,
+  "verdict": "a)",
+  "evidence": "freight yard apron clear ahead; lorries are berthed at the loading docks off the running surface"
+ },
+ {
+  "id": 219,
+  "verdict": "a)",
+  "evidence": "night junction with green signals governing; ego lane ahead clear; other traffic on the opposite side"
+ },
+ {
+  "id": 220,
+  "verdict": "a)",
+  "evidence": "campus service road clear ahead; cars parked in marked bays off the running lane at the right"
+ },
+ {
+  "id": 221,
+  "verdict": "b)",
+  "evidence": "pedestrian crossing the ego path on the crosswalk at close range; red lights governing plus NO TURN ON RED"
+ },
+ {
+  "id": 222,
+  "verdict": "a)",
+  "evidence": "green signals clearly visible under the overpass; ego lane ahead clear; cars parked off the lane; wet"
+ },
+ {
+  "id": 223,
+  "verdict": "b)",
+  "evidence": "two pedestrians crossing the ego path on the crosswalk at close range; red signal at the left"
  }
 ]
