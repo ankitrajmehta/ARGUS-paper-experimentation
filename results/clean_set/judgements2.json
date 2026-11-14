@@ -1038,5 +1038,45 @@
   "id": 207,
   "verdict": "b)",
   "evidence": "white pickup crossing the ego path at close range; red lights governing plus NO TURN ON RED"
+ },
+ {
+  "id": 208,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; cars parked off the running lane at the left; traffic far off; wet"
+ },
+ {
+  "id": 209,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; works barriers and barrels behind the kerb line at the right; traffic far off"
+ },
+ {
+  "id": 210,
+  "verdict": "b)",
+  "evidence": "red signals visible governing the ego lane at the junction ahead; lane otherwise clear; wet"
+ },
+ {
+  "id": 211,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; bus in the right bus lane; utility trucks and cones off the carriageway at the left"
+ },
+ {
+  "id": 212,
+  "verdict": "b)",
+  "evidence": "car directly ahead in the ego lane at close range with brake lights lit; red light clearly visible governing"
+ },
+ {
+  "id": 213,
+  "verdict": "b)",
+  "evidence": "red lights clearly visible governing the ego approach; ego at the crosswalk at the junction; wet"
+ },
+ {
+  "id": 214,
+  "verdict": "b)",
+  "evidence": "two red lights clearly visible on the gantry governing the ego lane; wet"
+ },
+ {
+  "id": 215,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; oncoming car far off; parked cars and crane off the carriageway; wet"
  }
 ]
