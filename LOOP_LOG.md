@@ -1617,3 +1617,51 @@ both are right.** The attack survives losing the word (+21, p=0.001); the
 shallow-layer probe does not. That is precisely the dissociation needed to say
 the model is doing something semantic that the layer-5 probe was never
 measuring.
+
+---
+
+## Iteration 26 — 2026-11-14 17:57 UTC — v21 launched: Qwen2-VL-7B on the audited 200
+
+Running, started immediately (no queue this time).
+
+```
+model   Qwen/Qwen2-VL-7B-Instruct    the friend's ARGUS paper checkpoint
+scenes  scenes_clean200.json         the audited set, 100 a) + 100 b)
+arms    baseline, plain, descriptive 600 scene-evaluations
+shard   --device-map auto            ~16.6 GB fp16 over both T4s
+```
+
+**Why this checkpoint and not Qwen2.5-VL-7B.** Iteration 20 established that
+ARGUS steering works on `Qwen2-VL-7B-Instruct` and is *untested on the 3B* --
+in their own words. Our negative steering result is therefore not a failed
+reproduction but an unverified configuration. Matching their exact model
+collapses the size confound and leaves only the task difference.
+
+**Why these two wordings.** `plain` is the positive control (+25.0, p=0.0005
+on the 3B); `descriptive` is the actionless wording (+21.0, p=0.001) whose
+survival killed the lexical explanation. If both hold on a 7B with higher
+clean accuracy, the attack result stops being "a near-chance model can be
+nudged".
+
+**The schedule risk, stated before it bites.** 3B ran ~26 s/scene on one T4.
+A 7B sharded over two cards is slower, and 600 runs at ~70 s is ~11.7 h
+against Kaggle's 12 h ceiling. Mitigations in the notebook: results are
+written after **each arm**, and each arm prints its own elapsed time. A
+timeout therefore costs `descriptive` alone, not the run. If arm 1 comes in
+slow, arm 3 moves to its own kernel rather than gambling the session.
+
+**Pre-flight, all passed.** 91 tests after the `render_signs --style` change;
+a `--dry-run` of the exact command (200-scene file, `descriptive`,
+`--device-map auto`); dataset re-uploaded and `ready`; and the source-hash
+guard **correctly refused the first launch attempt** because `render_signs.py`
+had changed -- the same stale-source failure that wasted v19, caught this time
+by the mechanism built after it.
+
+**Prediction, recorded now, before results.** Clean accuracy will be
+materially higher than the 3B's 52%, and `plain` will stay significant. I am
+less sure about `descriptive`: if the actionless wording depends on a weak
+model groping for any cue, it should shrink on a stronger one. **If
+`descriptive` holds at 7B, that is the strongest single result in the
+project.** If it collapses while `plain` holds, the lexical story returns in a
+new form -- that the actionless attack only works on models that cannot read
+the scene properly.
