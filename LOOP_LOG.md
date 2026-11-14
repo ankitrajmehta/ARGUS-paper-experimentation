@@ -764,3 +764,61 @@ that is the answer, and it is "no".
 for how separable those layers are -- which matters, because "steering at the
 right depth did not help" is a weaker claim if the probe there was poor. Worth
 measuring offline from the activations we already have.
+
+---
+
+## Iteration 11 — 2026-11-14 02:50 UTC — closed the layer question, launched v18
+
+**The deep layers were not the problem.** Measured offline from the activations
+already on disk:
+
+| layer | attacked: follows_injection | clean control |
+|---|---|---|
+| 5 | 100.0% | 77.0% |
+| 6 | 100.0% | 78.0% |
+| 16 | 100.0% | 81.5% |
+| 17 | 100.0% | 81.5% |
+
+Layers 16-17 separate the classes exactly as well as 5-6, so "the deep steering
+did nothing because the probe was poor there" is ruled out. The `NaN` in the
+deep artifact was only `--layers` skipping the sweep, not a bad probe. Both
+depths have a 100% probe and both are inert -- which points at the *direction*,
+not the depth.
+
+### v18, running from 02:50 UTC
+
+Two things, chosen because the first might rescue the defense and the second
+strengthens the project's actual positive result.
+
+**(a) Magnitudes above ARGUS's own.** v17 swept 0.1x-0.5x of the activation
+norm, which brackets their 9.9 (= 0.24x of the measured 41.0). Everything was
+inert except 0.5x, the only consistently-signed point (-6.7 overall, -17.6 on
+`STOP`, 3 saved 0 lost). v18 sweeps **1x, 2x, 4x** and tracks clean accuracy at
+each. The question is whether a window exists where the attack rate falls while
+clean behaviour holds. **If the two fall together, that is the answer and it is
+"no" -- the defense is just damage.**
+
+**(b) The `proceed` direction at n = 150.** All 29 original scenes plus 121
+never evaluated. Reported as three rows: all 150, the 121 out-of-sample, and the
+original 29. The middle row is the real number.
+
+Ablations and benign controls are skipped this time (`MIDAS_ARGUS_ABLATIONS=0`)
+-- the schedule comparison and the gate's 100%-vs-0% separation only needed
+asking once, and each repeat costs ~25 minutes. ~3.5 h estimated.
+
+Two infrastructure fixes this needed:
+
+* `upload --drivelm` staged only `scenes.json`, so the replication set would
+  have been invisible to its own stage. It now stages every `scenes*.json` and
+  **de-duplicates the frames** -- 1326 unique rather than 1500, since the 29
+  shared scenes appear in both files.
+* The ablation configs referenced a hardcoded `"0.25x"`. With the sweep changed
+  to 1/2/4x that key no longer exists, so they would have raised `KeyError`
+  minutes in. They now take the middle of whatever was actually swept.
+
+The stage-independence test earned its keep twice more, catching
+`PROCEED_SCENES` and `ARGUS_STYLE` leaking into the new stage. `ARGUS_STYLE`
+moved to the shared setup cell, which is where it belonged once two stages
+needed it.
+
+88 tests passing.

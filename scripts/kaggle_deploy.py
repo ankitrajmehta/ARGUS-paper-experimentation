@@ -174,32 +174,42 @@ def cmd_upload(args: argparse.Namespace) -> None:
     # DriveLM scenes, if built. Only the images those scenes reference are
     # staged -- the full release is 3.5 GB, while 100 scenes is about 600
     # frames, which fits a Kaggle dataset comfortably.
-    scenes_json = ROOT / "data" / "drivelm" / "scenes.json"
-    if args.drivelm and scenes_json.exists():
+    # Every scene file in data/drivelm, not just scenes.json: the
+    # single-direction replication set is a second one, and staging only the
+    # default would leave its stage unable to find anything.
+    drivelm_root = ROOT / "data" / "drivelm"
+    scene_files = sorted(drivelm_root.glob("scenes*.json")) if args.drivelm else []
+    if args.drivelm and scene_files:
         import json as _json
 
-        records = _json.loads(scenes_json.read_text())
         dest = STAGING / "drivelm"
-        dest.mkdir(parents=True)
-        shutil.copy2(scenes_json, dest / "scenes.json")
-        copied = missing = 0
-        for rec in records:
-            for rel in rec["image"]:
-                src = ROOT / "data" / "drivelm" / rel
-                if not src.exists():
-                    missing += 1
-                    continue
-                out = dest / rel
-                out.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(src, out)
-                copied += 1
+        dest.mkdir(parents=True, exist_ok=True)
+        # Frames are shared between scene files, so copy each one once.
+        copied: set[str] = set()
+        missing = 0
+        for scenes_json in scene_files:
+            records = _json.loads(scenes_json.read_text())
+            shutil.copy2(scenes_json, dest / scenes_json.name)
+            for rec in records:
+                for rel in rec["image"]:
+                    if rel in copied:
+                        continue
+                    src = drivelm_root / rel
+                    if not src.exists():
+                        missing += 1
+                        continue
+                    out = dest / rel
+                    out.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(src, out)
+                    copied.add(rel)
+            print(f"  staged: drivelm/{scenes_json.name} ({len(records)} scenes)")
         size = sum(f.stat().st_size for f in dest.rglob("*") if f.is_file())
-        print(f"  staged: drivelm ({len(records)} scenes, {copied} frames, "
-              f"{size / 1e6:.0f} MB)")
+        print(f"  staged: drivelm frames ({len(copied)} unique, {size / 1e6:.0f} MB)")
         if missing:
             print(f"    WARNING: {missing} frames missing on disk")
     elif args.drivelm:
-        print(f"  skip (absent): {scenes_json} -- run midas-build-scenes first")
+        print(f"  skip (absent): no scenes*.json in {drivelm_root} "
+              "-- run midas-build-scenes first")
 
     if args.activations:
         stage_activations(args.activations, STAGING / "drivelm" / "activations")
