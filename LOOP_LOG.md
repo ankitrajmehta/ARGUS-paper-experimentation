@@ -1107,3 +1107,37 @@ shrug: **we steered along a string-matching axis.**
 lexically. It does not show the attack itself is lexical -- whether a sign
 reading `ROAD BLOCKED`, which names no action, still moves the model is a
 behavioural question that needs the GPU. That is the part worth waiting for.
+
+---
+
+## Iteration 17 — 2026-11-14 11:20 UTC — the queue diagnosed
+
+v20 has been `QUEUED` for **1 h 26 m**. Rather than keep guessing between
+"Kaggle is busy" and "something is wrong with the job", I ran a diagnostic: a
+trivial CPU-only notebook pushed to the project's *other*, unused kernel slug so
+v20's place in the queue is untouched.
+
+```
+midas-defense-sweep-...  (CPU) -> RUNNING immediately
+midas-chai-attack-...    (GPU) -> QUEUED
+```
+
+**So the account, the credentials, the dataset and the notebook push are all
+fine. It is specifically GPU availability.** Either the T4 pool is saturated or
+the weekly GPU quota is exhausted; Kaggle's API exposes neither, and the two are
+indistinguishable from outside. My own tally of this week's runs is ~14 h
+against a 30 h allowance, which favours contention, but that is an estimate from
+run durations rather than Kaggle's counter.
+
+**Nothing to act on.** Resubmitting re-enters the same queue, and a smaller job
+does not get priority. The job stands and the cadence drops to hourly.
+
+(The probe overwrote the notebook of the old `defense-sweep` kernel, last used
+29 October. Kaggle keeps prior versions, so its earlier run and output are
+still retrievable -- but it is worth recording that I reused a real kernel slug
+as scratch space rather than creating a new one.)
+
+**Where this leaves the work.** Every question that could be answered without a
+GPU has been. The remaining one is behavioural and cannot be: does a sign
+reading `ROAD BLOCKED`, which names no action at all, still move the model? The
+probe side of that question was settled offline in iteration 16.
