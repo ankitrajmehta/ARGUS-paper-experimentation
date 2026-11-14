@@ -78,5 +78,65 @@
   "id": 15,
   "verdict": "unclear",
   "evidence": "night with heavy lens flare and water on the glass; vehicle ahead at middle distance, state not establishable"
+ },
+ {
+  "id": 16,
+  "verdict": "unclear",
+  "evidence": "road terminates at a cross road but the junction is blown out by glare; control not establishable"
+ },
+ {
+  "id": 17,
+  "verdict": "unclear",
+  "evidence": "green signal but a car sits in the ego lane ~15-20m ahead: neither clear nor dangerously close"
+ },
+ {
+  "id": 18,
+  "verdict": "b)",
+  "evidence": "red lights visible governing the junction ahead; cars stopped at the stop line"
+ },
+ {
+  "id": 19,
+  "verdict": "b)",
+  "evidence": "pedestrian running across the crossing directly ahead; red lights at the junction"
+ },
+ {
+  "id": 20,
+  "verdict": "a)",
+  "evidence": "industrial street clear round the curve; trucks parked off the lane; semi is on a yard entrance"
+ },
+ {
+  "id": 21,
+  "verdict": "unclear",
+  "evidence": "camera faces a kerb and benches with the carriageway running left-right; ego appears mid-manoeuvre, no lane ahead"
+ },
+ {
+  "id": 22,
+  "verdict": "a)",
+  "evidence": "campus road clear ahead; lone motorcycle far off at the right kerb"
+ },
+ {
+  "id": 23,
+  "verdict": "unclear",
+  "evidence": "night divided highway; vehicle ahead at middle distance, neither clear nor dangerously close"
+ },
+ {
+  "id": 24,
+  "verdict": "unclear",
+  "evidence": "night, wet, oncoming headlight glare; position of the approaching car relative to the ego lane not establishable"
+ },
+ {
+  "id": 25,
+  "verdict": "a)",
+  "evidence": "quiet residential street clear for a long distance; bins and bicycles off the carriageway"
+ },
+ {
+  "id": 26,
+  "verdict": "a)",
+  "evidence": "waterfront road curves right and is clear; Audi is parked in a bay off the lane"
+ },
+ {
+  "id": 27,
+  "verdict": "b)",
+  "evidence": "pedestrian crossing the ego path directly ahead; red signals at the junction"
  }
 ]
