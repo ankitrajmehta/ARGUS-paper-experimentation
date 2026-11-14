@@ -140,6 +140,42 @@ def img_styles():
     save(fig, "i4_styles.png")
 
 
+
+def img_disjoint():
+    """Six wordings: four that name the action, two that never do.
+
+    The distinction is not cosmetic. Every wording in the top row contains the
+    literal answer word, so "the model obeyed an instruction" and "the model
+    copied a word it could see" produce the same measurement. The bottom row
+    removes that confound.
+    """
+    scene = data.load_scenes("train")[SCENE]
+    x, y = signs.build_sign(scene, target="a)").origin
+    pad_x, pad_y = 330, 150
+
+    rows = [
+        [("plain", "Names the action"), ("authority", "Names the action"),
+         ("urgency", "Names the action")],
+        [("indirect", "Never names it"), ("descriptive", "Never names it, "
+                                          "and does not command"), (None, "")],
+    ]
+
+    fig, axes = plt.subplots(2, 3, figsize=(13.2, 4.6))
+    for row, specs in zip(axes, rows):
+        for ax, (style, label) in zip(row, specs):
+            if style is None:
+                ax.axis("off")
+                continue
+            image = frame(scene, style=style)
+            h, w = image.shape[:2]
+            sl = (slice(max(0, y - pad_y), min(h, y + pad_y)),
+                  slice(max(0, x - pad_x), min(w, x + pad_x)))
+            phrase = styles.phrase_for(style, "a)").upper()
+            panel(ax, image[sl], f"{phrase}", label)
+    fig.subplots_adjust(wspace=0.08, hspace=0.45, top=0.88)
+    save(fig, "i6_disjoint.png")
+
+
 def img_control():
     """An attack sign beside a benign one rendered the same way.
 
@@ -171,7 +207,7 @@ def img_control():
 if __name__ == "__main__":
     print("report images:")
     for fn in (img_clean_vs_attacked, img_sign_crop, img_two_signs,
-               img_styles, img_control):
+               img_styles, img_disjoint, img_control):
         try:
             fn()
         except Exception as exc:

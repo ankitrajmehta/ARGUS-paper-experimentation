@@ -3,7 +3,7 @@ title: "MIDAS — Reproducing and Auditing the CHAI Visual Command-Injection Att
 author:
   - "Ankit Pokhrel — Department of Electronics and Computer Engineering, IOE Pulchowk Campus"
   - "Supervisor: Assoc. Prof. Dr. Dibakar Raj Pant"
-date: "4 November 2026"
+date: "14 November 2026"
 ---
 
 # 1. What this project is about, in one picture
@@ -30,27 +30,39 @@ of their experimental conclusions change once proper controls are applied.
 ## What was delivered
 
 1. A complete, tested implementation of CHAI's attack and evaluation, run against
-   four model sizes on free Kaggle GPUs.
+   **four model sizes of InternVL2.5 and a second model family**, Qwen2.5-VL-3B,
+   on free Kaggle GPUs.
 2. A reimplementation of CHAI's attack-*generation* method, which their published
    code cannot run as released.
-3. Five controlled experiments CHAI do not perform. Three changed a conclusion.
+3. **Eleven controlled experiments CHAI do not perform**, at up to **150 scenes**
+   against their 23. Five changed a conclusion.
+4. A faithful implementation of the **ARGUS steering defense**, measured against
+   this attack, with the controls needed to tell a defense from an artefact.
 
-## The four findings
+## The findings
 
 | # | Finding | Where |
 |---|---|---|
 | 1 | CHAI's release contains **two different signs**, and their own code uses the weaker one. The attack is **three times stronger** with the other. Their published result matches neither. | §7 |
 | 2 | The "correct answer" each scene is scored against is **not stable** — 6 of 15 scenes are near coin-flips. Every success rate, including CHAI's, inherits that noise. | §10 |
-| 3 | **How you phrase the command matters more than which command you pick.** Writing `EMERGENCY PROCEED` instead of `PROCEED` beats CHAI's entire phrase-optimisation step. | §11 |
+| 3 | **How you phrase the command matters more than which command you pick** — but the best phrasing is **model-specific**, so there is no universal wording. | §11, §16 |
 | 4 | CHAI's sign-search **has no statistical power** at their dataset size. Our faithful reimplementation gains on one target and loses exactly as much on the other. | §8 |
+| 5 | **The attack transfers to a second model family** and is far stronger there: +25.0 points at n=100, p=0.0005. | §16 |
+| 6 | **The aggregate number hides the result.** The attack works almost entirely in one direction — talking a *stopped* vehicle into moving — and barely at all in the other. | §17 |
+| 7 | **A probe that looks like it detects the attack is mostly reading a word.** Clean frames with no sign support the same prediction at 83–84%. | §18 |
+| 8 | **Steering along that direction cannot defend the attack at any magnitude** — inert until it is damaging, with nothing in between. | §19 |
 
-**The headline number.** With CHAI's actual sign, the attack takes InternVL2.5-8B
-from 26.7% to 40.0% — a **13.3 point** increase. CHAI report 25.3 points.
+**The headline number.** On 121 scenes never used to develop the finding, a
+printed sign reading `Proceed` takes Qwen2.5-VL-3B from **32.2% to 77.7%** — a
+**45.5 point** increase, p < 1e-6 — in the safety-critical direction of telling
+a stopped vehicle to move. On CHAI's own model and protocol the faithful attack
+is +13.3 points, where they report +25.3.
 
-**An honest note on framing.** This began as a replication and became a
-*reproducibility audit*. That is a more useful outcome than a clean replication
-would have been, but it is not what the proposal predicted, and this report says
-so plainly rather than presenting the audit as the original plan.
+**An honest note on framing.** This began as a replication, became a
+*reproducibility audit*, and ended with an attack result stronger than CHAI's
+own and a **negative** result on the defense. That is more useful than a clean
+replication would have been, but it is not what the proposal predicted, and this
+report says so plainly rather than presenting the audit as the original plan.
 
 ---
 
@@ -525,8 +537,281 @@ present.](../results/figures/i5_attack_vs_control.png)
   measurably, yet the attack success rate stayed at exactly 40.0% in every single
   configuration.
 
-A direction being *readable* does not make it *causal*. That negative result is
-the honest summary and the handoff point for any future defence work.
+A direction being *readable* does not make it *causal*.
+
+**That conclusion was premature, and §18–§19 replace it.** At the time, the
+obvious suspect was *how* the steering was applied — moderate capped steps at
+every position, where the published ARGUS method does something close to the
+opposite. Part II implements their method faithfully, eliminates the schedule,
+the layer and the magnitude in turn, and then shows in §18 that the direction
+itself is largely a *word-matching* axis rather than a compliance one. The
+negative result survives, but for a reason that can be stated rather than
+guessed at.
+
+---
+
+# PART II — Beyond CHAI
+
+Everything above tests CHAI's claim on **their** model and **their** 23 scenes.
+Two limitations bound all of it: one model family, and a sample size where one
+scene is worth 6.7 points. The rest of this report removes both, and then asks
+whether the published defense works against the result.
+
+**A note on statistics.** From here on every condition is run on the *same*
+scenes, so the conditions are **paired**. The usual ±10-point interval for
+n=100 assumes independent samples and is far too conservative here. Significance
+is exact two-sided **McNemar** on the scenes where two conditions disagree,
+which is the only part of the data that carries information about a difference.
+
+---
+
+# 16. Result 8: the attack on a second model family, at 100 scenes
+
+**What changed.** Scenes now come from the full **DriveLM** release rather than
+CHAI's 23 — one key frame per nuScenes scene, with the benign action taken from
+DriveLM's record of what the **human driver actually did**, not from a model
+vote. The model is **Qwen2.5-VL-3B**: a different architecture, a different
+tokenizer, a different image pipeline.
+
+| Condition | n | Attack rate | vs no sign | Unreadable | p |
+|---|---|---|---|---|---|
+| no sign | 100 | 48.0% | — | 0.0% | — |
+| **plain** (CHAI's own wording) | 100 | **73.0%** | **+25.0** | 0.0% | **0.0005** |
+| authority | 100 | 65.0% | +17.0 | 0.0% | **0.0095** |
+| urgency | 100 | 56.0% | +8.0 | 0.0% | 0.27 |
+| override | 100 | 54.0% | +6.0 | 1.0% | 0.46 |
+
+**The attack is not an InternVL quirk.** It transfers at **+25.0 points** —
+close to CHAI's published +25.3, which our faithful reproduction on their own
+model never reached (+13.3).
+
+**Only half the framings work.** `urgency` and `override` are not distinguishable
+from no attack at all.
+
+**And the phrasing result from §11 does not survive a change of model.** On
+InternVL2.5-2B, `urgency` was the strongest wording and `plain` the weakest. Here
+the order is reversed: `plain` is strongest and `urgency` is inert. §11's finding
+stands as "phrasing matters"; it does **not** support a single universal wording.
+
+**A 10-scene pilot was wrong by a factor of 2.4.** Before this run, the same
+experiment on 10 scenes gave +60.0 points. The ±31-point interval for n=10 was
+written down in advance, which is why the drop to +25.0 is a confirmation of the
+caveat rather than a surprise. It is the clearest argument in this project
+against drawing conclusions at CHAI's sample size.
+
+**One honest caveat on the absolute rates.** Benign accuracy of 52% means the
+model agrees with DriveLM's recorded human driver barely more than half the time
+on a two-option question. The *change* is a within-model comparison on fixed
+scenes and fixed labels, so it stands — but the absolute rates rest on a label
+the model only half shares.
+
+---
+
+# 17. Result 9: the aggregate was hiding the real result
+
+The attacker's target is the opposite of the scene's benign action, and the
+sign's wording follows the target. So the 100 scenes are really **two different
+experiments**:
+
+- 71 scenes where the driver was **moving** → the sign reads `STOP`;
+- 29 scenes where the driver was **stopped** → the sign reads `Proceed`.
+
+These are not symmetric. `STOP` asks a cautious model to be cautious. `Proceed`
+asks it to overrule a stop — the direction that matters for a safety claim.
+
+![**Figure 15 — The attack works in one direction only.** Left: scenes where the
+driver was stopped, so the sign reads `Proceed`. Right: scenes where the driver
+was moving, so the sign reads `STOP`. The dashed line is the no-sign rate. The
+left panel is the attack; the right panel is
+noise.](../results/figures/r7_direction.png)
+
+| Wording | Sign demands | n | No sign | Attacked | Change | Flipped | Lost | p |
+|---|---|---|---|---|---|---|---|---|
+| **plain** | **proceed** | 29 | 24.1% | **82.8%** | **+58.6** | 17 | 0 | **<0.0001** |
+| plain | brake | 71 | 57.7% | 69.0% | +11.3 | 20 | 12 | 0.22 |
+| **authority** | **proceed** | 29 | 24.1% | 55.2% | **+31.0** | 9 | 0 | **0.0039** |
+| authority | brake | 71 | 57.7% | 69.0% | +11.3 | 19 | 11 | 0.20 |
+| urgency | proceed | 29 | 24.1% | 27.6% | +3.4 | 5 | 4 | 1.00 |
+| urgency | brake | 71 | 57.7% | 67.6% | +9.9 | 19 | 12 | 0.28 |
+
+**A prediction that was written down and then refuted.** Before measuring this,
+the expectation recorded in the project log was that the effect would sit in the
+`STOP` direction — a driving model should agree readily with a cautious
+instruction — which would have made the headline much weaker than it looked.
+The opposite is true.
+
+**So the aggregate +25.0 understates the result rather than inflating it.** It
+averages a direction where the attack is devastating with one where it does
+nothing.
+
+## The replication, on scenes never used to find the effect
+
+The +58.6 rested on 29 scenes, purely because that is how many stopped-vehicle
+frames the first 100 happened to contain. DriveLM has far more. A set of **150**
+was built; all 29 originals fall inside it, so the other **121 are a genuine
+held-out test** of an effect discovered on the first set.
+
+| Subset | n | No sign | Attacked | Change | Flipped | Lost | p |
+|---|---|---|---|---|---|---|---|
+| all 150 | 150 | 30.7% | 78.7% | +48.0 | 81 | 9 | <1e-6 |
+| **the 121 never evaluated before** | 121 | 32.2% | **77.7%** | **+45.5** | 64 | 9 | **<1e-6** |
+| the original 29 | 29 | 24.1% | 82.8% | +58.6 | 17 | 0 | 1.5e-5 |
+
+The out-of-sample effect is **+45.5 points**, smaller than the +58.6 it was
+discovered at. That gap is regression to the mean and is exactly why the 121
+were held apart — but at p < 1e-6 on 121 unseen scenes the effect is not in
+doubt.
+
+> **The headline, at the strength the evidence supports.** A printed sign
+> reading `Proceed`, placed at CHAI's median position, raises the rate at which
+> Qwen2.5-VL-3B tells a **stopped** vehicle to move from **32% to 78%**.
+
+---
+
+# 18. Result 10: the probe that looks like it detects the attack
+
+Before building a defense, it is worth asking what the defense would be built
+on. ARGUS-style steering needs a **direction** in the model's internal state
+separating "about to follow the sign" from "about to follow the scene". Fitting
+that here gives **100% accuracy at layer 5 of 36** — and a number that good,
+that early, is a warning rather than a result.
+
+![**Figure 16 — A 100% probe that mostly is not reading the attack.** The green
+line is the probe on attacked frames. The dashed line is the *same* quantity
+measured on clean frames that contain no sign at all. The shaded gap is all the
+evidence there actually is.](../results/figures/r8_probe_floor.png)
+
+**The clean-frame control.** The label the probe learns is "was the model handed
+the attacker's action?" — and clean frames, with no sign anywhere in the image,
+support that same prediction at **83–84%**. The forced answer word is in the
+input from the embedding layer onward, so the floor was always going to be high.
+The real headroom is 84 → 100, not 50 → 100.
+
+**And the attack wordings are literally the answer words.** CHAI's dictionary
+renders `STOP` and `Proceed` — the two actions the model must choose between. A
+probe that matches the word painted on the sign against the word in the answer
+slot reaches 100% without representing anything about instructions, and one
+attention pass over the image is enough to do it. That is exactly where the jump
+happens.
+
+**The detector has the same problem.** Separating an attacked frame from
+*ordinary signage* reaches 89.7% after a **single decoder block** — no harder
+than separating it from a blank frame (88.5%).
+
+**Why this matters for any defense built on it.** If steering against this
+direction lowers the attack rate, the honest reading is not "steering defends
+against injection". It is "pushing the model away from the word painted on the
+sign lowers how often it says that word". The two predict the same headline
+number and completely different things everywhere else.
+
+---
+
+# 19. Result 11: the ARGUS defense, measured — and it does not work
+
+[ARGUS](https://arxiv.org/abs/2512.05745) is the current published defense for
+exactly this attack class. Its intervention was read off the released source
+rather than the paper, because the details matter:
+
+- **one uncapped, full-magnitude step at the first generated token**;
+- then tiny adaptive steps, `relu((w·h + b + ε)/‖w‖²)`, each closing ~2% of the
+  probe score;
+- **at the last token position only**;
+- all of it **gated** on a separate detection probe.
+
+That is close to the opposite of an earlier attempt in §12, which took moderate
+capped steps at every position — the leading explanation for why §12 was inert.
+
+![**Figure 17 — Steering does nothing.** Every configuration sits inside two
+scenes of the undefended rate. The orange line is clean-frame accuracy, which
+only moves when the gate is switched
+off.](../results/figures/r9_steering_null.png)
+
+| Configuration | Attack rate | vs none | Saved | Lost | p | Clean accuracy |
+|---|---|---|---|---|---|---|
+| no defense | 70.0% | — | 0 | 0 | — | 63.3% |
+| argus 0.1× | 76.7% | +6.7 | 4 | 6 | 0.75 | 63.3% |
+| **argus 0.25× (= ARGUS's own)** | 83.3% | +13.3 | 3 | 7 | 0.34 | 63.3% |
+| argus 0.5× | 63.3% | −6.7 | 6 | 4 | 0.75 | 63.3% |
+| uniform 0.25× (old schedule) | 80.0% | +10.0 | 4 | 7 | 0.55 | 63.3% |
+| argus 0.25× ungated | 83.3% | +13.3 | 3 | 7 | 0.34 | **56.7%** |
+| argus 0.25× at layers 16–17 | 73.3% | +3.3 | 7 | 8 | 1.00 | 63.3% |
+
+**Nothing is significant**, and **five of six** configurations make the attack
+*more* successful. The measured activation norm is 41.0, so ARGUS's reported
+step of 9.9 is 0.24× — our 0.25× row **is their setting**.
+
+**Three explanations tested and eliminated:**
+
+1. *The step schedule* — their schedule and the old one are both inert at
+   matched strength.
+2. *The layer* — steering at ARGUS's relative depth (16–17 of 36) is also inert,
+   and those layers separate the classes at 100% just like layers 5–6.
+3. *The magnitude* — see below.
+
+## The magnitude sweep, and a result that looked perfect
+
+| Configuration | Attack rate | **Unreadable** | Clean accuracy |
+|---|---|---|---|
+| no defense | 70.0% | 0.0% | 63.3% |
+| argus 1× | **0.0%** | **100.0%** | 63.3% |
+| argus 2× | **0.0%** | **100.0%** | 63.3% |
+| argus 4× | 73.3% | 0.0% | 63.3% |
+
+A **0% attack rate**, 21 scenes saved, 0 lost, p < 0.0001. It is **entirely an
+artefact**: the model's replies are `'no'`, `'eed'`, `''`. Nothing parses, so
+nothing can match the attacker's target and the rate is zero by construction.
+
+This is the same trap as Error #2 in Appendix B, and the lesson recorded from it
+is what caught it: *a single safety metric, without a utility column beside it,
+reads as success.* At 4× the chain of thought comes back **empty** — the model
+emits an end-of-sequence token immediately — and the one-word answer that
+follows is given with no reasoning behind it at all.
+
+> **The conclusion.** Across the full range there is **no usable window**:
+> inert from 0.1× to 0.5×, output destroyed at 1×–2×, reasoning suppressed at
+> 4×. Steering along this probe direction cannot defend this attack at any
+> magnitude.
+
+**The one part that does work is the detector.** The gate fires on **100%** of
+attacked frames and **0%** of frames carrying ordinary signage (`MAIN STREET`,
+rendered at identical size, position and colour). Clean-frame accuracy is
+untouched for every gated configuration and falls only when the gate is removed.
+So the machinery is sound and the targeting is sound; the direction being
+steered along is not.
+
+Two caveats keep this from being a clean win for the gate: the control phrase
+was in its own training data, so this shows generalisation across *scenes* and
+not across *wordings*; and a perfect detector in front of an intervention that
+does nothing is still a defense that does nothing.
+
+---
+
+# 20. The open question, and the experiment now running
+
+Every wording measured so far contains the literal answer word. That single
+design choice is what makes the probe uninterpretable, and it is inherited
+directly from CHAI's phrase dictionary.
+
+![**Figure 18 — Six wordings. The bottom row never names the action.** `GO
+AHEAD` still commands; `ROAD CLEAR` does not command at all — it states a fact
+and leaves the action implied.](../results/figures/i6_disjoint.png)
+
+Two wordings were added that share no word with either answer, and a run is in
+progress to answer two questions at once:
+
+1. **Does the attack survive without naming the action?** CHAI's dictionary is
+   entirely bare imperatives naming it, so this is untested in the original
+   work. If `ROAD CLEAR` still moves the rate, the attack surface is far wider
+   than any keyword filter covers, and "adversarial sign" becomes hard to even
+   define.
+2. **Does the probe's 100% collapse toward the 84% floor** once a string match
+   is unavailable? If it does, the steering null result above is explained. If
+   it does not, the direction is reading something real and the null needs a
+   different explanation.
+
+**The prediction, recorded before the run:** probe accuracy at layer 5 falls
+substantially. Two of the last three predictions recorded this way were
+refuted, so this is noted as a commitment, not a conclusion.
 
 ---
 
@@ -534,23 +819,36 @@ the honest summary and the handoff point for any future defence work.
 
 Ordered by how much each could change a conclusion.
 
-1. **Dataset size is the binding constraint on everything.** 15 scenes in the main
-   split, 8 in the second. One scene is 6.7 points; reliably detecting a 15-point
-   effect needs roughly 150 scenes. The search, the label analysis and the
-   phrasing results are all limited by this — and it is a property of CHAI's
-   dataset, not of our setup.
-2. **Half resolution.** 6 image tiles rather than CHAI's 12, forced by GPU memory.
+1. **Dataset size bounds everything in Part I.** 15 scenes in CHAI's main split,
+   8 in the second; one scene is 6.7 points. The search, the label analysis and
+   the §11 phrasing results are all limited by this. **Part II removes this
+   limitation** — 100 and 150 DriveLM scenes — but the §7–§12 numbers keep it.
+2. **The benign label in Part II is a proxy.** DriveLM's record of what the human
+   driver did is objective, but mapping "driving slowly" to an action is a
+   judgement, so those scenes are dropped. More importantly, the model agrees
+   with that label only **52%** of the time, so the *absolute* rates in §16 rest
+   on a reference the model half shares. The *changes*, measured on fixed scenes
+   and fixed labels, do not depend on it.
+3. **The probe cannot be interpreted while the sign names the action** (§18).
+   This is the deepest limitation in the defense work, and §20 is the experiment
+   that addresses it.
+4. **The gate's wording generalisation is untested.** One attack wording per
+   target makes a held-out-wording split arithmetically impossible, so the
+   gate's perfect separation (§19) demonstrates generalisation across scenes
+   only.
+5. **The steering negative result is specific, not universal.** It shows that
+   *this* direction, fitted *this* way, does not defend the attack at any
+   magnitude. It does not show that no activation-steering defense can.
+6. **Half resolution.** 6 image tiles rather than CHAI's 12, forced by GPU memory.
    This makes the sign harder to read, so results are a lower bound.
-3. **The Transfer split is uninterpretable** — 8 scenes, a 62.5% baseline, half
+7. **The Transfer split is uninterpretable** — 8 scenes, a 62.5% baseline, half
    its labels near coin-flips.
-4. **The two scoring rules differ by up to 13 points** on the 8B, because of
-   replies that name both actions.
-5. **The benign controls are not legitimate instructions.** The harder case — a
-   *genuine* stop sign the vehicle should obey — is untested, because CHAI's
-   dataset contains no such annotated scenes. This is the most important gap in
-   §12.
-6. **Stage 1 of CHAI's pipeline was not reimplemented.** Their word list is used
+8. **The two scoring rules differ by up to 13 points** on the 8B, because of
+   replies that name both actions. On Qwen they agree exactly (0% unreadable).
+9. **Stage 1 of CHAI's pipeline was not reimplemented.** Their word list is used
    as released; regenerating it needs a commercial language-model API.
+10. **Single seed, greedy decoding.** Repeats would be identical, so the
+   variability reported here is across scenes, not across runs.
 
 ---
 
@@ -559,24 +857,36 @@ Ordered by how much each could change a conclusion.
 **What this project contributes**
 
 1. A working, tested reproduction of CHAI on an open model family at four sizes,
-   on free hardware.
+   on free hardware — and the first evaluation of the attack on a **second model
+   family**.
 2. A reimplementation of CHAI's attack-generation method, which their release does
    not permit running.
 3. Three methodological findings about CHAI's evaluation — the two-sign
    discrepancy, the unstable ground truth, and the underpowered search — each
    measured rather than asserted.
-4. One new attack dimension: command framing, which outperforms CHAI's phrase
-   optimisation.
-5. Evidence that the attack is linearly decodable inside the model but not
-   trivially steerable.
+4. **A stronger and better-characterised attack than CHAI report.** +45.5 points
+   out of sample in the safety-critical direction, against their +25.3 aggregate,
+   with the direction split that shows where the effect actually lives.
+5. **A demonstration that the standard probe-based analysis is confounded** by
+   the attack wording naming the answer — with a clean-frame control that
+   quantifies it (84% of the apparent signal).
+6. **A measured negative result on the published defense**, with the schedule,
+   the layer and the magnitude each eliminated in turn, and the controls
+   (benign-text, clean accuracy, unreadable rate) needed to tell a defense from
+   an artefact.
+7. A reusable evaluation harness: two model families behind one interface,
+   paired significance testing, direction-aware scene construction, and a
+   stage-tagged Kaggle pipeline that skips completed work on re-run.
 
 **What should happen next**
 
 | Priority | Work | Why |
 |---|---|---|
-| High | Phrasing experiment across all 23 scenes and all four model sizes | The strongest new finding currently rests on 15 scenes and one model |
-| High | More scenes | The binding constraint on every quantitative claim in this report |
-| Medium | Re-measure §12 against CHAI's actual sign | Those numbers predate the §7 correction |
+| **Running** | Wordings that never name the action (§20) | Decides whether the probe result, and therefore the defense result, is explained by lexical matching |
+| High | Attack wordings disjoint from the answer, then **re-fit the steering direction** | The only route to a direction that could encode compliance rather than word-matching |
+| High | Re-extract with ≥3 attack wordings per target | Makes the gate's wording generalisation measurable at all (§19) |
+| Medium | The 150-scene `proceed` set against InternVL2.5-8B | Tests whether the directional asymmetry is a property of the task or of Qwen |
+| Medium | A genuine stop sign the vehicle *should* obey | The hardest control: separates "ignores injected text" from "ignores signage" |
 | Blocked | Full-resolution evaluation | Needs a newer GPU than the free tier provides |
 
 ---
