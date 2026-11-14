@@ -1158,5 +1158,45 @@
   "id": 231,
   "verdict": "b)",
   "evidence": "Speedpost van directly ahead in the ego lane at close range with brake lights; red light governing"
+ },
+ {
+  "id": 232,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; cars parked along the right kerb off the running lane; traffic far off"
+ },
+ {
+  "id": 233,
+  "verdict": "a)",
+  "evidence": "ego lane passable round the bend; taxi and MPV ahead at normal following distance"
+ },
+ {
+  "id": 234,
+  "verdict": "a)",
+  "evidence": "warehouse street clear ahead; cars parked at the left and skips off the running surface at the right"
+ },
+ {
+  "id": 235,
+  "verdict": "b)",
+  "evidence": "red light at close range directly governing the ego approach plus further reds at the junction; wet"
+ },
+ {
+  "id": 236,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead round the bend; Singtel van parked at the left kerb off the running lane"
+ },
+ {
+  "id": 237,
+  "verdict": "a)",
+  "evidence": "paved service road clear ahead between the buildings; motorcycle parked off the lane at the left"
+ },
+ {
+  "id": 238,
+  "verdict": "a)",
+  "evidence": "industrial street clear ahead; cars parked in bays at the right; site cabin off the carriageway"
+ },
+ {
+  "id": 239,
+  "verdict": "b)",
+  "evidence": "Escalade crossing the ego path at close range; amber/red lights at the junction; second car at the left"
  }
 ]
