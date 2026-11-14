@@ -978,5 +978,65 @@
   "id": 195,
   "verdict": "b)",
   "evidence": "two articulated lorries crossing the ego path at close range; red lights governing the junction"
+ },
+ {
+  "id": 196,
+  "verdict": "a)",
+  "evidence": "industrial street clear ahead; utility truck and cars at the loading bays off the running lane"
+ },
+ {
+  "id": 197,
+  "verdict": "b)",
+  "evidence": "amber lights on the gantry governing the ego lane; ego at the crosswalk at the junction"
+ },
+ {
+  "id": 198,
+  "verdict": "a)",
+  "evidence": "crossing directly ahead with nobody on it; road beyond clear; pedestrians on the steps and footpath not entering"
+ },
+ {
+  "id": 199,
+  "verdict": "b)",
+  "evidence": "car directly ahead in the ego lane at close range with brake lights lit; night, heavy flare"
+ },
+ {
+  "id": 200,
+  "verdict": "b)",
+  "evidence": "cyclist crossing the ego path on the crosswalk directly ahead despite the green signal"
+ },
+ {
+  "id": 201,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; cars parked off the running lane at the right; SLOW and works boards on the verge"
+ },
+ {
+  "id": 202,
+  "verdict": "b)",
+  "evidence": "red lights governing the junction; minivan crossing the ego path left-to-right; container lorry at the left"
+ },
+ {
+  "id": 203,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; taxi oncoming on the opposite carriageway; pedestrians on the footpath"
+ },
+ {
+  "id": 204,
+  "verdict": "a)",
+  "evidence": "bridge carriageway clear for a long distance; pedestrians behind railings on the footpaths; distant signal green"
+ },
+ {
+  "id": 205,
+  "verdict": "b)",
+  "evidence": "two pedestrians crossing the ego path on the crosswalk at close range; amber/red signals at the junction"
+ },
+ {
+  "id": 206,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; person waiting at the bus shelter off the carriageway; traffic far off"
+ },
+ {
+  "id": 207,
+  "verdict": "b)",
+  "evidence": "white pickup crossing the ego path at close range; red lights governing plus NO TURN ON RED"
  }
 ]
