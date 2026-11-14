@@ -1141,3 +1141,51 @@ as scratch space rather than creating a new one.)
 GPU has been. The remaining one is behavioural and cannot be: does a sign
 reading `ROAD BLOCKED`, which names no action at all, still move the model? The
 probe side of that question was settled offline in iteration 16.
+
+---
+
+## Iteration 18 — 2026-11-14 13:00 UTC — the queue cleared, and a local path priced
+
+**v20 is `RUNNING`.** It sat `QUEUED` for **3 h 09 m** (pushed 09:51 UTC, started
+some time before 13:00). So iteration 17's reading was right: T4 contention, not
+quota, not a broken job. Nothing I did released it and nothing I could have done
+would have released it sooner -- which is the useful part of the record, since
+the temptation each tick was to cancel and resubmit.
+
+**While it was blocked I re-tested an assumption I had written down as settled.**
+Iteration 17 closed with "the remaining question is behavioural and cannot be
+[answered without a GPU]". That was asserted, never checked. Checking it:
+
+```
+torch 2.14.1, MPS available, 16 GB unified memory
+InternVL2.5-2B already cached in ~/.cache/huggingface/hub
+DriveLM frames on disk (3.3 GB), scenes.json has 100 labelled scenes
+internvl.resolve_device() already prefers CUDA -> Apple Silicon -> CPU
+```
+
+Every ingredient for a local run was already present, and the runner needed no
+new code. The claim was false as stated.
+
+**But the price makes it nearly useless.** A 2-scene `--device mps` run on
+InternVL2.5-2B exceeded **20 minutes** including model load and MPS warmup.
+Even charging all fixed cost to the first scene, a properly powered four-arm
+design (baseline + plain + indirect + descriptive over 50 scenes = 200
+scene-runs) does not fit in the 24 h window. What *would* fit is the 15-scene
+like-for-like extension of the existing 2B style sweep -- 2 styles x 15 scenes,
+roughly 5 h.
+
+**So the honest conclusion is narrower than either claim.** The question was
+never GPU-*impossible*; it was GPU-*impractical at adequate power*. Those are
+different, and I had recorded the stronger one. Now that the T4 is free, the
+InternVL arm belongs on Kaggle as a stage rather than on this laptop, where it
+is ~50x faster and does not compete for the machine the rest of the work runs
+on.
+
+**One caveat to carry into the comparison.** The existing InternVL2.5-2B style
+sweep is `n=15` on CHAI's own train split with CHAI's labels -- baseline 26.7%,
+plain 46.7%, override 60.0%, authority 66.7%, urgency 73.3%. Fifteen scenes is
+the same order of pilot that misled me by a factor of 2.4 on DriveLM
+(iteration 9). Any `indirect`/`descriptive` numbers placed next to those are
+comparable *to each other* and weakly powered *in absolute terms*, and the
+style ordering already reverses between InternVL and Qwen, so nothing here
+transfers across families without being run there.
