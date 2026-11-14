@@ -994,3 +994,66 @@ The `disjoint` stage: wordings that never name the action (`GO AHEAD` /
 survives without the answer word, and whether the probe's 100% collapses toward
 the 83-84% clean floor when a string match is unavailable. Prediction already
 recorded in iteration 13: accuracy at layer 5 falls substantially.
+
+---
+
+## Iteration 15 — 2026-11-14 10:00 UTC — the report, and a GPU session lost to my own mistake
+
+**The PDF is rebuilt**: `report/MIDAS_report.pdf`, **27 pages, 18 figures**.
+Part I is unchanged; **Part II** is new and covers §16 the second model family,
+§17 the directional split and the n=150 replication, §18 the probe validity
+diagnostics, §19 the ARGUS steering result, §20 the open question. The opening
+summary now lists 8 findings with the out-of-sample +45.5 as the headline;
+Limitations rewritten to 10 items; Contributions and next steps rewritten.
+
+Three new figures (directional split, probe floor, steering null) and one new
+rendered panel showing all six wordings. A general defect turned up while making
+them: `titles()` reserved a fixed amount of space for the subtitle, so any
+two-line caption printed straight through the title. Fixed by deriving the pad
+from the line count.
+
+**And a miscount of my own, corrected.** I had written "four of six
+configurations make the attack more successful" in both the log and the record.
+Recounting from the result files: it is **five of six** -- only `argus 0.5x`
+lowers the rate. Fixed in all three places. The conclusion is unchanged and
+marginally stronger.
+
+### v19 failed, and the cause was mine
+
+```
+AttributeError: module 'midas.styles' has no attribute 'DISJOINT_STYLES'
+```
+
+The kernel installs `src` from the **uploaded dataset**, not from git. I added
+the disjoint wordings at 04:43 UTC and launched at 08:2x, but the dataset was
+last uploaded at **02:36 UTC**. So the kernel ran source that predated the code
+it needed.
+
+I diagnosed this from the timestamps, but **waited for the log before
+relaunching** rather than acting on the inference -- the timestamps proved a
+sufficient cause, not the only one. The log confirmed it exactly. Re-uploaded,
+verified the staged `styles.py` actually contains `DISJOINT_STYLES`, relaunched
+as **v20**.
+
+### A guard, because this will happen again otherwise
+
+`kaggle_deploy.py run` now refuses to launch when `src/` differs from what was
+uploaded, naming the fix. Two iterations on the design, both worth recording:
+
+* **First attempt compared modification times.** It fired at 368 minutes when
+  the true gap was 23 -- I had parsed Kaggle's UTC timestamps as *local* time,
+  and this machine is at +0545. A guard that is wrong by six hours cries wolf
+  and gets bypassed.
+* **Second attempt still used mtime, and was still wrong**: `git checkout`
+  restores a file's bytes but not its mtime, so reverting an edit left the
+  guard refusing to launch. Replaced with a **content hash** of everything
+  under `src/`, recorded on successful upload only -- so a failed upload cannot
+  make the launcher believe the dataset is current.
+
+Tested in all four directions: no record (does not block), matching (passes),
+changed (refuses), reverted (passes again). 90 -> 91.
+
+This is error #6 in the record repeating in a new costume -- *"ran stale code
+from the inherited kernel output, not the uploaded dataset"*. The lesson then
+was to prefer the dataset mount; the lesson now is that preferring it is not
+enough if nothing checks that the mount is current.

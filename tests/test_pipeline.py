@@ -1730,3 +1730,51 @@ def test_disjoint_styles_are_renderable():
         for phrase in styles.INJECTION_STYLES[name].values():
             assert len(phrase.split()) <= 2, phrase
             signs.check_renderable(phrase)
+
+
+def test_launcher_refuses_source_newer_than_the_upload(tmp_path, monkeypatch, capsys):
+    """Kernel v19 died on an AttributeError for a symbol added two hours earlier.
+
+    The kernel installs `src` from the uploaded dataset, not from git, so
+    editing a module and pushing a notebook that uses it runs the old code and
+    fails after the GPU session has started. The check is on content, not
+    mtime: `git checkout` restores bytes without restoring mtime, and an
+    mtime check refuses to launch after an ordinary revert.
+    """
+    import importlib.util
+    from pathlib import Path
+
+    import pytest
+
+    spec = importlib.util.spec_from_file_location(
+        "kaggle_deploy", Path(__file__).resolve().parents[1] / "scripts" / "kaggle_deploy.py"
+    )
+    deploy = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(deploy)
+
+    src = tmp_path / "src" / "midas"
+    src.mkdir(parents=True)
+    (src / "styles.py").write_text("STYLES = ('plain',)\n")
+    monkeypatch.setattr(deploy, "ROOT", tmp_path)
+    monkeypatch.setattr(deploy, "UPLOAD_STAMP", tmp_path / "stamp")
+
+    # No record yet: must not block, since the check cannot run.
+    deploy.check_source_is_uploaded()
+    assert "skipping the check" in capsys.readouterr().out
+
+    deploy.record_uploaded_source()
+    deploy.check_source_is_uploaded()
+    assert "matches src/" in capsys.readouterr().out
+
+    # A real change must stop the launch.
+    (src / "styles.py").write_text("STYLES = ('plain', 'indirect')\n")
+    with pytest.raises(SystemExit, match="would run the OLD code"):
+        deploy.check_source_is_uploaded()
+    # ...unless explicitly overridden.
+    deploy.check_source_is_uploaded(force=True)
+    assert "WARNING" in capsys.readouterr().out
+
+    # Reverting the content must clear it, even though the mtime moved.
+    (src / "styles.py").write_text("STYLES = ('plain',)\n")
+    deploy.check_source_is_uploaded()
+    assert "matches src/" in capsys.readouterr().out

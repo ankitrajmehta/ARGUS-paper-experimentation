@@ -257,12 +257,72 @@ def cmd_upload(args: argparse.Namespace) -> None:
     print(result.stdout or result.stderr)
     if result.returncode != 0:
         sys.exit("upload failed")
+    # Recorded only on success, so a failed upload cannot make `run` believe
+    # the dataset is current.
+    record_uploaded_source()
     print("\nDataset processing takes a minute or two. Check with:\n"
           f"  kaggle datasets status {user}/{DATASET_SLUG}")
 
 
+UPLOAD_STAMP = ROOT / "kaggle" / ".uploaded_source_hash"
+
+
+def source_hash() -> str:
+    """Content hash of everything the kernel imports.
+
+    Content, not modification time: `git checkout` restores a file's bytes but
+    not its mtime, so an mtime check refuses to launch after an ordinary
+    revert. Hashing the bytes asks the question that actually matters -- is the
+    code on Kaggle the code in front of me.
+    """
+    import hashlib
+
+    digest = hashlib.sha256()
+    for f in sorted((ROOT / "src").rglob("*.py")):
+        if "__pycache__" in f.parts:
+            continue
+        digest.update(f.relative_to(ROOT).as_posix().encode())
+        digest.update(f.read_bytes())
+    return digest.hexdigest()
+
+
+def record_uploaded_source() -> None:
+    """Remember what was uploaded, so `run` can tell if it has drifted."""
+    UPLOAD_STAMP.parent.mkdir(parents=True, exist_ok=True)
+    UPLOAD_STAMP.write_text(source_hash())
+
+
+def check_source_is_uploaded(force: bool = False) -> None:
+    """Refuse to launch a kernel against source older than the working tree.
+
+    The kernel installs ``src`` from the *dataset*, not from git, so editing a
+    module and pushing a notebook that uses it launches the old code. That cost
+    a GPU session: v19 died on
+    ``AttributeError: module 'midas.styles' has no attribute 'DISJOINT_STYLES'``
+    because the dataset predated the commit that added it by two hours.
+    """
+    if not UPLOAD_STAMP.exists():
+        print("  note: no record of what source was uploaded; skipping the check")
+        return
+    if UPLOAD_STAMP.read_text().strip() == source_hash():
+        print("  source check: the uploaded dataset matches src/, good")
+        return
+
+    message = (
+        "src/ has changed since the dataset was last uploaded.\n"
+        "The kernel installs src from the dataset, so it would run the OLD code.\n\n"
+        "  python scripts/kaggle_deploy.py upload --drivelm --activations\n\n"
+        "Or pass --skip-source-check if this is deliberate."
+    )
+    if force:
+        print(f"  WARNING: {message}")
+    else:
+        sys.exit(f"refusing to launch: {message}")
+
+
 def cmd_run(args: argparse.Namespace) -> None:
     user = require_credentials()
+    check_source_is_uploaded(force=args.skip_source_check)
 
     name = "midas_stages.ipynb" if args.stages else "midas_kaggle.ipynb"
     notebook = ROOT / "kaggle" / name
@@ -426,6 +486,11 @@ def main(argv: list[str] | None = None) -> int:
 
     run = sub.add_parser("run", help="push the notebook and start it on T4 x2")
     run.add_argument("--no-run", action="store_true", help="save without executing")
+    run.add_argument(
+        "--skip-source-check", action="store_true",
+        help="launch even if src/ is newer than the uploaded dataset. The kernel "
+        "installs src from the dataset, so by default this is refused.",
+    )
     run.add_argument(
         "--stages",
         action="store_true",
