@@ -1278,5 +1278,75 @@
   "id": 255,
   "verdict": "a)",
   "evidence": "green signal governing; ego lane clear round the curve; works barriers off to the left"
+ },
+ {
+  "id": 256,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; SUV with an open door is at the right kerb outside the running lane; van parked left"
+ },
+ {
+  "id": 257,
+  "verdict": "b)",
+  "evidence": "car crossing the ego path at close range; amber/red lights at the junction; bus ahead"
+ },
+ {
+  "id": 258,
+  "verdict": "b)",
+  "evidence": "red works barriers placed across the carriageway directly ahead with a worker beside them; GIVE WAY sign"
+ },
+ {
+  "id": 259,
+  "verdict": "b)",
+  "evidence": "car directly ahead in the ego lane at close range with brake lights lit; red lights governing the junction"
+ },
+ {
+  "id": 260,
+  "verdict": "b)",
+  "evidence": "Mercedes crossing the ego path at close range; red lights clearly visible governing the junction"
+ },
+ {
+  "id": 261,
+  "verdict": "a)",
+  "evidence": "green signals clearly visible over the ego lane; lane ahead clear; traffic far off; wet"
+ },
+ {
+  "id": 262,
+  "verdict": "b)",
+  "evidence": "box truck and postal van crossing the ego path at close range; red lights plus NO TURN ON RED"
+ },
+ {
+  "id": 263,
+  "verdict": "b)",
+  "evidence": "SUV crossing the ego path at close range; red lights governing the junction; works cones at the right"
+ },
+ {
+  "id": 264,
+  "verdict": "a)",
+  "evidence": "campus road clear ahead; single car at normal following distance; verges and parking off the lane"
+ },
+ {
+  "id": 265,
+  "verdict": "a)",
+  "evidence": "ego lane ahead clear; SUV is held at the side-road mouth to the left; crosswalk clear; wet"
+ },
+ {
+  "id": 266,
+  "verdict": "b)",
+  "evidence": "works zone with a STOP board and hi-vis workers standing in the carriageway directly ahead; barriers narrowing the road"
+ },
+ {
+  "id": 267,
+  "verdict": "b)",
+  "evidence": "postal truck and taxi crossing the ego path at close range and a cyclist in the ego path; NO TURN ON RED"
+ },
+ {
+  "id": 268,
+  "verdict": "a)",
+  "evidence": "green signals clearly visible over the ego lane; lane ahead clear; car turning off to the left; wet"
+ },
+ {
+  "id": 269,
+  "verdict": "a)",
+  "evidence": "ego lane clear for a long distance; mailbox on the verge; single pedestrian far off"
  }
 ]

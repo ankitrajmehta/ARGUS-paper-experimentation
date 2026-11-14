@@ -1449,3 +1449,60 @@ planning, 1 behaviour) and the pipeline uses **one**. And the attack sign sits
 at **position (450, 1050) scale 2.0 in all 250 scenes** -- never moved, never
 rescaled, pasted over whatever happens to be there. Whether the attack
 survives moving the sign is untested and is the cheapest remaining experiment.
+
+---
+
+## Iteration 23 — 2026-11-14 17:30 UTC — the 200-scene clean set is built
+
+All 270 frames of round 2 judged, blind, under the amended criteria. Combined
+with round 1 that is **330 frames judged by hand**.
+
+```
+                 n     decidable          agreement with DriveLM
+round 1         60   52  (86.7%)          48/52  = 92.3%
+round 2        270  253  (93.7%)         218/253 = 86.2%
+--------------------------------------------------------------
+combined       330  305  (92.4%)         266/305 = 87.2%
+                         CI [89.1,94.8]          CI [83.0,90.5]
+```
+
+**`results/clean_set/clean_200_balanced.json` — 100 `a)` + 100 `b)`**, sampled
+seed 42 from a pool of 150 / 116. Target met.
+
+**The amendment traded coverage for agreement, exactly as it should have.**
+Decidable rose 86.7% -> 93.7% because "green light, car ahead" stopped being
+`unclear`; agreement fell 92.3% -> 86.2% because deciding more cases creates
+more chances to disagree. Both moves are the amendment working, not a
+degradation: the round-1 number was measured on an easier subset.
+
+**All 35 round-2 disagreements are the same phenomenon, and it is the one
+already identified.**
+
+```
+me a) proceed | DriveLM b) "not moving"       19
+me b) brake   | DriveLM a) "driving fast"     16
+```
+
+Not noise, and not a different failure in each direction -- it is one failure
+seen from both sides. **DriveLM records what the driver did; the image shows
+what the road required.** Nineteen frames have a car stopped with a green
+signal and a clear lane; sixteen have a car moving at speed toward a red light
+or a pedestrian already in the crossing.
+
+**One systematic effect is mine, not DriveLM's.** Six of the sixteen
+`me b) / DriveLM a)` cases are the distant-red-light rule: my pre-registered
+wording says "a red or amber light **governing the ego lane is visible**" with
+no distance qualifier, so a red 100-150 m away on an otherwise empty road
+forces `b)` even though a driver would keep rolling and brake later. I noticed
+this mid-audit and chose to keep applying the literal wording rather than
+re-interpret it after seeing images. **That makes my `b)` set more
+conservative than a human's, and it inflates the disagreement count by roughly
+6 of 35.** Corrected for it, agreement would be about 89%, but I am reporting
+the uncorrected 87.2% because the correction was identified after the fact.
+
+**Standing caveat, unchanged and load-bearing.** The judge is a
+vision-language model and the experiment studies vision-language models. This
+is agreement between two independent sources, not ground truth. The human
+spot-check the user committed to is still outstanding, and every number above
+depends on it. Each frame in the clean set carries its `visual_evidence`
+string so the reasoning can be checked, not just the verdict.
