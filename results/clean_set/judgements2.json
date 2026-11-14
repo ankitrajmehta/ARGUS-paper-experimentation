@@ -1118,5 +1118,45 @@
   "id": 223,
   "verdict": "b)",
   "evidence": "two pedestrians crossing the ego path on the crosswalk at close range; red signal at the left"
+ },
+ {
+  "id": 224,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; cars at normal following distance; NO U-TURN sign only; parked cars off the lane"
+ },
+ {
+  "id": 225,
+  "verdict": "a)",
+  "evidence": "ego lane clear for a long distance; cars parked both kerbs; pickup oncoming on the far side"
+ },
+ {
+  "id": 226,
+  "verdict": "a)",
+  "evidence": "green signals clearly visible governing; path through the junction passable; van in the adjacent lane"
+ },
+ {
+  "id": 227,
+  "verdict": "a)",
+  "evidence": "green signals clearly visible over the ego lane; lane ahead clear; motorcycle in the adjacent right lane"
+ },
+ {
+  "id": 228,
+  "verdict": "a)",
+  "evidence": "green signals clearly visible over the ego lane; lane ahead clear; van and SUV in the adjacent right lane"
+ },
+ {
+  "id": 229,
+  "verdict": "unclear",
+  "evidence": "ego faces a grass verge across the road with the carriageway running left-right; no ego lane ahead"
+ },
+ {
+  "id": 230,
+  "verdict": "b)",
+  "evidence": "two red lights clearly visible on the gantry governing the ego lane; ego at the crosswalk"
+ },
+ {
+  "id": 231,
+  "verdict": "b)",
+  "evidence": "Speedpost van directly ahead in the ego lane at close range with brake lights; red light governing"
  }
 ]
