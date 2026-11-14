@@ -738,6 +738,191 @@ signs, and why neither reproduces their published number: **the search is
 fitting noise.** Establishing that properly would need a scene count their
 dataset does not provide.
 
+### 9.6 Second model family on DriveLM at n=100 — complete
+
+Two limitations bounded everything above: **one model family** (InternVL2.5) and
+**23 scenes**. This addresses both. Scenes come from the full DriveLM release
+(`midas-build-scenes`, one key frame per nuScenes scene, benign action taken
+from DriveLM's record of the human driver); the model is **Qwen2.5-VL-3B** — a
+different architecture, tokenizer and image pipeline.
+
+Conditions share scenes, so significance is **exact paired McNemar** on the
+discordant scenes, not the ±10-point unpaired interval, which is far too
+conservative here (`scripts/paired_significance.py`).
+
+| Condition | n | ASR | Δ | benign-acc | unreadable | retry | p |
+|---|---|---|---|---|---|---|---|
+| no sign | 100 | 48.0% | — | 52.0% | 0.0% | 2.0% | — |
+| **plain** (CHAI's wording) | 100 | **73.0%** | **+25.0** | 27.0% | 0.0% | 8.0% | **0.0005** |
+| authority | 100 | 65.0% | +17.0 | 35.0% | 0.0% | 10.0% | **0.0095** |
+| urgency | 100 | 56.0% | +8.0 | 44.0% | 0.0% | 21.0% | 0.27 |
+| override | 100 | 54.0% | +6.0 | 45.0% | 1.0% | 13.0% | 0.46 |
+
+**The attack transfers to a second family at +25.0 points** — close to CHAI's
+published +25.3, which our faithful InternVL reproduction never reached (+13.3,
+section 6).
+
+**Only half the framings work.** urgency and override are not separable from no
+attack. And **the style ordering reverses between families**: plain is best here
+and was worst on InternVL2.5-2B (section 9.4), where urgency was best and is
+inert here. A single "best wording" does not survive a change of model, which
+retires the universal-phrasing reading of 9.4.
+
+**A 10-scene pilot was off by a factor of 2.4.** The smoke test gave clean
+30.0%, plain 90.0%, Δ +60.0. At n=100: 48.0%, 73.0%, +25.0. The ±31-point
+interval was recorded before the full run, so this is a confirmation of the
+caveat rather than a surprise — and it is the project's clearest argument
+against drawing conclusions at CHAI's own sample size.
+
+**Override makes the model echo the sign.** All 4 scenes where our strict rule
+and CHAI's substring rule disagree are the reply `"Override STOP"` — the sign's
+text, verbatim, instead of an answer. Strict parsing reads "stop" as brake and
+scores a hit; CHAI's rule looks for "brake" and scores a miss. It also explains
+override's 13% retry rate.
+
+**Caveat on the absolute rates.** Benign accuracy of 52% means the model agrees
+with DriveLM's recorded driver behaviour barely above chance on a two-option
+question. The Δ is a within-model comparison on fixed labels and fixed scenes,
+so it stands; the absolute rates rest on a label the model only half shares.
+
+### 9.7 The aggregate hid the result — direction matters — complete
+
+The target is the opposite of the scene's benign action and the sign's wording
+follows the target, so the two directions are **different experiments**: 71
+scenes whose driver was moving get a sign reading `STOP`; 29 whose driver was
+stopped get `Proceed`.
+
+The hypothesis, written down before measuring: the effect would sit in the
+`STOP` direction, since a driving model with a safety prior is predisposed to
+agree with a cautious instruction — which would make the headline much weaker
+than it looks. **That was wrong** (`scripts/attack_by_direction.py`).
+
+| style | sign demands | n | clean | attacked | Δ | flipped | lost | p |
+|---|---|---|---|---|---|---|---|---|
+| **plain** | **proceed** | 29 | 24.1% | **82.8%** | **+58.6** | 17 | 0 | **<0.0001** |
+| plain | brake | 71 | 57.7% | 69.0% | +11.3 | 20 | 12 | 0.22 |
+| **authority** | **proceed** | 29 | 24.1% | 55.2% | **+31.0** | 9 | 0 | **0.0039** |
+| authority | brake | 71 | 57.7% | 69.0% | +11.3 | 19 | 11 | 0.20 |
+| override | proceed | 29 | 24.1% | 48.3% | +24.1 | 9 | 2 | 0.065 |
+| override | brake | 71 | 57.7% | 56.3% | −1.4 | 17 | 18 | 1.00 |
+| urgency | proceed | 29 | 24.1% | 27.6% | +3.4 | 5 | 4 | 1.00 |
+| urgency | brake | 71 | 57.7% | 67.6% | +9.9 | 19 | 12 | 0.28 |
+
+**The attack works in the safety-critical direction and essentially nowhere
+else.** A sign reading `Proceed` takes the model from 24.1% to 82.8% on scenes
+where the human driver was stopped — 17 flipped, **zero lost**. The `STOP`
+direction is not significant for any wording.
+
+So **+25.0 understates rather than inflates**. The defensible headline is: *a
+printed sign reading "Proceed" raises the rate at which this model tells a
+stopped vehicle to move from 24% to 83%.* It also explains the style ordering —
+plain and authority are exactly the two that carry this direction.
+
+n = 29 there, so one scene is 3.4 points; it is the 17–0 split that makes it
+solid, not the sample size. A replication at n = 150 built with
+`midas-build-scenes --only-action 'b)'` is in progress, reported as the full set,
+the 121 scenes never previously evaluated, and the original 29 separately.
+
+### 9.8 The probes read surface features, not compliance — complete
+
+Fitting the defense on the Qwen activations gives **100% probe accuracy at layer
+5 of 36** and a 100% gate. Numbers that good that early are a warning, not a
+result; two diagnostics (`scripts/probe_leak_check.py`):
+
+**Clean control.** Clean frames carry no sign, but the sweep records
+`is_target_answer` — the same `answer == target` quantity the steering probe
+learns:
+
+| layer | attacked: follows_injection | clean: is_target_answer |
+|---|---|---|
+| 0 | 84.5% | 83.0% |
+| 5 | **100.0%** | 77.0% |
+| 35 | 100.0% | 84.5% |
+
+The real headroom is **84% → 100%**, not 50% → 100%. The floor is high because
+the forced answer token is in the input from the embedding layer on.
+
+**And the attack wordings are literally `STOP` and `Proceed`** — the target
+action words. A probe matching the word on the sign against the word in the
+answer slot reaches 100% without representing anything about instructions, and
+the jump at layer 5 is consistent with exactly that match completing.
+
+**Detection needs no depth either:**
+
+| layer | attack vs clean + benign | attack vs benign text only |
+|---|---|---|
+| 0 | 88.5% | 89.7% |
+| 34 | 100.0% | 100.0% |
+
+88.5% after a **single decoder block**, and separating the attack from ordinary
+signage is no harder than from a blank frame. The gate is a word detector; with
+two attack wordings and ten fixed benign phrases, memorising "does this say STOP
+or Proceed" suffices.
+
+**Consequence.** Steering against this direction and observing a lower attack
+rate would not show that steering defends against injection. It would show that
+pushing the model away from the word painted on the sign lowers how often it
+says that word. Same number, different claim.
+
+### 9.9 ARGUS-style steering on Qwen — measured, and inert
+
+The ARGUS schedule read off the sibling project's released source: **one
+uncapped full-magnitude step at the first generated token**, then Eq. 7 steps
+`relu((w·h + b + ε)/‖w‖²)`, **last token position only**, gated on detection.
+That is close to the opposite of section 8's intervention (moderate capped steps
+at every position), which was the leading explanation for why section 8 was
+inert. Implemented as `SteerConfig(schedule="argus")`, with step sizes set as
+fractions of the measured activation norm rather than copied across.
+
+30 scenes, CHAI's wording, `plain`:
+
+| configuration | attack | Δ | saved | lost | p | clean acc | gate fired |
+|---|---|---|---|---|---|---|---|
+| no defense | 70.0% | — | 0 | 0 | — | 63.3% | 0.0% |
+| argus 0.1x | 76.7% | +6.7 | 4 | 6 | 0.75 | 63.3% | 100% |
+| **argus 0.25x** | 83.3% | +13.3 | 3 | 7 | 0.34 | 63.3% | 100% |
+| argus 0.5x | 63.3% | −6.7 | 6 | 4 | 0.75 | 63.3% | 100% |
+| uniform 0.25x | 80.0% | +10.0 | 4 | 7 | 0.55 | 63.3% | 100% |
+| argus 0.25x ungated | 83.3% | +13.3 | 3 | 7 | 0.34 | **56.7%** | 100% |
+| argus 0.25x deep L16–17 | 73.3% | +3.3 | 7 | 8 | 1.00 | 63.3% | 100% |
+
+**Nothing is significant** — smallest p is 0.34, and four of six configurations
+make the attack *more* successful.
+
+**And 0.25x is ARGUS's own magnitude.** The measured activation norm at layer 5
+is 41.0, so their reported 9.9 is 0.24× of it; our 0.25x step is 10.25. This is
+their schedule, at their strength, at a layer where the probe is 100% accurate,
+with a working gate: **+13.3 points, p = 0.34**.
+
+**So the step schedule does not explain section 8.** Uniform and ARGUS schedules
+at matched strength are both inert, and so is steering at ARGUS's relative depth.
+
+**The layer choice is also ruled out.** Measured offline, layers 16–17 separate
+the classes at 100%, exactly like 5–6 — so "the deep steering failed because the
+probe was poor there" is not available.
+
+**The gate, by contrast, works.** It fires on 100% of attacked frames and **0%**
+of frames rendered with `MAIN STREET` at identical size, position and colours
+(`--style benign_text`). Two caveats: the control phrase was in the gate's own
+training set, so this demonstrates scene generalisation and not wording
+generalisation (which is untestable with one attack wording per target); and a
+perfect detector in front of an inert intervention is still an inert defense.
+What it does buy is **no collateral damage** — clean accuracy is unchanged for
+every gated configuration and falls to 56.7% ungated, confirming the machinery
+perturbs behaviour when applied indiscriminately.
+
+**Reading.** Steering along a linear probe direction does not defend this attack
+— not at ARGUS's magnitude, schedule or relative depth, nor at the probe's best
+layers. On two model families this is now a measured negative result rather than
+a single puzzling null, and section 9.8 gives the likely reason: the direction
+encodes a lexical match, not compliance. The one open thread is magnitude — 0.5x
+is the only consistently-signed point (−17.6 on `STOP`, 3 saved, 0 lost,
+p = 0.25) — so whether a window exists at larger steps where the attack rate
+falls while clean accuracy holds is being measured. If both fall together, the
+answer is that the intervention is damage rather than defense.
+
+---
+
 ---
 
 ## 10. Errors made and corrected
@@ -758,6 +943,10 @@ Documented because each changed a conclusion, and most produced
 | 10 | Rendered the wrong sign throughout | `main.py` sets `testing = True`, so CHAI's InternVL path calls `load_universal("internvl")` and never reads `optimal_attacks/optimal.json`, which we had been loading. Different colours and size | `param_source` selects between them, defaulting to CHAI's actual values. **The faithful attack is +13.3 points, not +40** -- §9.5 |
 | 11 | Predicted the correction would *raise* the attack rate | Reasoned "black on red is more legible than pink on red" from intuition. Pure red has luminance ~54/255, so black on red is *low* luminance contrast and pink on red is high | The measurement reversed it: +40.0 for pink, +13.3 for black. **Stated as a prediction before the run, which is why it was caught; an unstated assumption would have become the explanation** |
 | 12 | CE search never improved, and the test did not catch it | The objective thresholded log-probs to a binary hit; over 6 scenes that is 7 values, so candidates tied and elite selection was random. The end-to-end test scored candidates by frame brightness, which no sign can move, so it passed with the search frozen at 0% | Added `--objective margin` (continuous); gave the loop a `score_fn` hook and a test asserting actual improvement toward a known optimum |
+| 13 | Steered a neighbouring layer on Qwen, silently | `Steerer` hooked decoder block `layer - 1`, correct for InternVL whose `hidden_states[0]` is the embedding output. The Qwen runner hooks `decoder[i]` directly, so its layer *i* **is** block *i* | Each runner declares `ACTIVATION_LAYER_OFFSET`. **Would have produced a plausible null result with no error anywhere** |
+| 14 | `midas-fit-defense` crashed on the real extraction | The strict `scene+phrase` gate split needs a fold holding out an attack wording *and* a non-attack one. `--phrases 1` gives four phrase values over five folds, so no test fold ever had both classes; every layer scored `nan` and indexing the empty ranked list raised | Falls back to held-out scenes and says why; the weaker validation is written into the artifact's notes. Caught by pre-flighting on synthetic activations **before** the sweeps existed |
+| 15 | Predicted the gate would fire on benign signage | Reasoned from the probe reaching 89.7% on attack-vs-benign-text after a single decoder block that the gate was "a word detector" and would not discriminate | It fires on **100%** of attacked frames and **0%** of `MAIN STREET` frames. The inference about *what* the probe keys on was sound; the conclusion that it therefore could not discriminate did not follow. **Recorded before the run, which is why it is here** |
+| 16 | Predicted the attack would work in the cautious direction | Expected a driving model to agree readily with `STOP` and resist `Proceed`, making the headline weaker than it looked | Exactly inverted: `Proceed` +58.6 (p < 0.0001), `STOP` +11.3 (p = 0.22). **The aggregate +25.0 was understating, not inflating** — §9.7 |
 | 9 | Fetching run v12 overwrote run v10's archive | `kaggle kernels output` writes into one fixed directory and also restores a full copy of the attached dataset (the vendored nuScenes frames, deleted earlier on purpose) | `fetch` now refuses a non-empty directory unless `--force`, takes `--out`, and deletes the source copy |
 
 **Kaggle environment failures** (seven consecutive runs, each exposing one
@@ -861,8 +1050,14 @@ Ordered by how much each could change the conclusion.
 | **Scene count** | **the binding constraint on everything above. 15 train / 8 test makes one scene 6.7 points, and the search, the labels and the style gaps are all noise-limited by it** |
 | **Style probes at the open turn** | **§9.4's transfer numbers use the answer-token readout. Repeat with `--prompt-only` before claiming a gate would separate styles** |
 | 12-tile evaluation | needs a GPU with FlashAttention (sm_80+) |
-| Legitimate-instruction controls | needs scenes CHAI's dataset lacks |
-| Scene count beyond 23 | would need new nuScenes frames labelled |
+| Legitimate-instruction controls | **done** — `--style benign_text` renders ordinary signage at identical size, position and colours; the gate separates it from an injection 100% vs 0% (§9.9) |
+| Scene count beyond 23 | **done** — DriveLM gives 100 scenes on a second model family (§9.6), and 150 in the direction that matters |
+| **Second model family** | **done** — Qwen2.5-VL-3B, +25.0 points, p = 0.0005 (§9.6). The style ordering reverses against InternVL, retiring the universal-wording reading of §9.4 |
+| **ARGUS schedule as the explanation for §8** | **ruled out** — their schedule at their magnitude is inert (p = 0.34), as is their relative depth (§9.9) |
+| **Probe validity** | **open, and the most important item.** The steering direction is fitted on a label a clean-frame control already predicts at 84%, against an attack wording that is literally the target action word. A direction that encodes compliance rather than lexical match would need wordings disjoint from the answer vocabulary (§9.8) |
+| **Steering magnitude** | in progress — 1x/2x/4x of the activation norm, tracking clean accuracy. 0.5x is the only consistently-signed point so far. If attack and clean accuracy fall together there is no defense to find |
+| **`proceed` replication at n=150** | in progress — 121 of the 150 scenes were never previously evaluated, so they are the out-of-sample test of §9.7 |
+| **Gate wording generalisation** | blocked by extraction — one attack wording per target makes a wording holdout impossible. Needs `--phrases 3` and a fresh sweep (§9.9) |
 
 ---
 
@@ -877,11 +1072,21 @@ src/midas/            implementation (21 files, 7 CLIs)
   evaluate.py         ASR, dual scoring, run records
   probes.py           linear probes, grouped validation, SVD subspace
   steering.py         defense artefact and steerer (secondary scope)
+  optimize.py         CHAI's stage-2 cross-entropy sign search
   tasks/drivelm.py    prompt chain, answer parsing, upstream verification
+  models/__init__.py  backend detection; one parser serves both families
   models/internvl.py  inference, device mapping, activation extraction
-tests/                57 tests
+  models/qwen.py      Qwen2-VL / Qwen2.5-VL, float32 vision tower on T4
+  cli/build_scenes.py DriveLM -> CHAI scene format, direction selection
+tests/                88 tests
 kaggle/               notebooks + deployment README
 scripts/              setup, figures, notebook generation, Kaggle deploy
+  fetch_drivelm.py          download the gated DriveLM release
+  summarise_drivelm_run.py  read run records back independently of the notebook
+  paired_significance.py    exact McNemar; conditions share scenes
+  attack_by_direction.py    split by which way the sign pushes (SS 9.7)
+  probe_leak_check.py       clean-frame control for the probe (SS 9.8)
+  summarise_steering.py     the three steering questions (SS 9.9)
 results/
   runs_2b_tiles6/     2B attack results
   kaggle_8b/          8B results: runs, labels, scale, activations, defense
@@ -890,9 +1095,12 @@ results/
   kaggle_final/       everything re-measured against CHAI's sign (kernel v14)
   activations/        2B activation sweeps
   defense/            fitted artefacts and sweeps
+  kaggle_drivelm/     100 DriveLM scenes on Qwen2.5-VL-3B + activations (v16)
+  kaggle_argus/       ARGUS-schedule steering and benign-text controls (v17)
   figures/            report figures
 MIDAS_report.md       narrative report
-PROJECT_RECORD.md     this file
+PROJECT_RECORD.md     this file (curated)
+LOOP_LOG.md           raw journal of the unattended run, including dead ends
 ```
 
 ---
