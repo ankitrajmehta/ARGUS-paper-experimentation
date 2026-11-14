@@ -1564,3 +1564,56 @@ string match is no longer available."* That is about the probe, not the
 behaviour, and the activations for it are in the v20 archive
 (`disjoint/activations/*.npz`). **Still unevaluated** -- the behavioural result
 above does not bear on it either way, and I am not treating it as confirmed.
+
+---
+
+## Iteration 25 — 2026-11-14 17:50 UTC — the layer-5 prediction, confirmed
+
+Probe decomposition re-run on v20's activations, against the original
+action-naming run as the control. All three are Qwen2.5-VL-3B, 200 attacked
+rows, held-out scenes, same script.
+
+```
+                        layer 5                  layer at which
+                 sign word   follows_inj      sign word hits 100%
+plain (control)    100.0%       100.0%              5
+indirect            93.0%        88.0%             16
+descriptive         88.0%        86.5%             24
+```
+
+**Iteration 13 recorded, before any of this ran:** *"probe accuracy at layer 5
+will fall substantially, because a one-attention-pass string match is no
+longer available."*
+
+**It fell from 100.0% to 86.5%, and the saturation point moved 19 layers
+deeper.** The prediction is confirmed -- the first of three recorded
+predictions to survive (the gate prediction and the direction prediction were
+both refuted, errors #15 and #16).
+
+**Why this matters more than the number.** Iteration 16's claim was that the
+probe's perfect score is explained by a string match completing at layer 5.
+That was an inference from a correlation: the sign word became decodable at
+exactly the layer the probe saturated. This is the intervention that tests it.
+Remove the shared string -- keep everything else identical -- and both move
+together, exactly as the lexical account predicts. The sign word is no longer
+available at layer 5 because there is no longer a string to match; the probe
+degrades in lockstep; and both recover only once enough depth exists to do the
+mapping semantically.
+
+The gradient across the three wordings is the same story at finer grain:
+`plain` shares the answer word outright (layer 5), `indirect` is a command in
+other words (layer 16), `descriptive` describes the world and leaves the
+action implied (layer 24). More semantic distance, more depth required.
+
+**What this does not mean.** The probe is not broken -- it still reaches 100%,
+just deeper. A defense fitted at layer 24 on `descriptive` data would have a
+direction that is *not* explicable as string matching. That is a concrete,
+affordable repair to the steering work and it follows directly from this
+result. It also means the original defense was fitted at the worst possible
+place: the layer where the shortcut is strongest.
+
+**The behavioural and probe results now point in opposite directions, and
+both are right.** The attack survives losing the word (+21, p=0.001); the
+shallow-layer probe does not. That is precisely the dissociation needed to say
+the model is doing something semantic that the layer-5 probe was never
+measuring.
