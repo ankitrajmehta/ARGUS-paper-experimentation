@@ -1165,42 +1165,52 @@ internvl.resolve_device() already prefers CUDA -> Apple Silicon -> CPU
 The runner needed no new code, so the claim was false as stated: a local run is
 possible in principle.
 
-### CORRECTION -- the first version of this entry was wrong twice
+### CORRECTION -- the cause was `--model`, and I misdiagnosed it twice
 
-The paragraphs above originally also listed "InternVL2.5-2B already cached in
-`~/.cache/huggingface/hub`", and concluded from a 2-scene `--device mps` run
-that exceeded **20 minutes** that the local path was real but too slow, with an
-extrapolated ~5 h for a 15-scene sweep. **Both of those were wrong, and the
-second was wrong because of the first.**
+This entry originally claimed "InternVL2.5-2B already cached" and extrapolated
+from a 2-scene `--device mps` run that exceeded **20 minutes** to "~5 h for a
+15-scene sweep". It was then corrected a second time to say the model was not
+cached and the stall was an unidentified hang inside `from_pretrained`. **Both
+diagnoses were wrong. The actual cause is one line of output I never read:**
 
-* The model was **not** cached. `ls ~/.cache/huggingface/hub` printed a
-  directory named `models--OpenGVLab--InternVL2_5-2B` and I read the name as
-  the model. The directory contained only `refs/main` -- no `blobs/`, no
-  `snapshots/`, 4.0 KB on disk. A stub, not a cache.
-* So the run never loaded a model. It ran **68 minutes** at 9% CPU with **56 MB
-  RSS** -- a 2B model in fp16 is ~4.4 GB resident, so the weights were never in
-  memory. It measured nothing about MPS throughput. The "20 minutes for 2
-  scenes" figure, and every number extrapolated from it, described a process
-  that was stuck before inference began.
+```
+loading OpenGVLab/InternVL2_5-8B (backend auto) ...
+  device=mps dtype=torch.float16 flash_attn=False device_map=none
+```
 
-What it was stuck *on* is still unidentified; an explicit `snapshot_download`
-of the same repo starts immediately and pulls the weights at ~2 MB/s, and a
-single `config.json` fetch returns in 1.2 s, so the network and the repo are
-fine. The stall is somewhere in `from_pretrained`, not in the hub.
+`run_eval` defaults to **InternVL2.5-8B**, and I never passed `--model`. So:
 
-**Two process errors worth naming, because both are repeats.** The first is
-error #2's shape again: I read a *proxy* for the thing I cared about (a
-directory name, an elapsed time) as the thing itself, and built a quantitative
-conclusion on it. The second: I piped a long-running diagnostic through
-`tail -30`, so when I killed the process the buffer died with it and the output
-that would have shown the hang immediately was lost. Long diagnostic runs get
-`-u` and a plain redirect from now on.
+* The 68-minute run was loading an **8B** model in fp16 -- about 16 GB of
+  weights -- onto a machine with **16 GB** of unified memory. It does not fit.
+  The low CPU and small RSS I read as "never started downloading" were a
+  process thrashing against memory pressure.
+* 8B *was* already cached, all 15 GB of it. The 15 GB I saw under
+  `~/.cache/huggingface/hub` and attributed to unrelated models was mostly this.
+  There was never a download in play.
+* 2B genuinely was not cached, and `models--OpenGVLab--InternVL2_5-2B`
+  genuinely was a 4.0 KB stub -- but that was **the wrong directory to be
+  looking in**, so the one true observation in the second diagnosis was also
+  the one that sent me further off. I then spent 5 m 45 s downloading 2B to
+  "fix" a problem that had nothing to do with it.
 
-**The standing conclusion is therefore weaker than both earlier versions.** I
-do not know what local throughput is. I know only that the obvious way of
-measuring it hangs before the model loads. Since the T4 is now free, this is
-not worth more time: the InternVL disjoint arm belongs on Kaggle as a stage,
-and the local path goes back to being untested rather than "priced".
+**Why I could not see it: I destroyed the evidence.** The run was piped through
+`tail -30`, so nothing flushed until exit; when I killed it, the buffer died
+with it. The model name was in the *first line of output* the whole time. Every
+subsequent inference -- stalled download, Xet backend, `from_pretrained` bug --
+was built on not having that line, and each one was checkable and wrong.
+
+**Three errors, all repeats.** (1) Error #2's shape: reading a *proxy* (a
+directory name, an elapsed time, an RSS figure) as the thing itself and putting
+a number on it. (2) Diagnosing from inference when direct observation was
+available and cheap -- the same mistake as the mtime-vs-content guard, twice.
+(3) Correcting a wrong diagnosis with another wrong diagnosis, and committing
+it with the same confidence as the first.
+
+**Standing conclusion: local MPS throughput is still unmeasured.** A corrected
+run with `--model OpenGVLab/InternVL2_5-2B` is in flight. What is now known is
+only that nothing was ever wrong with the hub, the network, the cache or
+`from_pretrained` -- the command was simply asking a 16 GB laptop to hold a
+16 GB model. The InternVL disjoint arm still belongs on Kaggle regardless.
 
 **One caveat to carry into the comparison.** The existing InternVL2.5-2B style
 sweep is `n=15` on CHAI's own train split with CHAI's labels -- baseline 26.7%,
