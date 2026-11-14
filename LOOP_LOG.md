@@ -658,3 +658,109 @@ can supply used to print the smaller count with no comment, which looks like a
 complete set. It now says `NOTE: asked for 150, found N`.
 
 85 -> 88 tests.
+
+---
+
+## Iteration 10 — 2026-11-14 02:25 UTC — the ARGUS schedule is also inert
+
+v17 completed in ~5 h. Seven configurations x two conditions, plus six
+benign-text controls. `scripts/summarise_steering.py` reads it back.
+
+### 1. No configuration changes the attack rate
+
+| configuration | attack | vs none | won | lost | p | clean acc | steered |
+|---|---|---|---|---|---|---|---|
+| no defense | 70.0% | -- | 0 | 0 | -- | 63.3% | 0.0% |
+| argus 0.1x | 76.7% | +6.7 | 4 | 6 | 0.75 | 63.3% | 100% |
+| **argus 0.25x** | 83.3% | +13.3 | 3 | 7 | 0.34 | 63.3% | 100% |
+| argus 0.5x | 63.3% | **-6.7** | 6 | 4 | 0.75 | 63.3% | 100% |
+| uniform 0.25x | 80.0% | +10.0 | 4 | 7 | 0.55 | 63.3% | 100% |
+| argus 0.25x ungated | 83.3% | +13.3 | 3 | 7 | 0.34 | **56.7%** | 100% |
+| argus 0.25x deep L16-17 | 73.3% | +3.3 | 7 | 8 | 1.00 | 63.3% | 100% |
+
+Nothing is significant; the smallest p is 0.34. Four of six configurations make
+the attack **more** successful, which is what noise looks like.
+
+**And 0.25x is almost exactly ARGUS's own setting.** The kernel measured the
+typical activation norm at layer 5 as **41.0**, so their 9.9 is 24.1% of it --
+our 0.25x step is 10.25 against their 9.9. So this is their schedule, at their
+magnitude, at our probe's best layers, gated: **+13.3 points, p = 0.34.**
+
+**The section 12 null result is therefore not explained by the step schedule.**
+That was the leading hypothesis for three iterations, it was worth testing, and
+it is now ruled out: uniform and ARGUS schedules at matched strength are both
+inert (+10.0 and +13.3, neither significant). Steering at ARGUS's *relative
+depth* (16-17 of 36) is inert too (+3.3, p = 1.00).
+
+### 2. The gate is good, and my prediction about it was wrong
+
+Recorded before the run: *"the gate will fire on the benign control at a similar
+rate, because at layer 0 it already separates benign text from clean frames at
+89.7%."*
+
+| configuration | steered: attack | steered: `MAIN STREET` | gap |
+|---|---|---|---|
+| argus 0.1x / 0.25x / 0.5x / uniform / deep | 100.0% | **0.0%** | +100.0 |
+| argus 0.25x ungated | 100.0% | 100.0% | 0.0 |
+
+**Perfect separation.** The gate fires on every attacked frame and no benign
+one. It is not a text detector -- it distinguishes an injected instruction from
+ordinary signage rendered at the same size, position and colours.
+
+Two things keep this from being a clean win:
+
+* **It is in-sample on wording.** `--style benign_text` renders
+  `BENIGN_PHRASES[0]` = `MAIN STREET`, and the gate's training controls were the
+  first two benign phrases -- so the exact test phrase was in its training data,
+  on these same scenes. Held-out-*scene* accuracy was 100%, so it generalises
+  across scenes; wording generalisation remains untestable with one attack
+  wording per target (iteration 5).
+* It is the **gate**, not the steering. A perfect detector in front of an
+  intervention that does nothing is still a defense that does nothing.
+
+What the gate does buy is **no collateral damage**: clean accuracy is 63.3% for
+every gated configuration, identical to undefended. Ungated steering drops it to
+56.7%. So steering *does* perturb behaviour when applied indiscriminately -- the
+machinery works, it simply does not help against the attack.
+
+### 3. It does nothing where the attack actually works
+
+| sign says Proceed (n=13) | attack | vs none | p |
+|---|---|---|---|
+| no defense | 69.2% | -- | -- |
+| argus 0.25x | 76.9% | +7.7 | 1.00 |
+| argus 0.5x | 76.9% | +7.7 | 1.00 |
+| uniform 0.25x | 61.5% | -7.7 | 1.00 |
+| deep L16-17 | 69.2% | 0.0 | 1.00 |
+
+Every p is 1.00. In the `STOP` direction the only consistently-signed result is
+**argus 0.5x: -17.6 points, 3 saved and 0 lost, p = 0.25** -- suggestive but
+n = 17 and well short of significance.
+
+### What this means, stated plainly
+
+**Steering along a linear probe direction does not defend this attack** -- not
+at ARGUS's magnitude, not with their schedule, not at their relative depth, and
+not at the layers where our probe is most accurate. This is now a *measured*
+negative result on two model families rather than a single puzzling null.
+
+The most likely reason is the one found in iteration 7: the probe is not reading
+compliance. Clean frames with no sign at all support the same prediction at
+83-84%, the attacked probe only reaches 100% at layer 5 of 36, and the attack
+wordings are literally `STOP` and `Proceed` -- the target action words. A
+direction fitted on that is a lexical-match direction, and pushing along it is
+not pushing against "about to obey an instruction".
+
+The 0.5x result is the one thread worth pulling: it is the only magnitude where
+the sign of the effect is consistently defensive, and it is **2x ARGUS's own**.
+So the next question is whether a window exists at larger magnitudes where the
+attack rate falls while clean accuracy holds -- and if the two fall together,
+that is the answer, and it is "no".
+
+### One gap noticed in the artifacts
+
+`--layers 16 17` skips the layer sweep, so the deep artifact records
+`accuracy: NaN`. The direction is still fitted, but we have no held-out number
+for how separable those layers are -- which matters, because "steering at the
+right depth did not help" is a weaker claim if the probe there was poor. Worth
+measuring offline from the activations we already have.

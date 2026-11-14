@@ -1,0 +1,23 @@
+{
+  "layers": [
+    {
+      "layer": 16,
+      "margin": 7.656562177989657,
+      "accuracy": NaN,
+      "probe_norm": 1.030719725111607,
+      "bias": -0.01989766961099103
+    },
+    {
+      "layer": 17,
+      "margin": 8.961240598524144,
+      "accuracy": NaN,
+      "probe_norm": 0.9122696863795762,
+      "bias": 0.012055418160508527
+    }
+  ],
+  "gate_layer": 34,
+  "gate_b": -4.348168017031847,
+  "model": "Qwen/Qwen2.5-VL-3B-Instruct",
+  "notes": "fitted on 800 vectors: {np.str_('attack'): 200, np.str_('benign_text'): 400, np.str_('clean'): 200}; gate validation: scene only (phrase holdout not possible)",
+  "subspace_dim": 5
+}
