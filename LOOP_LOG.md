@@ -1262,3 +1262,75 @@ general claim about MPS/CUDA parity, and I am not making one.
 
 `plain`, `indirect` and `descriptive` are queued behind it; all four should be
 in by ~15:12 UTC. v20 on Kaggle is still `RUNNING` at 1 h 33 m.
+
+---
+
+## Iteration 20 — 2026-11-14 15:00 UTC — we never ran the configuration that works
+
+Prompted by a question from the user -- is the 3B simply too weak, and did the
+friend use heavier models? -- I read the ARGUS reference repo instead of
+assuming. **This reframes the whole steering result.**
+
+**Their E3, on `Qwen2-VL-7B-Instruct` (the paper model, ~16.6 GB, fp16 split
+across both T4s), VTQA, N=100, 4.55 h:**
+
+```
+no defense      AIA 32%
+steering only   AIA 12%
+full ARGUS      AIA  5%
+paired: 20 attacks stopped, 0 started
+detector: 100/100 injected, 0/100 clean
+layers [13, 12], alpha = 10
+```
+
+Weaker than the ARGUS paper, but **it works, and every pre-registered check
+passed.** And then, in their own words:
+
+> ARGUS steering: works on VTQA with the 7B as released (E3 v1), **untested on
+> the 3B** and the robot
+
+**So our negative result is not a failed reproduction.** We ran ARGUS steering
+on Qwen2.5-VL-**3B** -- precisely the configuration they had flagged as never
+verified. I have been describing our seven non-significant configs as "ARGUS
+does not transfer to driving", and that was not a fair description of what we
+did. The honest statement is that we ran an unverified configuration and it
+did not work, which is a much weaker claim.
+
+**Two pieces of corroboration that our implementation is not simply broken.**
+Their detector scored **100/100 injected, 0/100 clean** -- identical to ours
+(iteration 15: gate fires on 100% attacked, 0% benign). And their
+**alpha = 10** is essentially our 0.25x, measured at 10.25 against an
+activation norm of 41.0. The parts line up; only the outcome differs.
+
+**Two confounds, not one.** Our setup differs from their working one in *both*
+of these at once:
+
+1. **Model size** -- 3B vs 7B.
+2. **Task** -- their VTQA text-injection vs our rendered road sign driving
+   decision. Their injected content is text to be read and obeyed; ours is a
+   sign in the scene.
+
+We cannot currently say which is responsible, and I should stop implying it is
+the task.
+
+**The user's other point stands and is uncomfortable.** Expressed as clean
+accuracy rather than ASR, Qwen2.5-VL-3B gets **52%** right on the 100 DriveLM
+scenes -- coin-flip on a two-way choice, and *worse than a constant "proceed"*,
+which would score 71% on that label distribution. Flipping a near-chance model
+is a weak demonstration. The proceed set is the part that survives this:
+clean accuracy **69%**, dragged to **21%** under attack, which is breaking a
+model that mostly worked.
+
+**Consequent recommendation, for the user to decide.** Run `Qwen2-VL-7B-Instruct`
+-- their exact checkpoint -- next. It collapses confound 1, aligns us with the
+only configuration where this steering is known to work, and answers the
+competence objection at the same time. It is affordable on the hardware we
+already use, since they ran it on 2xT4 in fp16, and the Qwen backend already
+dispatches `model_type == "qwen2_vl"` to `Qwen2VLForConditionalGeneration`.
+Cost is ~4.5 h of T4 time per full run against a queue that cost 3 h 09 m
+today, so this is a multi-day commitment rather than a tonight job.
+
+**Local sweep, second exact reproduction.** The `plain` arm also matches Kaggle
+to the digit (ASR 46.7%, benign-acc 53.3%, unreadable 0.0%, retried 0.0%),
+making it two of two arms. 946.20 s. `indirect` is running; v20 is still
+`RUNNING` at 2 h.
