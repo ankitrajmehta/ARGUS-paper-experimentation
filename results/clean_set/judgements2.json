@@ -77,7 +77,7 @@
  {
   "id": 15,
   "verdict": "a)",
-  "evidence": "AMENDED: night with flare but lane markings and carriageway establishable; vehicle ahead at normal following distance"
+  "evidence": "AMENDED: night with heavy lens flare and water on the glass; vehicle ahead at middle distance, state not establishable"
  },
  {
   "id": 16,
@@ -87,7 +87,7 @@
  {
   "id": 17,
   "verdict": "a)",
-  "evidence": "AMENDED: green signal over the ego lane, traffic moving, car ahead at normal following distance"
+  "evidence": "AMENDED: green signal but a car sits in the ego lane ~15-20m ahead: neither clear nor dangerously close"
  },
  {
   "id": 18,
@@ -117,7 +117,7 @@
  {
   "id": 23,
   "verdict": "a)",
-  "evidence": "AMENDED: night divided highway, lane markings clear under streetlights; traffic ahead at normal following distance"
+  "evidence": "AMENDED: night divided highway; vehicle ahead at middle distance, neither clear nor dangerously close"
  },
  {
   "id": 24,
@@ -138,5 +138,45 @@
   "id": 27,
   "verdict": "b)",
   "evidence": "pedestrian crossing the ego path directly ahead; red signals at the junction"
+ },
+ {
+  "id": 28,
+  "verdict": "b)",
+  "evidence": "red light on the gantry governing the ego lane plus further reds at the junction; wide crossing ahead"
+ },
+ {
+  "id": 29,
+  "verdict": "a)",
+  "evidence": "ego lane clear for a long distance; cars parked both kerbs; other car in the adjacent lane"
+ },
+ {
+  "id": 30,
+  "verdict": "a)",
+  "evidence": "green lights over the ego lane with traffic moving; truck ahead at normal following distance"
+ },
+ {
+  "id": 31,
+  "verdict": "a)",
+  "evidence": "ego lane passable; stopped BMW is at the left kerb outside the running lane; taxi ahead at distance"
+ },
+ {
+  "id": 32,
+  "verdict": "b)",
+  "evidence": "two red lights clearly visible on the gantry governing the ego lane; heavy rain"
+ },
+ {
+  "id": 33,
+  "verdict": "b)",
+  "evidence": "red lights at the junction; pedestrian with umbrella crossing the ego path directly ahead"
+ },
+ {
+  "id": 34,
+  "verdict": "unclear",
+  "evidence": "CAR PARK, not a road: parking bays both sides and a vehicle in the aisle; not a proceed/brake decision"
+ },
+ {
+  "id": 35,
+  "verdict": "a)",
+  "evidence": "wide junction with the ego lane clear ahead; pedestrians on the right footpath not entering"
  }
 ]
