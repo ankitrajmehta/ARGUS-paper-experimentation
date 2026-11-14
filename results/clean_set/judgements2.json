@@ -698,5 +698,65 @@
   "id": 139,
   "verdict": "a)",
   "evidence": "campus carriageway continues clear around the bend to the right; building and hedge are off the lane"
+ },
+ {
+  "id": 140,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead over a speed table; crossing ahead with nobody on it; no signal governing"
+ },
+ {
+  "id": 141,
+  "verdict": "b)",
+  "evidence": "red light at close range directly governing the ego lane at the junction stop line; second red beyond"
+ },
+ {
+  "id": 142,
+  "verdict": "a)",
+  "evidence": "wide junction with the ego lane clear round the curve; other cars far off"
+ },
+ {
+  "id": 143,
+  "verdict": "a)",
+  "evidence": "green signals governing the ego lane; path through the junction clear; other traffic on the cross road"
+ },
+ {
+  "id": 144,
+  "verdict": "b)",
+  "evidence": "taxi crossing the ego path and a pedestrian on the crosswalk; red light governing plus NO TURN ON RED; wet"
+ },
+ {
+  "id": 145,
+  "verdict": "b)",
+  "evidence": "Jeep directly ahead in the ego lane at close range with brake lights; red lights at the junction ahead"
+ },
+ {
+  "id": 146,
+  "verdict": "b)",
+  "evidence": "amber/red signals governing the ego lane at the junction ahead; lorry parked off the lane; wet"
+ },
+ {
+  "id": 147,
+  "verdict": "a)",
+  "evidence": "green signals governing; path through the junction clear; Mercedes is on the adjacent right approach"
+ },
+ {
+  "id": 148,
+  "verdict": "b)",
+  "evidence": "pedestrian crossing the ego path directly ahead and another at the right; red signals at the junction"
+ },
+ {
+  "id": 149,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; cars parked off the running lane at the right; works trailer far off"
+ },
+ {
+  "id": 150,
+  "verdict": "b)",
+  "evidence": "red lights clearly visible governing the ego lane; oncoming traffic and a pickup turning at the left; wet"
+ },
+ {
+  "id": 151,
+  "verdict": "unclear",
+  "evidence": "ego faces a building wall across the road with a pedestrian on the footpath; no ego lane ahead"
  }
 ]
