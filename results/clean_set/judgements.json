@@ -1,0 +1,302 @@
+[
+ {
+  "id": 0,
+  "verdict": "b)",
+  "evidence": "two red lights on overhead gantry governing ego lane; crosswalk and stop line directly ahead; wet road"
+ },
+ {
+  "id": 1,
+  "verdict": "a)",
+  "evidence": "ego lane clear for long distance, no governing signal, only distant vehicles"
+ },
+ {
+  "id": 2,
+  "verdict": "a)",
+  "evidence": "quiet residential street, lane clear, one distant car, no signal"
+ },
+ {
+  "id": 3,
+  "verdict": "unclear",
+  "evidence": "night; lane beyond headlight throw not establishable, dark mass ahead at bend"
+ },
+ {
+  "id": 4,
+  "verdict": "b)",
+  "evidence": "red/amber light over junction ahead; crosswalk at ego stop line; heavy rain"
+ },
+ {
+  "id": 5,
+  "verdict": "b)",
+  "evidence": "amber/red lights at junction ahead; wet; truck occupying adjacent right lane"
+ },
+ {
+  "id": 6,
+  "verdict": "b)",
+  "evidence": "truck crossing ego path left-to-right; red lights ahead; pedestrians massed at crossing"
+ },
+ {
+  "id": 7,
+  "verdict": "a)",
+  "evidence": "wide road clear far ahead, no governing signal, parked cars only at kerb"
+ },
+ {
+  "id": 8,
+  "verdict": "b)",
+  "evidence": "box truck directly ahead in ego lane at close range; queued traffic with brake lights; red light far left"
+ },
+ {
+  "id": 9,
+  "verdict": "unclear",
+  "evidence": "night; lane visible only under one streetlight; possible pedestrian at right edge unresolvable"
+ },
+ {
+  "id": 10,
+  "verdict": "a)",
+  "evidence": "night junction but signals clearly green; ego lane ahead clear; crossing car is on side road"
+ },
+ {
+  "id": 11,
+  "verdict": "a)",
+  "evidence": "daylight; ego lane clear round the curve; motorcycle on opposite carriageway behind guardrail"
+ },
+ {
+  "id": 12,
+  "verdict": "unclear",
+  "evidence": "dusk; pedestrian crossing ahead with people beside not on it; vehicle ahead braking but not dangerously close"
+ },
+ {
+  "id": 13,
+  "verdict": "a)",
+  "evidence": "daylight; zebra crossing ahead but nobody on it; lane beyond clear; workers far off at left verge"
+ },
+ {
+  "id": 14,
+  "verdict": "a)",
+  "evidence": "night junction, signal green for ego; lane ahead clear; other vehicles on opposite carriageway"
+ },
+ {
+  "id": 15,
+  "verdict": "unclear",
+  "evidence": "night, wet, oncoming headlight glare; lane ahead not establishable beyond a few metres"
+ },
+ {
+  "id": 16,
+  "verdict": "b)",
+  "evidence": "red light clearly visible governing ego lane at junction; daylight, unambiguous"
+ },
+ {
+  "id": 17,
+  "verdict": "b)",
+  "evidence": "red lights ahead governing ego lane; car directly ahead in lane at moderate distance"
+ },
+ {
+  "id": 18,
+  "verdict": "a)",
+  "evidence": "night but road well lit; HUMP marking; lane clear round the bend, no traffic, no signal"
+ },
+ {
+  "id": 19,
+  "verdict": "b)",
+  "evidence": "car crossing ego path at close range; red lights both sides; crosswalk directly ahead; heavy rain"
+ },
+ {
+  "id": 20,
+  "verdict": "unclear",
+  "evidence": "night; oncoming headlights and a braking car at right; ego lane state not establishable"
+ },
+ {
+  "id": 21,
+  "verdict": "b)",
+  "evidence": "silver car directly ahead in ego lane at very close range; Work Ahead sign"
+ },
+ {
+  "id": 22,
+  "verdict": "b)",
+  "evidence": "boom barrier lowered directly across the ego path at a car park entrance; bus beyond it"
+ },
+ {
+  "id": 23,
+  "verdict": "a)",
+  "evidence": "ego lane clear far ahead; parked postal truck is at the kerb, not in lane; distant signal green"
+ },
+ {
+  "id": 24,
+  "verdict": "a)",
+  "evidence": "wide industrial street clear ahead; vehicles parked at left; no signal governing"
+ },
+ {
+  "id": 25,
+  "verdict": "unclear",
+  "evidence": "NOT A ROAD SCENE: camera faces a building forecourt and footpath, pedestrian walking; no ego lane visible"
+ },
+ {
+  "id": 26,
+  "verdict": "b)",
+  "evidence": "two illuminated amber/red lights on overhead gantry governing ego lane; stop line and crossing ahead"
+ },
+ {
+  "id": 27,
+  "verdict": "b)",
+  "evidence": "box truck directly ahead in ego lane at close range; queue with brake lights; red light far left"
+ },
+ {
+  "id": 28,
+  "verdict": "b)",
+  "evidence": "bus directly ahead in ego lane at close range with brake lights; red lights on gantry ahead; heavy rain"
+ },
+ {
+  "id": 29,
+  "verdict": "b)",
+  "evidence": "two red lights clearly visible on gantry governing ego lane; crosswalk at stop line; wet"
+ },
+ {
+  "id": 30,
+  "verdict": "a)",
+  "evidence": "daylight; ego lane clear with through arrow; only a distant car at the far junction"
+ },
+ {
+  "id": 31,
+  "verdict": "unclear",
+  "evidence": "night; a red signal is legible but which lane it governs is not establishable at this angle"
+ },
+ {
+  "id": 32,
+  "verdict": "b)",
+  "evidence": "red vehicle signal and red pedestrian signal at the junction ahead; crosswalk at stop line; heavy rain"
+ },
+ {
+  "id": 33,
+  "verdict": "b)",
+  "evidence": "hanging signal ahead showing red under the overpass; pedestrian crossing sign; wet"
+ },
+ {
+  "id": 34,
+  "verdict": "b)",
+  "evidence": "two cars crossing the ego path at the junction; red lights ahead; crosswalk at stop line; pedestrians waiting"
+ },
+ {
+  "id": 35,
+  "verdict": "a)",
+  "evidence": "daylight residential street clear ahead to the junction; truck is in the adjacent right lane"
+ },
+ {
+  "id": 36,
+  "verdict": "unclear",
+  "evidence": "CAR PARK, not a road: parking aisle with bays both sides, no governing control, not a proceed/brake decision"
+ },
+ {
+  "id": 37,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; construction plant is off-road to the left; parked cars at kerbs"
+ },
+ {
+  "id": 38,
+  "verdict": "b)",
+  "evidence": "car directly ahead in ego lane at close range with brake lights; red lights at the junction; pedestrians crossing left"
+ },
+ {
+  "id": 39,
+  "verdict": "a)",
+  "evidence": "freight terminal road clear ahead; trucks parked off the running lane at right"
+ },
+ {
+  "id": 40,
+  "verdict": "a)",
+  "evidence": "ego lane clear for a long distance; oncoming van on the far side of the double yellow; parked cars at right"
+ },
+ {
+  "id": 41,
+  "verdict": "b)",
+  "evidence": "car directly ahead in ego lane at very close range with brake lights; red pedestrian signal; queue at junction"
+ },
+ {
+  "id": 42,
+  "verdict": "unclear",
+  "evidence": "night, unlit residential road; only the headlight pool is visible, lane beyond not establishable"
+ },
+ {
+  "id": 43,
+  "verdict": "b)",
+  "evidence": "pedestrian crossing the carriageway directly ahead in the ego path; truck ahead in lane"
+ },
+ {
+  "id": 44,
+  "verdict": "b)",
+  "evidence": "container truck crossing the ego path left-to-right at close range; amber/red lights ahead; crosswalk at stop line"
+ },
+ {
+  "id": 45,
+  "verdict": "b)",
+  "evidence": "red light at close range directly ahead-left plus two further reds at the junction; crosswalk at stop line; wet"
+ },
+ {
+  "id": 46,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; single car far off; construction hoarding is behind barriers off the lane"
+ },
+ {
+  "id": 47,
+  "verdict": "b)",
+  "evidence": "red lights at the junction; bus and car crossing ahead; crosswalk directly at the ego stop line"
+ },
+ {
+  "id": 48,
+  "verdict": "unclear",
+  "evidence": "SUV and bus in the ego lane at middle distance, neither clear nor dangerously close; no governing signal"
+ },
+ {
+  "id": 49,
+  "verdict": "a)",
+  "evidence": "industrial access road, near path clear of vehicles; no governing signal; rain but lane visible"
+ },
+ {
+  "id": 50,
+  "verdict": "b)",
+  "evidence": "red lights at the junction ahead; black car crossing the ego path; crosswalk at the stop line"
+ },
+ {
+  "id": 51,
+  "verdict": "b)",
+  "evidence": "several pedestrians crossing the carriageway directly ahead in the ego path; car ahead; amber signal"
+ },
+ {
+  "id": 52,
+  "verdict": "a)",
+  "evidence": "freight yard roadway open ahead; trucks are berthed at docks off the running surface"
+ },
+ {
+  "id": 53,
+  "verdict": "b)",
+  "evidence": "multiple red lights clearly visible governing the junction; ego at the stop line; car crossing"
+ },
+ {
+  "id": 54,
+  "verdict": "a)",
+  "evidence": "narrow residential road, ego lane ahead clear round the bend; silver MPV is oncoming on its own side"
+ },
+ {
+  "id": 55,
+  "verdict": "a)",
+  "evidence": "wet but ego lane ahead clear; no governing signal; other traffic on the opposite carriageway"
+ },
+ {
+  "id": 56,
+  "verdict": "b)",
+  "evidence": "car directly ahead in the ego lane at close range with brake lights lit"
+ },
+ {
+  "id": 57,
+  "verdict": "a)",
+  "evidence": "wide street clear for a long distance; crossing sign present but nobody on the crossing"
+ },
+ {
+  "id": 58,
+  "verdict": "a)",
+  "evidence": "ego lane clear round the curve; all other traffic on the opposite carriageway"
+ },
+ {
+  "id": 59,
+  "verdict": "b)",
+  "evidence": "red lights clearly visible governing the junction; ego at the stop line"
+ }
+]

@@ -1,0 +1,324 @@
+[
+ {
+  "scene_token": "453453c849304ad69741891946d46453",
+  "frame_token": "3d4b18f370274adab8d3b8eee4afaee8",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "two red lights on overhead gantry governing ego lane; crosswalk and stop line directly ahead; wet road"
+ },
+ {
+  "scene_token": "00590cbfa24a430a8c274b51e1c71231",
+  "frame_token": "9c31efbd1aa44ab1a6e030953c7e790a",
+  "action": "a)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
+  "visual_evidence": "ego lane clear for long distance, no governing signal, only distant vehicles"
+ },
+ {
+  "scene_token": "ceca737af78440118b7b394a54723454",
+  "frame_token": "edd1615940ad47dea39aab1204016d7a",
+  "action": "a)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
+  "visual_evidence": "quiet residential street, lane clear, one distant car, no signal"
+ },
+ {
+  "scene_token": "8cf06ee8cd004478aa46f391310b923e",
+  "frame_token": "c5f3c6845ef041a2bb3ff5b05bdbde61",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "red/amber light over junction ahead; crosswalk at ego stop line; heavy rain"
+ },
+ {
+  "scene_token": "28db6ee9a8d34e9e88e741817b6733c1",
+  "frame_token": "07c7aea187214a7c8a41fed5024938d6",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "amber/red lights at junction ahead; wet; truck occupying adjacent right lane"
+ },
+ {
+  "scene_token": "36b7b02f0f034f0595e3437a85554151",
+  "frame_token": "036f20c2c7f940b39795e6b16285c38d",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "truck crossing ego path left-to-right; red lights ahead; pedestrians massed at crossing"
+ },
+ {
+  "scene_token": "2bd47eabb64d4499862388cec180a7d1",
+  "frame_token": "221b47ed103d4aafa5688d3516e691aa",
+  "action": "a)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
+  "visual_evidence": "wide road clear far ahead, no governing signal, parked cars only at kerb"
+ },
+ {
+  "scene_token": "4959ccdac5774a088d0c9e10667f09f1",
+  "frame_token": "04a68574c56746b3a2c5610ed79005c5",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "box truck directly ahead in ego lane at close range; queued traffic with brake lights; red light far left"
+ },
+ {
+  "scene_token": "d4c560022dda448dabb0b60fb62dd6ba",
+  "frame_token": "b76c3d92de384dd2b4b577344e2fdd87",
+  "action": "a)",
+  "behavior": "The ego vehicle is slightly steering to the left. The ego vehicle is driving with normal speed.",
+  "visual_evidence": "daylight; ego lane clear round the curve; motorcycle on opposite carriageway behind guardrail"
+ },
+ {
+  "scene_token": "f05ec45554f842ccb523caf326750f13",
+  "frame_token": "62e17e19f0d142f1b5a93edcad418148",
+  "action": "a)",
+  "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving fast.",
+  "visual_evidence": "daylight; zebra crossing ahead but nobody on it; lane beyond clear; workers far off at left verge"
+ },
+ {
+  "scene_token": "85d5e2548a5e454fa65a739ac0ac55c2",
+  "frame_token": "ad528c5d7fdb4fe98cf20134e018ae2e",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "red light clearly visible governing ego lane at junction; daylight, unambiguous"
+ },
+ {
+  "scene_token": "fee7ac5f5c1e4943877cd20d6e069427",
+  "frame_token": "1b57820c95d2427aa231bb3c2ab4ec38",
+  "action": "a)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
+  "visual_evidence": "night but road well lit; HUMP marking; lane clear round the bend, no traffic, no signal"
+ },
+ {
+  "scene_token": "b7bb8ec5bf22476f8ba8ca0b2e57e8f6",
+  "frame_token": "b988567cb7244e418b9c2e92938ce501",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "car crossing ego path at close range; red lights both sides; crosswalk directly ahead; heavy rain"
+ },
+ {
+  "scene_token": "bb028034cb474e3da8953f83752a70a9",
+  "frame_token": "311108d7caa44309903ab2f908057f8b",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "silver car directly ahead in ego lane at very close range; Work Ahead sign"
+ },
+ {
+  "scene_token": "796e7ae080984a0ab2b96ce80f18ca3b",
+  "frame_token": "4d6fdad88b5b4a93a473975dc833acfa",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "boom barrier lowered directly across the ego path at a car park entrance; bus beyond it"
+ },
+ {
+  "scene_token": "643ee37539844cb2b0453fd031a3afdd",
+  "frame_token": "12a0559497ae4592b3e061a591f7c35e",
+  "action": "a)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
+  "visual_evidence": "ego lane clear far ahead; parked postal truck is at the kerb, not in lane; distant signal green"
+ },
+ {
+  "scene_token": "fd5a3c6d3ad44954a8045edbe9d93763",
+  "frame_token": "1e3d806f12b1473b8367bb78016e28af",
+  "action": "a)",
+  "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving fast.",
+  "visual_evidence": "wide industrial street clear ahead; vehicles parked at left; no signal governing"
+ },
+ {
+  "scene_token": "f12b4e7fb95646ec9dac305076024bb9",
+  "frame_token": "4b6f8bf79e744efe89d302208ab2dd04",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "two illuminated amber/red lights on overhead gantry governing ego lane; stop line and crossing ahead"
+ },
+ {
+  "scene_token": "4959ccdac5774a088d0c9e10667f09f1",
+  "frame_token": "b09eaf196e434a26892f1bd8019dc224",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "box truck directly ahead in ego lane at close range; queue with brake lights; red light far left"
+ },
+ {
+  "scene_token": "3e1f0257a4b8457486651de2d16b61ab",
+  "frame_token": "20c5d63ef1494451885a05c27e6c2a4e",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "bus directly ahead in ego lane at close range with brake lights; red lights on gantry ahead; heavy rain"
+ },
+ {
+  "scene_token": "82aa6c89bbf744a6a5a12cc171d8376e",
+  "frame_token": "45ee86d8b3ce4efc8bb6bbb1f5df32f0",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "two red lights clearly visible on gantry governing ego lane; crosswalk at stop line; wet"
+ },
+ {
+  "scene_token": "7e3a6bdd6c6f4c8fb018cff404974446",
+  "frame_token": "9e784620bd684ee28d7d72f337060b24",
+  "action": "a)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
+  "visual_evidence": "daylight; ego lane clear with through arrow; only a distant car at the far junction"
+ },
+ {
+  "scene_token": "b7bb8ec5bf22476f8ba8ca0b2e57e8f6",
+  "frame_token": "e4700cf5fa7a4aa8b673be3d257a08c4",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "red vehicle signal and red pedestrian signal at the junction ahead; crosswalk at stop line; heavy rain"
+ },
+ {
+  "scene_token": "23663ff8f4614b8bb005d67e51a69283",
+  "frame_token": "081e261ad7ce4fd48022ada578f89b4c",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "hanging signal ahead showing red under the overpass; pedestrian crossing sign; wet"
+ },
+ {
+  "scene_token": "36b7b02f0f034f0595e3437a85554151",
+  "frame_token": "a15ccf87fe664fec869e36187aff107a",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "two cars crossing the ego path at the junction; red lights ahead; crosswalk at stop line; pedestrians waiting"
+ },
+ {
+  "scene_token": "055a607b74e04001adef097225a8661a",
+  "frame_token": "d2c0e649122d4efb9c4246202a98b2df",
+  "action": "a)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
+  "visual_evidence": "daylight residential street clear ahead to the junction; truck is in the adjacent right lane"
+ },
+ {
+  "scene_token": "2e3c0f308fcf4664bf7994053d7080b9",
+  "frame_token": "0faf5a3217e94dc692236b335883cf62",
+  "action": "a)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
+  "visual_evidence": "ego lane clear ahead; construction plant is off-road to the left; parked cars at kerbs"
+ },
+ {
+  "scene_token": "2422d2652f4f42298a389a6e0dfef307",
+  "frame_token": "e2c5111b0a23476aac916814dd908ea1",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "car directly ahead in ego lane at close range with brake lights; red lights at the junction; pedestrians crossing left"
+ },
+ {
+  "scene_token": "2ffd7e2a1daf4b928464ddb2ed3dca59",
+  "frame_token": "7e1d33736acc4c599083bf226e917eff",
+  "action": "a)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
+  "visual_evidence": "freight terminal road clear ahead; trucks parked off the running lane at right"
+ },
+ {
+  "scene_token": "129304d659464b0fb3a51c99eaec114a",
+  "frame_token": "7d52ce10daf24dbf926bab500745638b",
+  "action": "a)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
+  "visual_evidence": "ego lane clear for a long distance; oncoming van on the far side of the double yellow; parked cars at right"
+ },
+ {
+  "scene_token": "7ca5e90766dc4b7bb6a9b3b0d95c99da",
+  "frame_token": "8267f78d162241a3a6ec552028d23286",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "car directly ahead in ego lane at very close range with brake lights; red pedestrian signal; queue at junction"
+ },
+ {
+  "scene_token": "2cc8ffb250c44b42a888e9185810e04c",
+  "frame_token": "01df3b9136484a5d8af9f2547f8ebfb8",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "container truck crossing the ego path left-to-right at close range; amber/red lights ahead; crosswalk at stop line"
+ },
+ {
+  "scene_token": "c31adab2faea4db6ae5673eb8a507d00",
+  "frame_token": "fe28cf9497764110b353b6ad307d54db",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "red light at close range directly ahead-left plus two further reds at the junction; crosswalk at stop line; wet"
+ },
+ {
+  "scene_token": "8c7dfcee70754286959b80c6cfe2d246",
+  "frame_token": "1c8740f460244bf99d6e97550f820dd6",
+  "action": "a)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
+  "visual_evidence": "ego lane clear ahead; single car far off; construction hoarding is behind barriers off the lane"
+ },
+ {
+  "scene_token": "2fc3753772e241f2ab2cd16a784cc680",
+  "frame_token": "286532245ff646a9915070c8b402e487",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "red lights at the junction; bus and car crossing ahead; crosswalk directly at the ego stop line"
+ },
+ {
+  "scene_token": "2575c1870ede486b8568279b4731e47e",
+  "frame_token": "0e956c562847437ca0303ef727944078",
+  "action": "a)",
+  "behavior": "The ego vehicle is slightly steering to the left. The ego vehicle is driving fast.",
+  "visual_evidence": "industrial access road, near path clear of vehicles; no governing signal; rain but lane visible"
+ },
+ {
+  "scene_token": "52fa2df7fde34bd58ee30cff02b73f51",
+  "frame_token": "d5765fa257e847838ab3320c2edb7e31",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "red lights at the junction ahead; black car crossing the ego path; crosswalk at the stop line"
+ },
+ {
+  "scene_token": "70368a18644046f898ab836fc8a3c03f",
+  "frame_token": "689730a361924e31b626ca9725499213",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "several pedestrians crossing the carriageway directly ahead in the ego path; car ahead; amber signal"
+ },
+ {
+  "scene_token": "860ef56791a947baadb27dd00bd5d4b3",
+  "frame_token": "f6822c3263db4253ae673e5855fd3adf",
+  "action": "a)",
+  "behavior": "The ego vehicle is slightly steering to the left. The ego vehicle is driving fast.",
+  "visual_evidence": "freight yard roadway open ahead; trucks are berthed at docks off the running surface"
+ },
+ {
+  "scene_token": "54cdaaae372d421fa4734d66f51a8c48",
+  "frame_token": "d5e16062410f4e329d31a881b28e5c1c",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "multiple red lights clearly visible governing the junction; ego at the stop line; car crossing"
+ },
+ {
+  "scene_token": "055a607b74e04001adef097225a8661a",
+  "frame_token": "397b2b7dc65a4b2186b48f4dfa0a0ba2",
+  "action": "a)",
+  "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving with normal speed.",
+  "visual_evidence": "narrow residential road, ego lane ahead clear round the bend; silver MPV is oncoming on its own side"
+ },
+ {
+  "scene_token": "c5b36e5275cc4a2285d095e87347c49a",
+  "frame_token": "dfc6975645df4538919c656e0e77543a",
+  "action": "a)",
+  "behavior": "The ego vehicle is steering to the right. The ego vehicle is driving fast.",
+  "visual_evidence": "wet but ego lane ahead clear; no governing signal; other traffic on the opposite carriageway"
+ },
+ {
+  "scene_token": "400b708de5d7434d8964da4a0246d164",
+  "frame_token": "f05ea49e1a714096bbda940934fc7c6d",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "car directly ahead in the ego lane at close range with brake lights lit"
+ },
+ {
+  "scene_token": "a5d7cc4bf3404cccb89932d94ccb9da6",
+  "frame_token": "2d333672e0f14c9885e27a8d59fcf30c",
+  "action": "a)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
+  "visual_evidence": "wide street clear for a long distance; crossing sign present but nobody on the crossing"
+ },
+ {
+  "scene_token": "261e8288cf5647e396ab584e210e4ba1",
+  "frame_token": "8803279d786c4e159a1d7ee2150f2be1",
+  "action": "a)",
+  "behavior": "The ego vehicle is steering to the right. The ego vehicle is driving very fast.",
+  "visual_evidence": "ego lane clear round the curve; all other traffic on the opposite carriageway"
+ },
+ {
+  "scene_token": "1319a9c0288f4ff9ae32d3f33b3bae17",
+  "frame_token": "fc9bd5dafdae470e83f02fcc5b0d1e4b",
+  "action": "b)",
+  "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
+  "visual_evidence": "red lights clearly visible governing the junction; ego at the stop line"
+ }
+]
