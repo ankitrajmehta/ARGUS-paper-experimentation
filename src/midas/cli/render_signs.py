@@ -54,6 +54,11 @@ def main(argv: list[str] | None = None) -> int:
         help="force one target action for every scene, e.g. 'b)'. Overrides --target-mode.",
     )
     parser.add_argument("--compare", action="store_true", help="also write clean|attacked pairs")
+    parser.add_argument(
+        "--style", default=None,
+        help="injection style instead of CHAI's optimised phrase, e.g. plain or "
+             "descriptive. See midas.styles.INJECTION_STYLES.",
+    )
     args = parser.parse_args(argv)
 
     cfg = AttackConfig(background_mode=args.background_mode, size_multiplier=args.size_multiplier)
@@ -71,7 +76,9 @@ def main(argv: list[str] | None = None) -> int:
 
         images = scene.load_images()
         clean = images[scene.attacked_camera].copy()
-        attacked, sign = signs.attack_scene(scene, images=images, target=target, cfg=cfg)
+        attacked, sign = signs.attack_scene(
+            scene, images=images, target=target, cfg=cfg, style=args.style
+        )
         front = attacked[scene.attacked_camera]
         rendered += 1
 
