@@ -5,7 +5,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "bus occupying the lane at close range and a hi-vis worker standing in the carriageway ahead",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-01-15-52-19-0400__CAM_FRONT__1533153418512404.jpg"
  },
  {
   "scene_token": "3bc4553925494890a21ef7a15c40eaed",
@@ -13,7 +14,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; oncoming car on the far side of the double yellow; van far off",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-31-11-19-57-0400__CAM_FRONT__1535729256612404.jpg"
  },
  {
   "scene_token": "e233467e827140efa4b42d2b4c435855",
@@ -21,7 +23,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "car crossing the ego path at close range directly in front despite the green signal; night",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-11-21-19-38-26+0800__CAM_FRONT__1542801005912460.jpg"
  },
  {
   "scene_token": "d39c6835da754adfa0f75183e685c403",
@@ -29,7 +32,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; out-of-service bus in the left layby; car and lorry far off",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-28-16-16-48-0400__CAM_FRONT__1535487532262404.jpg"
  },
  {
   "scene_token": "2135a00f664d4a3bbfb938e007befa06",
@@ -37,7 +41,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "Speedpost van directly ahead in the ego lane at close range with brake lights; red light governing",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-26-11-17-24+0800__CAM_FRONT__1537932253112460.jpg"
  },
  {
   "scene_token": "82aef599650d462db73731b7ff40918b",
@@ -45,7 +50,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "campus road clear ahead; motorcycle parked at the left kerb outside the lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-18-11-50-34+0800__CAM_FRONT__1531886205412466.jpg"
  },
  {
   "scene_token": "f05ec45554f842ccb523caf326750f13",
@@ -53,7 +59,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving fast.",
   "visual_evidence": "daylight; zebra crossing ahead but nobody on it; lane beyond clear; workers far off at left verge",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-21-40+0800__CAM_FRONT__1533280930112460.jpg"
  },
  {
   "scene_token": "643ee37539844cb2b0453fd031a3afdd",
@@ -61,7 +68,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear far ahead; parked postal truck is at the kerb, not in lane; distant signal green",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-52-26-0400__CAM_FRONT__1535659488512404.jpg"
  },
  {
   "scene_token": "c31adab2faea4db6ae5673eb8a507d00",
@@ -69,7 +77,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red light at close range directly governing the ego approach plus further reds at the junction; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297335912404.jpg"
  },
  {
   "scene_token": "6447a9c30b0140d783871b08104ae7b3",
@@ -77,7 +86,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "two red lights clearly visible on the gantry governing the ego lane; heavy rain",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297196412404.jpg"
  },
  {
   "scene_token": "36b7b02f0f034f0595e3437a85554151",
@@ -85,7 +95,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "truck crossing ego path left-to-right; red lights ahead; pedestrians massed at crossing",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-21-11-53-44-0400__CAM_FRONT__1534867303912404.jpg"
  },
  {
   "scene_token": "64e1ad8a976542ab86c427d714550d06",
@@ -93,7 +104,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "roadway under the overpass clear ahead; vehicles parked in bays both sides; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-07-26-0400__CAM_FRONT__1537286912012404.jpg"
  },
  {
   "scene_token": "df0c3cb16cde410eba8eea191765515c",
@@ -101,7 +113,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
   "visual_evidence": "ego lane clear ahead; only a distant vehicle far off; parked cars at the left kerb; rain but lane visible",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-07-26-0400__CAM_FRONT__1537287331912404.jpg"
  },
  {
   "scene_token": "129304d659464b0fb3a51c99eaec114a",
@@ -109,7 +122,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; Subaru is oncoming on the far side of the double yellow; traffic only at distance",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-07-27-12-07-38-0400__CAM_FRONT__1532707870362404.jpg"
  },
  {
   "scene_token": "5a1d2867bb504c888a628ad549cc10b6",
@@ -117,7 +131,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; taxi parked at the right kerb outside the running lane; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-15-26-58-0400__CAM_FRONT__1537299110412404.jpg"
  },
  {
   "scene_token": "7ad327c8827849ed91136bb2d04acec9",
@@ -125,7 +140,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red lights governing the junction; minivan crossing the ego path left-to-right; container lorry at the left",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-07-27-12-07-38-0400__CAM_FRONT__1532708002512404.jpg"
  },
  {
   "scene_token": "f13bd38bf9b64d579a63d4e7d750f592",
@@ -133,7 +149,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; person waiting at the bus shelter off the carriageway; traffic far off",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-00-36+0800__CAM_FRONT__1533279771912460.jpg"
  },
  {
   "scene_token": "54cdaaae372d421fa4734d66f51a8c48",
@@ -141,7 +158,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "multiple red lights clearly visible governing the junction; ego at the stop line; car crossing",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-00-36+0800__CAM_FRONT__1533280045112460.jpg"
  },
  {
   "scene_token": "ced236f5da704cbcb41249bb6ecc8b68",
@@ -149,7 +167,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
   "visual_evidence": "residential street clear ahead; lorry and taxi parked off the running lane at the right",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-27-15-33-17+0800__CAM_FRONT__1538033683762460.jpg"
  },
  {
   "scene_token": "2cc8ffb250c44b42a888e9185810e04c",
@@ -157,7 +176,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving fast.",
   "visual_evidence": "green signal clearly visible over the ego lane; wide junction ahead clear; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-15-26-58-0400__CAM_FRONT__1537298973912404.jpg"
  },
  {
   "scene_token": "1d4db80d13f342aba4881b38099bc4b7",
@@ -165,7 +185,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is steering to the right. The ego vehicle is driving with normal speed.",
   "visual_evidence": "green signal governing the exit; the way ahead to the right is clear of traffic",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-18-11-50-34+0800__CAM_FRONT__1531886125912469.jpg"
  },
  {
   "scene_token": "b7bb8ec5bf22476f8ba8ca0b2e57e8f6",
@@ -173,7 +194,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red vehicle signal and red pedestrian signal at the junction ahead; crosswalk at stop line; heavy rain",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-43-59-0400__CAM_FRONT__1537296543162404.jpg"
  },
  {
   "scene_token": "d1ece215e0a8442691cb5e380a6fb935",
@@ -181,7 +203,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red lights governing plus NO TURN ON RED; estate car crossing the ego path; lorry at close range to the left",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-28-16-16-48-0400__CAM_FRONT__1535487741162404.jpg"
  },
  {
   "scene_token": "edf6a55a70114f6296143ed471251804",
@@ -189,7 +212,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "AMENDED: dusk but lane establishable; give-way marking, crossing clear, pedestrians beside not on it; car ahead at normal following distance",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-11-14-18-57-54+0800__CAM_FRONT__1542193462512460.jpg"
  },
  {
   "scene_token": "406a61a4d394432e95a7e8426a97551f",
@@ -197,7 +221,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "two red lights clearly visible on the gantry governing the ego lane; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-43-59-0400__CAM_FRONT__1537296619862404.jpg"
  },
  {
   "scene_token": "64a3a2d22172406c848f2a92275808ba",
@@ -205,7 +230,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "green lights clearly visible over the ego lane; lane ahead clear; works compound off to the right; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537289929512404.jpg"
  },
  {
   "scene_token": "60111bb5388f4195b98555d4d4b89618",
@@ -213,7 +239,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "two articulated lorries crossing the ego path at close range; red lights governing the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-07-27-12-07-38-0400__CAM_FRONT__1532707930662404.jpg"
  },
  {
   "scene_token": "bc8f2774ff4946d3965a807a6aa1b64f",
@@ -221,7 +248,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "dark estate car crossing the ego path left-to-right at close range directly in front",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-07-27-12-07-38-0400__CAM_FRONT__1532707766162404.jpg"
  },
  {
   "scene_token": "2fc3753772e241f2ab2cd16a784cc680",
@@ -229,7 +257,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red lights at the junction; bus and car crossing ahead; crosswalk directly at the ego stop line",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657117612404.jpg"
  },
  {
   "scene_token": "eae0cfe3be5f44a5be4f3e2c961397ed",
@@ -237,7 +266,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red lights clearly visible governing; two pedestrians crossing and a container lorry turning at the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-07-27-12-07-38-0400__CAM_FRONT__1532707966912404.jpg"
  },
  {
   "scene_token": "055a607b74e04001adef097225a8661a",
@@ -245,7 +275,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "daylight residential street clear ahead to the junction; truck is in the adjacent right lane",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-27-15-33-17+0800__CAM_FRONT__1538033910162460.jpg"
  },
  {
   "scene_token": "727214583a2a478094d4f093d20c7060",
@@ -253,7 +284,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "bus directly ahead in the ego lane at close range with brake lights; red lights at the junction; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297855362404.jpg"
  },
  {
   "scene_token": "f92422ed4b4e427194a4958ccf15709a",
@@ -261,7 +293,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane passable with cars at normal following distance; concrete barriers and works off the carriageway",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535573941012404.jpg"
  },
  {
   "scene_token": "724957e51f464a9aa64a16458443786d",
@@ -269,7 +302,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "two pedestrians crossing the ego path on the crosswalk directly ahead at close range",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-07-27-12-07-38-0400__CAM_FRONT__1532708643862404.jpg"
  },
  {
   "scene_token": "4f18d9a7ed374a0fb93c026589dcf9a0",
@@ -277,7 +311,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "ego lane clear ahead; parked cars along the right kerb; traffic only far off",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-52-26-0400__CAM_FRONT__1535658966012404.jpg"
  },
  {
   "scene_token": "b8be4950e73743a8841d545fcb145706",
@@ -285,7 +320,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "wheelchair user in the carriageway directly ahead; van ahead in lane; works cones narrowing the right",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-28-16-16-48-0400__CAM_FRONT__1535487972762404.jpg"
  },
  {
   "scene_token": "2ce2df158372461fa91ce77455656f81",
@@ -293,7 +329,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "ego at a stop line facing a terminating junction with two red signals visible governing the approach",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-01-15-10-21+0800__CAM_FRONT__1533107723862460.jpg"
  },
  {
   "scene_token": "261e8288cf5647e396ab584e210e4ba1",
@@ -301,7 +338,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is steering to the right. The ego vehicle is driving very fast.",
   "visual_evidence": "ego lane clear round the curve; all other traffic on the opposite carriageway",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-10-08-15-52-24+0800__CAM_FRONT__1538985722862460.jpg"
  },
  {
   "scene_token": "e083627747d8499a8c4e94c7abf941e2",
@@ -309,7 +347,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving fast.",
   "visual_evidence": "green signal governing the ego lane; lane ahead clear; Jeep at normal following distance; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297647162404.jpg"
  },
  {
   "scene_token": "6520b5f0d568414c973f791b30ee1548",
@@ -317,7 +356,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red light at close range directly governing the ego lane at the junction stop line; second red beyond",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-18-11-50-34+0800__CAM_FRONT__1531886170662460.jpg"
  },
  {
   "scene_token": "ceca737af78440118b7b394a54723454",
@@ -325,7 +365,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "quiet residential street, lane clear, one distant car, no signal",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-27-15-33-17+0800__CAM_FRONT__1538033877162460.jpg"
  },
  {
   "scene_token": "ce2d6bdc33084dc1a2780f41f6740e06",
@@ -333,7 +374,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
   "visual_evidence": "ego lane clear ahead under the footbridge; motorcycle far off; car stopped in the adjacent left lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-01-16-32-59+0800__CAM_FRONT__1533112537162460.jpg"
  },
  {
   "scene_token": "14b96c255dee4a838a8d401302ac2852",
@@ -341,7 +383,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
   "visual_evidence": "ego lane clear ahead; works barriers and barrels behind the kerb line at the right; traffic far off",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-06-15-06-32-0400__CAM_FRONT__1533583201162404.jpg"
  },
  {
   "scene_token": "2ffd7e2a1daf4b928464ddb2ed3dca59",
@@ -349,7 +392,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the left. The ego vehicle is driving fast.",
   "visual_evidence": "freight yard apron clear ahead; lorries are berthed at the loading docks off the running surface",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-05-21-11-06-59-0400__CAM_FRONT__1526915647912465.jpg"
  },
  {
   "scene_token": "453453c849304ad69741891946d46453",
@@ -357,7 +401,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "two red lights on overhead gantry governing ego lane; crosswalk and stop line directly ahead; wet road",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537289978412404.jpg"
  },
  {
   "scene_token": "129304d659464b0fb3a51c99eaec114a",
@@ -365,7 +410,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear for a long distance; oncoming van on the far side of the double yellow; parked cars at right",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-07-27-12-07-38-0400__CAM_FRONT__1532707873862404.jpg"
  },
  {
   "scene_token": "53484b9d012842bb98719a9d12b038ca",
@@ -373,7 +419,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "three pedestrians crossing the ego path on the crosswalk directly ahead; red signals at the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-28-16-16-48-0400__CAM_FRONT__1535488244162404.jpg"
  },
  {
   "scene_token": "e233467e827140efa4b42d2b4c435855",
@@ -381,7 +428,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "scooter crossing the ego path at close range directly ahead despite the green signal",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-11-21-19-38-26+0800__CAM_FRONT__1542801001912460.jpg"
  },
  {
   "scene_token": "3d42cd90a8184d9ebd3bb85b6416314d",
@@ -389,7 +437,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red lights clearly visible at the junction; SUV crossing the ego path from the right; crosswalk at the stop line",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-06-15-06-32-0400__CAM_FRONT__1533583049162404.jpg"
  },
  {
   "scene_token": "f8ef029224b84d14843db98a76a7f4a1",
@@ -397,7 +446,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is steering to the left. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear round the curve; NO ENTRY signs apply to the right-hand branch, not the ego path",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-10-08-15-52-24+0800__CAM_FRONT__1538985523662460.jpg"
  },
  {
   "scene_token": "efe3681f556b43e6aa65bf7bfc61a2f8",
@@ -405,7 +455,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "bridge carriageway clear for a long distance; pedestrians behind the barrier on the footpath",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535573516412404.jpg"
  },
  {
   "scene_token": "b0644660d7864451bfc4b3432bb5b47e",
@@ -413,7 +464,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "taxi crossing the ego path and a pedestrian on the crosswalk; red light governing plus NO TURN ON RED; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537289890912404.jpg"
  },
  {
   "scene_token": "16c90eedfc7943a5a4c64e84d18876a2",
@@ -421,7 +473,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "night but ego lane and speed table visible ahead and clear; headlight glare is from oncoming traffic on the far side",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-11-21-19-11-29+0800__CAM_FRONT__1542799054262460.jpg"
  },
  {
   "scene_token": "3bc4553925494890a21ef7a15c40eaed",
@@ -429,7 +482,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "two pedestrians crossing the ego path on the crosswalk at close range; red signal at the left",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-31-11-19-57-0400__CAM_FRONT__1535729246512404.jpg"
  },
  {
   "scene_token": "75a4ec12042542149b0a77a0a10d6330",
@@ -437,7 +491,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
   "visual_evidence": "warehouse street clear ahead; cars parked at the left and skips off the running surface at the right",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-05-21-11-06-59-0400__CAM_FRONT__1526915333112465.jpg"
  },
  {
   "scene_token": "cf550d9670274ac1a7f274fbacb39c48",
@@ -445,7 +500,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is steering to the right. The ego vehicle is driving fast.",
   "visual_evidence": "green signal governing; ego lane clear round the curve; works barriers off to the left",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-24-11-13-19+0800__CAM_FRONT__1532402164162460.jpg"
  },
  {
   "scene_token": "23663ff8f4614b8bb005d67e51a69283",
@@ -453,7 +509,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "hanging signal ahead showing red under the overpass; pedestrian crossing sign; wet",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297429412404.jpg"
  },
  {
   "scene_token": "363bb6c0fdaf465aa54c39f082bb92c6",
@@ -461,7 +518,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear with traffic only at distance; container lorry is in the adjacent right lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-31-11-19-57-0400__CAM_FRONT__1535728928912404.jpg"
  },
  {
   "scene_token": "5b9c64f03f8b4a4f8189a18d74f866c2",
@@ -469,7 +527,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "industrial street clear round the curve; trucks parked off the lane; semi is on a yard entrance",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385307362404.jpg"
  },
  {
   "scene_token": "d0880a386b6d434bb5cd13c134af7a3e",
@@ -477,7 +536,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "campus road clear ahead; lone motorcycle far off at the right kerb",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-18-11-50-34+0800__CAM_FRONT__1531886035362460.jpg"
  },
  {
   "scene_token": "7ed1b613f0ee47ceaf6d19ca3947f825",
@@ -485,7 +545,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "car directly ahead in the ego lane at close range with brake lights lit; night, heavy flare",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-11-21-19-58-31+0800__CAM_FRONT__1542801712512460.jpg"
  },
  {
   "scene_token": "373bf99c103d4464a7b963a83523fbcb",
@@ -493,7 +554,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "pedestrian running across the crossing directly ahead; red lights at the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535656816262404.jpg"
  },
  {
   "scene_token": "670e01eb31b64b509db5290531254203",
@@ -501,7 +563,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the left. The ego vehicle is driving fast.",
   "visual_evidence": "crosswalk ahead with nobody on it; ego lane clear beyond; car park off to the right",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-07-26-12-13-50-0400__CAM_FRONT__1532621749612404.jpg"
  },
  {
   "scene_token": "f05ec45554f842ccb523caf326750f13",
@@ -509,7 +572,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; CAUTION board on the verge and cones far off; pedestrians on the footpath",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-21-40+0800__CAM_FRONT__1533280935012460.jpg"
  },
  {
   "scene_token": "5c76a3728b8b4d02ae20bd69fb928aa1",
@@ -517,7 +581,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "green lights clearly visible over the ego lane; SUV ahead at normal following distance; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537290297512404.jpg"
  },
  {
   "scene_token": "b528f78de55e41d9bb3382176dae1a4c",
@@ -525,7 +590,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red lights clearly visible governing the ego lane; SUV braking at close left; pedestrian at the crossing",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-28-16-16-48-0400__CAM_FRONT__1535487857912404.jpg"
  },
  {
   "scene_token": "9a81caa3d5134d7f87ee4786ccef68f7",
@@ -533,7 +599,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is steering to the left. The ego vehicle is driving fast.",
   "visual_evidence": "parkland road clear ahead; silver car far off at the left kerb",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-24-11-13-19+0800__CAM_FRONT__1532402294612460.jpg"
  },
  {
   "scene_token": "4deb245e67374cd88e64d6557b652841",
@@ -541,7 +608,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead over the hump; Mercedes is oncoming on the opposite carriageway",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-10-08-15-52-24+0800__CAM_FRONT__1538985246262460.jpg"
  },
  {
   "scene_token": "5b9c64f03f8b4a4f8189a18d74f866c2",
@@ -549,7 +617,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving with normal speed.",
   "visual_evidence": "industrial road curving right and clear; lorries parked both sides off the running lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385310862404.jpg"
  },
  {
   "scene_token": "01c8c59260db4a3682d7b4f8da65425e",
@@ -557,7 +626,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; motorcycles parked at the left kerb off the lane; SLOW warning board only",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-01-16-41-59+0800__CAM_FRONT__1533113393862460.jpg"
  },
  {
   "scene_token": "400b708de5d7434d8964da4a0246d164",
@@ -565,7 +635,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "car directly ahead in the ego lane at close range with brake lights lit",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-11-21-19-38-26+0800__CAM_FRONT__1542800471362460.jpg"
  },
  {
   "scene_token": "4deb245e67374cd88e64d6557b652841",
@@ -573,7 +644,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear round the bend; the crossing car is on the side road at the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-10-08-15-52-24+0800__CAM_FRONT__1538985249112460.jpg"
  },
  {
   "scene_token": "8857cf15fa7049a6b000490835d3b9fc",
@@ -581,7 +653,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "white car crossing the ego path left-to-right at close range at the junction exit",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-01-16-41-59+0800__CAM_FRONT__1533112950412460.jpg"
  },
  {
   "scene_token": "221a67d95acf448ba863917ec4d32ed0",
@@ -589,7 +662,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "Escalade crossing the ego path at close range; amber/red lights at the junction; second car at the left",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535574004412404.jpg"
  },
  {
   "scene_token": "3e1f0257a4b8457486651de2d16b61ab",
@@ -597,7 +671,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "bus directly ahead in ego lane at close range with brake lights; red lights on gantry ahead; heavy rain",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297884362404.jpg"
  },
  {
   "scene_token": "7e3a6bdd6c6f4c8fb018cff404974446",
@@ -605,7 +680,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "daylight; ego lane clear with through arrow; only a distant car at the far junction",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-18-11-50-34+0800__CAM_FRONT__1531886009412469.jpg"
  },
  {
   "scene_token": "fcb40dc8514444c49b1fdc06f80a123b",
@@ -613,7 +689,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "boom barrier lowered across the ego path at the car park control point",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-27-11-36-48+0800__CAM_FRONT__1532662677012460.jpg"
  },
  {
   "scene_token": "76b36918bd4c487581a4196ffd1b1434",
@@ -621,7 +698,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red lights clearly visible governing the ego lane; oncoming traffic; ego at the crosswalk; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537296995912404.jpg"
  },
  {
   "scene_token": "fd5a3c6d3ad44954a8045edbe9d93763",
@@ -629,7 +707,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving fast.",
   "visual_evidence": "wide industrial street clear ahead; vehicles parked at left; no signal governing",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-05-21-11-06-59-0400__CAM_FRONT__1526915709862465.jpg"
  },
  {
   "scene_token": "c133e78e55ae487c821803a3b183d1ab",
@@ -637,7 +716,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "ego lane clear for a long distance; van far off; cars parked off the running lane at the left",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535573076912404.jpg"
  },
  {
   "scene_token": "8c7dfcee70754286959b80c6cfe2d246",
@@ -645,7 +725,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; single car far off; construction hoarding is behind barriers off the lane",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-31-11-19-57-0400__CAM_FRONT__1535729529412404.jpg"
  },
  {
   "scene_token": "4431d97ea17044ad9c09c13d16684054",
@@ -653,7 +734,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving with normal speed.",
   "visual_evidence": "campus roadway clear ahead; vehicles parked in marked bays off the running lane both sides",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-27-11-36-48+0800__CAM_FRONT__1532662758412460.jpg"
  },
  {
   "scene_token": "e15260c4ed5b4505900d497ef92ddd2d",
@@ -661,7 +743,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "green lights clearly visible over the ego lane; wide junction ahead clear of traffic; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297156912404.jpg"
  },
  {
   "scene_token": "6e81ee0f64274490a403bbd6482c2bf9",
@@ -669,7 +752,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "coach stopped at a terminus in the left of the lane; the carriageway continues clear to the right",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-18-11-50-34+0800__CAM_FRONT__1531886340362460.jpg"
  },
  {
   "scene_token": "85d5e2548a5e454fa65a739ac0ac55c2",
@@ -677,7 +761,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red light clearly visible governing ego lane at junction; daylight, unambiguous",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-10-02-10-56-37+0800__CAM_FRONT__1538449160862460.jpg"
  },
  {
   "scene_token": "c67b72f4a0bd4f2b96ecbd0e01c58232",
@@ -685,7 +770,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "ego lane clear ahead over a speed table; crossing ahead with nobody on it; no signal governing",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-27-11-36-48+0800__CAM_FRONT__1532662887012460.jpg"
  },
  {
   "scene_token": "93481c2504474ca0b21d4abbab2cf3cf",
@@ -693,7 +779,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "wide yard road clear ahead; parked cars off the lane; rain but lane visible",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-07-26-0400__CAM_FRONT__1537286944662404.jpg"
  },
  {
   "scene_token": "82aa6c89bbf744a6a5a12cc171d8376e",
@@ -701,7 +788,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "two red lights clearly visible on gantry governing ego lane; crosswalk at stop line; wet",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297723012404.jpg"
  },
  {
   "scene_token": "1d4db80d13f342aba4881b38099bc4b7",
@@ -709,7 +797,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "green signal at the junction ahead; open paved approach with no vehicle in the ego path",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-18-11-50-34+0800__CAM_FRONT__1531886121412465.jpg"
  },
  {
   "scene_token": "19284973bd0342998c37848e931a90d0",
@@ -717,7 +806,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
   "visual_evidence": "dual carriageway, ego lane clear; single car ahead at distance in the adjacent lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-10-02-10-56-37+0800__CAM_FRONT__1538449179362460.jpg"
  },
  {
   "scene_token": "28d385e6db0e495da3a606b58e2432f0",
@@ -725,7 +815,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "campus service road clear ahead; SUV at normal following distance; parked cars in bays off the lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-00-36+0800__CAM_FRONT__1533280286412460.jpg"
  },
  {
   "scene_token": "865c607c8ef44f13b39744a0de110740",
@@ -733,7 +824,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
   "visual_evidence": "night but street-lit with lane markings clear; vehicle ahead at normal following distance; oncoming car on the far side",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-11-21-19-38-26+0800__CAM_FRONT__1542800313362460.jpg"
  },
  {
   "scene_token": "8cf06ee8cd004478aa46f391310b923e",
@@ -741,7 +833,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red/amber light over junction ahead; crosswalk at ego stop line; heavy rain",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-15-26-58-0400__CAM_FRONT__1537299148862404.jpg"
  },
  {
   "scene_token": "c31adab2faea4db6ae5673eb8a507d00",
@@ -749,7 +842,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red light at close range directly ahead-left plus two further reds at the junction; crosswalk at stop line; wet",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297333862404.jpg"
  },
  {
   "scene_token": "2ffd7e2a1daf4b928464ddb2ed3dca59",
@@ -757,7 +851,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "freight terminal road clear ahead; trucks parked off the running lane at right",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-05-21-11-06-59-0400__CAM_FRONT__1526915641012465.jpg"
  },
  {
   "scene_token": "579fb61492be4ffc97132658f8e4bb9c",
@@ -765,7 +860,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "white pickup crossing the ego path at close range; red lights governing plus NO TURN ON RED",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535573553912404.jpg"
  },
  {
   "scene_token": "9e7d5adad1514dd79292e9318b7a443c",
@@ -773,7 +869,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "adults with a pram crossing directly ahead in the ego path; red lights at the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-07-27-12-07-38-0400__CAM_FRONT__1532708394012404.jpg"
  },
  {
   "scene_token": "7f03cd19d9cc4381a591fca00666d7ed",
@@ -781,7 +878,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red light at close range governing the ego approach plus further reds; pedestrian crossing at the right",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-25-11-10-38+0800__CAM_FRONT__1537845249262460.jpg"
  },
  {
   "scene_token": "dac50250c406439480be8b44d2c5a634",
@@ -789,7 +887,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "ego lane clear round the bend; Audi parked on the red line off the running lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-10-08-16-03-24+0800__CAM_FRONT__1538986308162460.jpg"
  },
  {
   "scene_token": "75548269eb0a4614a6f84ab8d7713196",
@@ -797,7 +896,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "Speedpost van directly ahead in the ego lane at close range with brake lights; red light governing",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-26-11-17-24+0800__CAM_FRONT__1537932231412460.jpg"
  },
  {
   "scene_token": "b0644660d7864451bfc4b3432bb5b47e",
@@ -805,7 +905,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "Brinks truck crossing the ego path; red light governing plus NO TURN ON RED; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537289899912404.jpg"
  },
  {
   "scene_token": "7ca5e90766dc4b7bb6a9b3b0d95c99da",
@@ -813,7 +914,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "car directly ahead in ego lane at very close range with brake lights; red pedestrian signal; queue at junction",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-21-11-53-44-0400__CAM_FRONT__1534867443412404.jpg"
  },
  {
   "scene_token": "860ef56791a947baadb27dd00bd5d4b3",
@@ -821,7 +923,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the left. The ego vehicle is driving fast.",
   "visual_evidence": "freight yard roadway open ahead; trucks are berthed at docks off the running surface",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-01-15-52-19-0400__CAM_FRONT__1533153550912404.jpg"
  },
  {
   "scene_token": "2bd47eabb64d4499862388cec180a7d1",
@@ -829,7 +932,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
   "visual_evidence": "wide road clear far ahead, no governing signal, parked cars only at kerb",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-28-13-40-50-0400__CAM_FRONT__1535478874512404.jpg"
  },
  {
   "scene_token": "2422d2652f4f42298a389a6e0dfef307",
@@ -837,7 +941,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "car directly ahead in ego lane at close range with brake lights; red lights at the junction; pedestrians crossing left",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-25-11-10-38+0800__CAM_FRONT__1537845383112460.jpg"
  },
  {
   "scene_token": "37b32e4e8cf846679b2c0cb342dbd4aa",
@@ -845,7 +950,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane ahead clear; white Mercedes is oncoming on its own side of the narrow road",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-24-11-13-19+0800__CAM_FRONT__1532402328612460.jpg"
  },
  {
   "scene_token": "bb028034cb474e3da8953f83752a70a9",
@@ -853,7 +959,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "silver car directly ahead in ego lane at very close range; Work Ahead sign",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-24-11-22-45+0800__CAM_FRONT__1532402879412460.jpg"
  },
  {
   "scene_token": "4959ccdac5774a088d0c9e10667f09f1",
@@ -861,7 +968,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "box truck directly ahead in ego lane at close range; queue with brake lights; red light far left",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-06-15-06-32-0400__CAM_FRONT__1533582544662411.jpg"
  },
  {
   "scene_token": "c7780850596641b8ab5f352d16b178e4",
@@ -869,7 +977,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "SUV directly ahead in the ego lane at close range with brake lights lit; red lights governing; pedestrians crossing left; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537290219412404.jpg"
  },
  {
   "scene_token": "f12b4e7fb95646ec9dac305076024bb9",
@@ -877,7 +986,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "two illuminated amber/red lights on overhead gantry governing ego lane; stop line and crossing ahead",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-52-26-0400__CAM_FRONT__1535659415662404.jpg"
  },
  {
   "scene_token": "82aa6c89bbf744a6a5a12cc171d8376e",
@@ -885,7 +995,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red lights at the junction; pedestrian with umbrella crossing the ego path directly ahead",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297724862404.jpg"
  },
  {
   "scene_token": "491322eec05043c9907c59aa35b046ea",
@@ -893,7 +1004,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
   "visual_evidence": "industrial street clear ahead; only distant headlights far off; rain but lane visible",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-43-59-0400__CAM_FRONT__1537296468362404.jpg"
  },
  {
   "scene_token": "01796494e25c448dadaba70cfcc3532d",
@@ -901,7 +1013,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "white SUV at close range directly ahead with brake lights lit and a bus stopped beyond it; gap closing despite the green signal",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-10-08-16-03-24+0800__CAM_FRONT__1538985957262460.jpg"
  },
  {
   "scene_token": "7599adab7f3944dc8ac1c88b4f3bb082",
@@ -909,7 +1022,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "SUV crossing the ego path at close range; red lights governing the junction; works cones at the right",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-07-27-12-07-38-0400__CAM_FRONT__1532708327412404.jpg"
  },
  {
   "scene_token": "c5b36e5275cc4a2285d095e87347c49a",
@@ -917,7 +1031,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; cars parked at the right kerb; traffic far off; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-15-26-58-0400__CAM_FRONT__1537299191862404.jpg"
  },
  {
   "scene_token": "555c691be4704ef29559373e031441dd",
@@ -925,7 +1040,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "pedestrians crossing the ego path on the crosswalk; SUV directly ahead braking; red signal at the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535573619362404.jpg"
  },
  {
   "scene_token": "83773bcf46ac486383529098de0542dd",
@@ -933,7 +1049,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the left. The ego vehicle is driving very fast.",
   "visual_evidence": "campus road clear ahead; single car at normal following distance; verges and parking off the lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-24-11-22-45+0800__CAM_FRONT__1532402725412460.jpg"
  },
  {
   "scene_token": "75548269eb0a4614a6f84ab8d7713196",
@@ -941,7 +1058,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "Speedpost van directly ahead in the ego lane at close range with brake lights; red light governing",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-26-11-17-24+0800__CAM_FRONT__1537932224912460.jpg"
  },
  {
   "scene_token": "54cdaaae372d421fa4734d66f51a8c48",
@@ -949,7 +1067,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red lights visible governing the junction; cars crossing ahead; ego at the stop line",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-00-36+0800__CAM_FRONT__1533280048162460.jpg"
  },
  {
   "scene_token": "010fb5bcc7984d0f8f07f99e02366df1",
@@ -957,7 +1076,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; cones and excavator in a works zone off the right side; traffic far off; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537290049912404.jpg"
  },
  {
   "scene_token": "724957e51f464a9aa64a16458443786d",
@@ -965,7 +1085,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red signals visible governing the ego lane at the junction ahead; box truck ahead in lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-07-27-12-07-38-0400__CAM_FRONT__1532708648762404.jpg"
  },
  {
   "scene_token": "c59fe8015e3743329ec907bc29c93124",
@@ -973,7 +1094,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "waterfront road curves right and is clear; Audi is parked in a bay off the lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-28-13-40-50-0400__CAM_FRONT__1535478531862404.jpg"
  },
  {
   "scene_token": "98fc76cc0e364efdaa7e86a36b666dda",
@@ -981,7 +1103,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
   "visual_evidence": "green lights clearly visible over the ego lane; lane ahead clear; van oncoming on the far side; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-43-59-0400__CAM_FRONT__1537296416112404.jpg"
  },
  {
   "scene_token": "52fa2df7fde34bd58ee30cff02b73f51",
@@ -989,7 +1112,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red lights at the junction ahead; black car crossing the ego path; crosswalk at the stop line",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535573860912404.jpg"
  },
  {
   "scene_token": "52fa2df7fde34bd58ee30cff02b73f51",
@@ -997,7 +1121,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "two pedestrians crossing the ego path on the crosswalk at close range; amber/red signals at the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535573857412404.jpg"
  },
  {
   "scene_token": "5c6620829a1f492b8482218670aa0541",
@@ -1005,7 +1130,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "quiet residential street clear for a long distance; bins and bicycles off the carriageway",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-27-15-33-17+0800__CAM_FRONT__1538033861362460.jpg"
  },
  {
   "scene_token": "1319a9c0288f4ff9ae32d3f33b3bae17",
@@ -1013,7 +1139,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red light at close range governing the ego approach plus further reds at the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-25-11-10-38+0800__CAM_FRONT__1537845286262460.jpg"
  },
  {
   "scene_token": "0e37d4a357db4246a908cfd97d17efc6",
@@ -1021,7 +1148,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "wide junction with the ego lane clear round the curve; other cars far off",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-24-11-13-19+0800__CAM_FRONT__1532402321862578.jpg"
  },
  {
   "scene_token": "4a4d09496d594c7385a1ec227bdb3a7f",
@@ -1029,7 +1157,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving fast.",
   "visual_evidence": "wide carriageway clear ahead; traffic only far off; bus shelter off the kerb; wet but lane visible",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537289816662404.jpg"
  },
  {
   "scene_token": "da41ecbc644b4915b84bb732e35ebf8c",
@@ -1037,7 +1166,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving with normal speed.",
   "visual_evidence": "industrial street clear for a long distance; parked vehicles off the running lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-52-26-0400__CAM_FRONT__1535658930162404.jpg"
  },
  {
   "scene_token": "c04cdbbe744c4da08d3df61c47d5cc94",
@@ -1045,7 +1175,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "car directly ahead in the ego lane at close range with brake lights lit; red lights governing the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-01-15-10-21+0800__CAM_FRONT__1533107526362460.jpg"
  },
  {
   "scene_token": "53484b9d012842bb98719a9d12b038ca",
@@ -1053,7 +1184,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "pedestrian crossing the ego path directly ahead at close range; red lights at the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-28-16-16-48-0400__CAM_FRONT__1535488250012404.jpg"
  },
  {
   "scene_token": "f7d01e23508040c2aec430e8da13fb76",
@@ -1061,7 +1193,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear for a long distance; cars parked both kerbs; no red signal governing",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-52-26-0400__CAM_FRONT__1535659560912404.jpg"
  },
  {
   "scene_token": "3e1f0257a4b8457486651de2d16b61ab",
@@ -1069,7 +1202,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "bus directly ahead in the ego lane at close range with brake lights; red lights on the gantry ahead",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297889412404.jpg"
  },
  {
   "scene_token": "7bcc4753bdb64d2cb407b55cc4e4527f",
@@ -1077,7 +1211,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "pedestrian crossing the ego path directly ahead; red signals at the junction; works barriers on the left",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-02-17-28-51+0800__CAM_FRONT__1533202640762460.jpg"
  },
  {
   "scene_token": "a1ca2ba59ac9452fb3da60019bf32c71",
@@ -1085,7 +1220,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "boom barrier lowered across the ego path at a vehicle checkpoint; gatehouse and bus beyond",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-01-16-32-59+0800__CAM_FRONT__1533112401162460.jpg"
  },
  {
   "scene_token": "938479858b4849dd8ceddc11c154082b",
@@ -1093,7 +1229,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
   "visual_evidence": "ego lane clear ahead; car and pedestrian both far off; works hoarding off the carriageway; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297174162404.jpg"
  },
  {
   "scene_token": "70368a18644046f898ab836fc8a3c03f",
@@ -1101,7 +1238,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "several pedestrians crossing the carriageway directly ahead in the ego path; car ahead; amber signal",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-24-11-03-52+0800__CAM_FRONT__1532401624362460.jpg"
  },
  {
   "scene_token": "2e3c0f308fcf4664bf7994053d7080b9",
@@ -1109,7 +1247,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "ego lane clear ahead; construction plant is off-road to the left; parked cars at kerbs",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-07-26-12-13-50-0400__CAM_FRONT__1532622000012404.jpg"
  },
  {
   "scene_token": "82240fd6d5ba4375815f8a7fa1561361",
@@ -1117,7 +1256,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "taxi crossing the ego path at close range; red lights clearly visible governing the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535656880262404.jpg"
  },
  {
   "scene_token": "798e8504b4364d378270333a349ef508",
@@ -1125,7 +1265,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red light on the gantry governing the ego lane plus further reds at the junction; wide crossing ahead",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-24-11-13-19+0800__CAM_FRONT__1532402051162460.jpg"
  },
  {
   "scene_token": "2135a00f664d4a3bbfb938e007befa06",
@@ -1133,7 +1274,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "Speedpost van directly ahead in the ego lane at close range with brake lights; red light governing the approach",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-26-11-17-24+0800__CAM_FRONT__1537932252112460.jpg"
  },
  {
   "scene_token": "491322eec05043c9907c59aa35b046ea",
@@ -1141,7 +1283,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
   "visual_evidence": "ego lane clear ahead; oncoming traffic on the far carriageway; heavy rain but lane visible",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-43-59-0400__CAM_FRONT__1537296472362404.jpg"
  },
  {
   "scene_token": "36fbee38a28543ea9e27a67d64e1dee4",
@@ -1149,7 +1292,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "ego at a stop bar facing a terminating T-junction; road ahead ends in kerb and hedge",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-01-16-32-59+0800__CAM_FRONT__1533112757912460.jpg"
  },
  {
   "scene_token": "c6da5920d2bc459bb3bc51ee6b9fdd7e",
@@ -1157,7 +1301,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "signals ahead green; box truck in the ego lane at normal following distance; works zone off the carriageway",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-31-11-19-57-0400__CAM_FRONT__1535729412862404.jpg"
  },
  {
   "scene_token": "7463b2d752f0464f803b07a945ee7c5a",
@@ -1165,7 +1310,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "black Mercedes crossing the ego path at very close range directly in front",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-00-36+0800__CAM_FRONT__1533280323112460.jpg"
  },
  {
   "scene_token": "8fe2dd6f533646b39c8e81316597c52b",
@@ -1173,7 +1319,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "car directly ahead in the ego lane at close range with brake lights lit; red lights at the junction ahead",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-25-11-10-38+0800__CAM_FRONT__1537845394762460.jpg"
  },
  {
   "scene_token": "36b7b02f0f034f0595e3437a85554151",
@@ -1181,7 +1328,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "box truck and postal van crossing the ego path at close range; red lights plus NO TURN ON RED",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-21-11-53-44-0400__CAM_FRONT__1534867307012404.jpg"
  },
  {
   "scene_token": "a5d7cc4bf3404cccb89932d94ccb9da6",
@@ -1189,7 +1337,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "wide street clear for a long distance; crossing sign present but nobody on the crossing",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-01-15-52-19-0400__CAM_FRONT__1533153494662404.jpg"
  },
  {
   "scene_token": "0e37d4a357db4246a908cfd97d17efc6",
@@ -1197,7 +1346,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the left. The ego vehicle is driving very fast.",
   "visual_evidence": "campus road clear ahead; van parked off the lane at the left; car far off",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-24-11-13-19+0800__CAM_FRONT__1532402309162460.jpg"
  },
  {
   "scene_token": "d8a5dd6087de4e808c61c27f91e8216e",
@@ -1205,7 +1355,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "three red lights clearly visible on the gantry governing the ego lane; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-13-41-50-0400__CAM_FRONT__1537292801912404.jpg"
  },
  {
   "scene_token": "2cc8ffb250c44b42a888e9185810e04c",
@@ -1213,7 +1364,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "container truck crossing the ego path left-to-right at close range; amber/red lights ahead; crosswalk at stop line",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-15-26-58-0400__CAM_FRONT__1537298962362404.jpg"
  },
  {
   "scene_token": "9771da5dd7bb4657be34365619e39dab",
@@ -1221,7 +1373,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "pedestrian crossing the ego path directly ahead; red signals at the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-11-21-19-38-26+0800__CAM_FRONT__1542800911412460.jpg"
  },
  {
   "scene_token": "5035adcd18d34d4783c2ccb41db998c1",
@@ -1229,7 +1382,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
   "visual_evidence": "residential street clear ahead; white van far off; bins and bicycles off the carriageway",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-27-15-33-17+0800__CAM_FRONT__1538033919662460.jpg"
  },
  {
   "scene_token": "f55c8c62235146d895f611176fd0a5dc",
@@ -1237,7 +1391,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red lights clearly visible governing the ego lane; oncoming traffic and a pickup turning at the left; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297015913048.jpg"
  },
  {
   "scene_token": "d9a3087bab26405cb005221b979edd39",
@@ -1245,7 +1400,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "Jeep directly ahead in the ego lane at close range with brake lights; red lights at the junction ahead",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-28-16-16-48-0400__CAM_FRONT__1535488375762404.jpg"
  },
  {
   "scene_token": "491322eec05043c9907c59aa35b046ea",
@@ -1253,7 +1409,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the right. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; trailer parked at the left kerb; traffic far off; wet but lane visible",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-43-59-0400__CAM_FRONT__1537296465362404.jpg"
  },
  {
   "scene_token": "b09162caded44198b149b4bce3558056",
@@ -1261,7 +1418,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "AMENDED: no governing signal; SUV and bus ahead at normal following distance with traffic moving, lane passable",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-10-08-16-03-24+0800__CAM_FRONT__1538986260262460.jpg"
  },
  {
   "scene_token": "2fc3753772e241f2ab2cd16a784cc680",
@@ -1269,7 +1427,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "tipper truck and van crossing the ego path at close range; red lights clearly visible at the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657119612404.jpg"
  },
  {
   "scene_token": "ab5bc0504e2c4103ab306c5bd18f6791",
@@ -1277,7 +1436,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "two red lights clearly visible on the gantry; black sedan crossing the ego path at close range",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657365662404.jpg"
  },
  {
   "scene_token": "b3f63d06b6c54ae6ae80d688f4966408",
@@ -1285,7 +1445,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is slightly steering to the left. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane through-arrow and clear; white SUV braking is in the adjacent right lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-10-08-16-03-24+0800__CAM_FRONT__1538985876662460.jpg"
  },
  {
   "scene_token": "c0990deaa8954a54afc86f7710f349a1",
@@ -1293,7 +1454,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "pedestrian standing at the crossing edge about to enter the ego path; van crossing at the junction ahead",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-10-08-16-03-24+0800__CAM_FRONT__1538986204412460.jpg"
  },
  {
   "scene_token": "70e7d95ee1d1426fa84da44ddbf82d7a",
@@ -1301,7 +1463,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "amber lights on the gantry governing the ego lane; ego at the crosswalk at the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-52-26-0400__CAM_FRONT__1535659599412404.jpg"
  },
  {
   "scene_token": "2135a00f664d4a3bbfb938e007befa06",
@@ -1309,7 +1472,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "Speedpost van directly ahead in the ego lane at close range with brake lights; red light governing",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-26-11-17-24+0800__CAM_FRONT__1537932255612460.jpg"
  },
  {
   "scene_token": "df0c3cb16cde410eba8eea191765515c",
@@ -1317,7 +1481,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; cars parked off the running lane at the left; traffic far off; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-07-26-0400__CAM_FRONT__1537287343862404.jpg"
  },
  {
   "scene_token": "53484b9d012842bb98719a9d12b038ca",
@@ -1325,7 +1490,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "pedestrian crossing the ego path directly ahead and another at the right; red signals at the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-28-16-16-48-0400__CAM_FRONT__1535488258412404.jpg"
  },
  {
   "scene_token": "6e81ee0f64274490a403bbd6482c2bf9",
@@ -1333,7 +1499,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane continues clear to the right; coach is stopped in the left lane at a terminus",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-07-18-11-50-34+0800__CAM_FRONT__1531886340862460.jpg"
  },
  {
   "scene_token": "b7bb8ec5bf22476f8ba8ca0b2e57e8f6",
@@ -1341,7 +1508,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "car crossing ego path at close range; red lights both sides; crosswalk directly ahead; heavy rain",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-43-59-0400__CAM_FRONT__1537296534112419.jpg"
  },
  {
   "scene_token": "2c96ff6afc9e4cf7bc8b107fce955c1f",
@@ -1349,7 +1517,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; oncoming car far off; parked cars and crane off the carriageway; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537289774012404.jpg"
  },
  {
   "scene_token": "d1ac8e27ba8944a4a42a488cf2fedd74",
@@ -1357,7 +1526,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "ego lane passable; Cadillac ahead at normal following distance; works cones behind the kerb line at the right",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-21-11-53-44-0400__CAM_FRONT__1534867233262404.jpg"
  },
  {
   "scene_token": "796e7ae080984a0ab2b96ce80f18ca3b",
@@ -1365,7 +1535,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "boom barrier lowered directly across the ego path at a car park entrance; bus beyond it",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-11-14-18-57-54+0800__CAM_FRONT__1542193210862460.jpg"
  },
  {
   "scene_token": "36b7b02f0f034f0595e3437a85554151",
@@ -1373,7 +1544,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "two cars crossing the ego path at the junction; red lights ahead; crosswalk at stop line; pedestrians waiting",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-21-11-53-44-0400__CAM_FRONT__1534867314412404.jpg"
  },
  {
   "scene_token": "ab7f4909bc6c4841a12020355a7d505c",
@@ -1381,7 +1553,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
   "visual_evidence": "ego lane clear for a long distance; mailbox on the verge; single pedestrian far off",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385118112404.jpg"
  },
  {
   "scene_token": "69ee276c40644ddbb7fe21c613cd7689",
@@ -1389,7 +1562,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "green lights clearly visible over the ego lane; lane ahead clear; SUV is in the adjacent lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-28-16-16-48-0400__CAM_FRONT__1535487893662409.jpg"
  },
  {
   "scene_token": "f29904c2bcdc4d78bbcac75a2b30fe38",
@@ -1397,7 +1571,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "bridge carriageway clear ahead with a car far off; oncoming traffic on the far side of the double yellow; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537290192912404.jpg"
  },
  {
   "scene_token": "3d42cd90a8184d9ebd3bb85b6416314d",
@@ -1405,7 +1580,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "white pickup crossing the ego path at very close range plus a second crossing vehicle and a cyclist; red lights at the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-06-15-06-32-0400__CAM_FRONT__1533583056262404.jpg"
  },
  {
   "scene_token": "8399be3e75814cc793d145986318c45d",
@@ -1413,7 +1589,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; cars at normal following distance; NO U-TURN sign only; parked cars off the lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-28-13-40-50-0400__CAM_FRONT__1535478685162404.jpg"
  },
  {
   "scene_token": "f612aec0c3e34e32b2e9e48670cdecca",
@@ -1421,7 +1598,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red lights visible governing the ego lane; NO TURN ON RED sign; lorry at the junction to the left",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-28-16-16-48-0400__CAM_FRONT__1535487797662404.jpg"
  },
  {
   "scene_token": "4098aaf3c7074e7d87285e2fc95369e0",
@@ -1429,7 +1607,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; white car parked off the running lane at the left; traffic far off",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-00-36+0800__CAM_FRONT__1533279679612460.jpg"
  },
  {
   "scene_token": "fee7ac5f5c1e4943877cd20d6e069427",
@@ -1437,7 +1616,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "night but road well lit; HUMP marking; lane clear round the bend, no traffic, no signal",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-11-14-19-09-14+0800__CAM_FRONT__1542194142262460.jpg"
  },
  {
   "scene_token": "b519ec833e23450a8bd3340b67f2516b",
@@ -1445,7 +1625,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "ego lane clear for a long distance; van parked at the right kerb; pedestrians on the footpath",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-31-11-56-46-0400__CAM_FRONT__1535731417862404.jpg"
  },
  {
   "scene_token": "4959ccdac5774a088d0c9e10667f09f1",
@@ -1453,7 +1634,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "box truck directly ahead in ego lane at close range; queued traffic with brake lights; red light far left",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-06-15-06-32-0400__CAM_FRONT__1533582552362404.jpg"
  },
  {
   "scene_token": "78f63999591a49a195b872ddc368a146",
@@ -1461,7 +1643,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "green light clearly visible over the ego lane; lane ahead clear; bus and cars in the adjacent right lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-10-02-10-56-37+0800__CAM_FRONT__1538449249412460.jpg"
  },
  {
   "scene_token": "54cdaaae372d421fa4734d66f51a8c48",
@@ -1469,7 +1652,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red lights clearly visible governing the wide junction; car crossing ahead; ego at the stop line",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-03-15-00-36+0800__CAM_FRONT__1533280042612460.jpg"
  },
  {
   "scene_token": "8fe2dd6f533646b39c8e81316597c52b",
@@ -1477,7 +1661,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "car directly ahead in the ego lane at close range with brake lights lit despite the green signals; works barriers at the right",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-25-11-10-38+0800__CAM_FRONT__1537845405662460.jpg"
  },
  {
   "scene_token": "04e5f089805540a5a9e73c1b7c54ee8c",
@@ -1485,7 +1670,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is steering to the right. The ego vehicle is driving very fast.",
   "visual_evidence": "AMENDED: night divided highway; vehicle ahead at middle distance, neither clear nor dangerously close",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-11-21-19-38-26+0800__CAM_FRONT__1542801248912469.jpg"
  },
  {
   "scene_token": "97349fd50e694a5f994b0954047b96d0",
@@ -1493,7 +1679,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "industrial street clear ahead; cars parked in bays at the right; site cabin off the carriageway",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385253662404.jpg"
  },
  {
   "scene_token": "4efde86424ea4088a43faeb5158ceabf",
@@ -1501,7 +1688,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "green signals clearly visible over the ego lane; lane ahead clear; car turning off to the left; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537289999912404.jpg"
  },
  {
   "scene_token": "ef5f216134a94e308697ab4c75402a20",
@@ -1509,7 +1697,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "service road under building, through arrow, way ahead clear; cars parked off the lane",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-08-01-16-32-59+0800__CAM_FRONT__1533112857162460.jpg"
  },
  {
   "scene_token": "ced236f5da704cbcb41249bb6ecc8b68",
@@ -1517,7 +1706,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving fast.",
   "visual_evidence": "ego lane clear ahead; cars parked off the running lane at the right; SLOW and works boards on the verge",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-09-27-15-33-17+0800__CAM_FRONT__1538033680262460.jpg"
  },
  {
   "scene_token": "c5b36e5275cc4a2285d095e87347c49a",
@@ -1525,7 +1715,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is steering to the right. The ego vehicle is driving fast.",
   "visual_evidence": "wet but ego lane ahead clear; no governing signal; other traffic on the opposite carriageway",
-  "round": "round 1"
+  "round": "round 1",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-15-26-58-0400__CAM_FRONT__1537299189362404.jpg"
  },
  {
   "scene_token": "48ba943c3d19463a81281bf6a7078eac",
@@ -1533,7 +1724,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "articulated lorries crossing the ego path directly ahead; red light governing plus NO TURN ON RED; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-12-53-31-0400__CAM_FRONT__1537289862112404.jpg"
  },
  {
   "scene_token": "2fc3753772e241f2ab2cd16a784cc680",
@@ -1541,7 +1733,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "two cars crossing the ego path at close range; red lights clearly visible at the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123112404.jpg"
  },
  {
   "scene_token": "221a67d95acf448ba863917ec4d32ed0",
@@ -1549,7 +1742,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "car crossing the ego path at close range; amber/red lights at the junction; bus ahead",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-29-16-04-13-0400__CAM_FRONT__1535574011912404.jpg"
  },
  {
   "scene_token": "d1ac8e27ba8944a4a42a488cf2fedd74",
@@ -1557,7 +1751,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving with normal speed.",
   "visual_evidence": "ego lane passable; cars ahead at normal following distance; works cones behind the kerb; crossing clear",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-21-11-53-44-0400__CAM_FRONT__1534867241162404.jpg"
  },
  {
   "scene_token": "8c45a7a9142f4f848d463cc46843db71",
@@ -1565,7 +1760,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "Mercedes crossing the ego path at close range; red lights clearly visible governing the junction",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-30-15-52-26-0400__CAM_FRONT__1535659018612404.jpg"
  },
  {
   "scene_token": "ee909cb746e44174be804f26bc971efe",
@@ -1573,7 +1769,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "red lights clearly visible governing the junction ahead; wet",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537297367762404.jpg"
  },
  {
   "scene_token": "76b36918bd4c487581a4196ffd1b1434",
@@ -1581,7 +1778,8 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "pickup crossing the ego path at close range; red lights on the gantry; heavy rain",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-09-18-14-54-39-0400__CAM_FRONT__1537296991362404.jpg"
  },
  {
   "scene_token": "04e5f089805540a5a9e73c1b7c54ee8c",
@@ -1589,7 +1787,8 @@
   "action": "a)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is driving very fast.",
   "visual_evidence": "AMENDED: night with heavy lens flare and water on the glass; vehicle ahead at middle distance, state not establishable",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n015-2018-11-21-19-38-26+0800__CAM_FRONT__1542801252862460.jpg"
  },
  {
   "scene_token": "66be189398d74681a8b8db4b7dd52259",
@@ -1597,6 +1796,7 @@
   "action": "b)",
   "behavior": "The ego vehicle is going straight. The ego vehicle is not moving.",
   "visual_evidence": "amber/red lights on the gantry governing the ego lane; pedestrian stepping into the carriageway at the right",
-  "round": "round 2"
+  "round": "round 2",
+  "front": "data/drivelm/nuscenes/samples/CAM_FRONT/n008-2018-08-28-16-16-48-0400__CAM_FRONT__1535487700162404.jpg"
  }
 ]
