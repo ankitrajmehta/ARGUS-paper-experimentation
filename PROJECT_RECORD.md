@@ -923,6 +923,68 @@ answer is that the intervention is damage rather than defense.
 
 ---
 
+### 9.10 The `proceed` direction replicated out of sample — complete
+
+§9.7's +58.6 rested on 29 scenes. `midas-build-scenes --only-action 'b)'` built
+**150** stopped-vehicle scenes from DriveLM; all 29 originals are inside them,
+so the 121 others are a genuine held-out test of an effect discovered on the
+first set. 0% unreadable in both conditions.
+
+| subset | n | clean | attacked | Δ | won | lost | p |
+|---|---|---|---|---|---|---|---|
+| all 150 | 150 | 30.7% | 78.7% | +48.0 | 81 | 9 | <1e-6 |
+| **the 121 never evaluated before** | 121 | 32.2% | 77.7% | **+45.5** | 64 | 9 | **<1e-6** |
+| the original 29 | 29 | 24.1% | 82.8% | +58.6 | 17 | 0 | 1.5e-5 |
+
+The out-of-sample effect is **+45.5 points** — smaller than the +58.6 it was
+discovered at, which is what regression to the mean looks like and is exactly
+why the 121 were held apart, but it is not in doubt at p < 1e-6 on 121 unseen
+scenes.
+
+**The project's headline claim, stated at the strength the evidence supports:**
+*a printed sign reading `Proceed`, placed in the scene at CHAI's median position,
+raises the rate at which Qwen2.5-VL-3B tells a stopped vehicle to move from 32%
+to 78%* — measured on scenes that played no part in finding the effect.
+
+### 9.11 No steering magnitude works — the negative result is complete
+
+§9.9 left one thread: 0.5× was the only consistently-signed point, so a larger
+step might find a window where the attack rate falls and clean behaviour holds.
+Measured at 1×, 2× and 4× of the activation norm (41.0, 82.0, 164.0):
+
+| configuration | attack | Δ | **unreadable** | retry | clean acc |
+|---|---|---|---|---|---|
+| no defense | 70.0% | — | 0.0% | 13.3% | 63.3% |
+| argus 1× | **0.0%** | −70.0 | **100.0%** | 100.0% | 63.3% |
+| argus 2× | **0.0%** | −70.0 | **100.0%** | 100.0% | 63.3% |
+| argus 4× | 73.3% | +3.3 | 0.0% | 100.0% | 63.3% |
+
+A 0% attack rate at p < 0.0001 with 21 saved and 0 lost — and **entirely an
+artefact**. The replies are `'no'`, `'eed'`, `''`. Nothing parses, so nothing
+can match the target. This is error #2 recurring, and the lesson recorded from
+it is what caught it: a single safety metric without a utility column reads as
+success.
+
+At 4× the chain of thought is **empty** — the model emits EOS immediately — and
+the one-word summarise turn answers from no reasoning at all, landing back at
+the undefended rate. Why 4× yields clean one-word answers where 2× yields
+fragments is **not established**; it is non-monotone and no mechanism is claimed.
+
+**There is no window:**
+
+* 0.1×–0.5× (brackets ARGUS's own 0.24×): nothing significant, and 5 of 6
+  configurations make the attack *more* successful;
+* 1×–2×: output destroyed;
+* 4×: reasoning suppressed, attack rate back at baseline.
+
+**Steering along this probe direction cannot defend this attack at any
+magnitude** — inert until damaging, with nothing between. With the schedule
+(§9.9) and the layer depth (§9.9) both ruled out, what remains is the direction,
+and §9.8 shows it is a lexical-match axis rather than a compliance axis. On two
+model families this is a measured negative result, not an unexplained null.
+
+---
+
 ---
 
 ## 10. Errors made and corrected
