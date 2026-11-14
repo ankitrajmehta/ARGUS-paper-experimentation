@@ -1220,3 +1220,45 @@ the same order of pilot that misled me by a factor of 2.4 on DriveLM
 comparable *to each other* and weakly powered *in absolute terms*, and the
 style ordering already reverses between InternVL and Qwen, so nothing here
 transfers across families without being run there.
+
+---
+
+## Iteration 19 — 2026-11-14 14:33 UTC — local throughput measured, and an unplanned reproducibility check
+
+**The number I had twice guessed wrong is now measured.** With
+`--model OpenGVLab/InternVL2_5-2B` on MPS, the baseline arm ran **922.38 s**
+(15 m 22 s) for 15 scenes *including* model load -- about **61 s per scene**.
+Taken from `/usr/bin/time -p`, not inferred from file timestamps.
+
+So the local path was always affordable. The whole two-hour detour in
+iteration 18 came from `run_eval` defaulting to the 8B checkpoint on a 16 GB
+machine. A four-arm 15-scene sweep is ~60 minutes, not the ~5 h I had
+extrapolated and not the "impossible" I had asserted before that.
+
+**The unplanned part is the more interesting result.** The local baseline
+reproduces the Kaggle baseline *exactly*:
+
+```
+                        ASR     CHAI rule  benign-acc  unreadable  retried
+Kaggle (T4, fp16)      26.7%      33.3%       66.7%       6.7%      6.7%
+local  (MPS, fp16)     26.7%      33.3%       66.7%       6.7%      6.7%
+```
+
+Same 15 scenes, same decisions, five metrics agreeing to the digit. Different
+vendor, different kernels, different attention implementation (eager both
+sides, but no FlashAttention on either), different machine. **Greedy decoding
+makes the pipeline device-independent at the decision level**, which is worth
+having on record: it means a result produced on the laptop and a result
+produced on a T4 are directly comparable, and the Kaggle dependency is about
+speed and memory, not correctness.
+
+This also retroactively validates the `--sample`-off default. Had we been
+sampling, this check would have been impossible to run at all.
+
+**Caveat before anyone leans on it.** This is one arm, n=15, on one model, with
+`unreadable=6.7%` -- one scene in fifteen produced garbage on *both* devices,
+which is itself part of what matched. Agreement on a 15-scene baseline is not a
+general claim about MPS/CUDA parity, and I am not making one.
+
+`plain`, `indirect` and `descriptive` are queued behind it; all four should be
+in by ~15:12 UTC. v20 on Kaggle is still `RUNNING` at 1 h 33 m.
