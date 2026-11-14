@@ -1144,7 +1144,7 @@ probe side of that question was settled offline in iteration 16.
 
 ---
 
-## Iteration 18 — 2026-11-14 13:00 UTC — the queue cleared, and a local path priced
+## Iteration 18 — 2026-11-14 13:00 UTC — the queue cleared, and a local path mis-priced
 
 **v20 is `RUNNING`.** It sat `QUEUED` for **3 h 09 m** (pushed 09:51 UTC, started
 some time before 13:00). So iteration 17's reading was right: T4 contention, not
@@ -1158,28 +1158,49 @@ Iteration 17 closed with "the remaining question is behavioural and cannot be
 
 ```
 torch 2.14.1, MPS available, 16 GB unified memory
-InternVL2.5-2B already cached in ~/.cache/huggingface/hub
 DriveLM frames on disk (3.3 GB), scenes.json has 100 labelled scenes
 internvl.resolve_device() already prefers CUDA -> Apple Silicon -> CPU
 ```
 
-Every ingredient for a local run was already present, and the runner needed no
-new code. The claim was false as stated.
+The runner needed no new code, so the claim was false as stated: a local run is
+possible in principle.
 
-**But the price makes it nearly useless.** A 2-scene `--device mps` run on
-InternVL2.5-2B exceeded **20 minutes** including model load and MPS warmup.
-Even charging all fixed cost to the first scene, a properly powered four-arm
-design (baseline + plain + indirect + descriptive over 50 scenes = 200
-scene-runs) does not fit in the 24 h window. What *would* fit is the 15-scene
-like-for-like extension of the existing 2B style sweep -- 2 styles x 15 scenes,
-roughly 5 h.
+### CORRECTION -- the first version of this entry was wrong twice
 
-**So the honest conclusion is narrower than either claim.** The question was
-never GPU-*impossible*; it was GPU-*impractical at adequate power*. Those are
-different, and I had recorded the stronger one. Now that the T4 is free, the
-InternVL arm belongs on Kaggle as a stage rather than on this laptop, where it
-is ~50x faster and does not compete for the machine the rest of the work runs
-on.
+The paragraphs above originally also listed "InternVL2.5-2B already cached in
+`~/.cache/huggingface/hub`", and concluded from a 2-scene `--device mps` run
+that exceeded **20 minutes** that the local path was real but too slow, with an
+extrapolated ~5 h for a 15-scene sweep. **Both of those were wrong, and the
+second was wrong because of the first.**
+
+* The model was **not** cached. `ls ~/.cache/huggingface/hub` printed a
+  directory named `models--OpenGVLab--InternVL2_5-2B` and I read the name as
+  the model. The directory contained only `refs/main` -- no `blobs/`, no
+  `snapshots/`, 4.0 KB on disk. A stub, not a cache.
+* So the run never loaded a model. It ran **68 minutes** at 9% CPU with **56 MB
+  RSS** -- a 2B model in fp16 is ~4.4 GB resident, so the weights were never in
+  memory. It measured nothing about MPS throughput. The "20 minutes for 2
+  scenes" figure, and every number extrapolated from it, described a process
+  that was stuck before inference began.
+
+What it was stuck *on* is still unidentified; an explicit `snapshot_download`
+of the same repo starts immediately and pulls the weights at ~2 MB/s, and a
+single `config.json` fetch returns in 1.2 s, so the network and the repo are
+fine. The stall is somewhere in `from_pretrained`, not in the hub.
+
+**Two process errors worth naming, because both are repeats.** The first is
+error #2's shape again: I read a *proxy* for the thing I cared about (a
+directory name, an elapsed time) as the thing itself, and built a quantitative
+conclusion on it. The second: I piped a long-running diagnostic through
+`tail -30`, so when I killed the process the buffer died with it and the output
+that would have shown the hang immediately was lost. Long diagnostic runs get
+`-u` and a plain redirect from now on.
+
+**The standing conclusion is therefore weaker than both earlier versions.** I
+do not know what local throughput is. I know only that the obvious way of
+measuring it hangs before the model loads. Since the T4 is now free, this is
+not worth more time: the InternVL disjoint arm belongs on Kaggle as a stage,
+and the local path goes back to being untested rather than "priced".
 
 **One caveat to carry into the comparison.** The existing InternVL2.5-2B style
 sweep is `n=15` on CHAI's own train split with CHAI's labels -- baseline 26.7%,
