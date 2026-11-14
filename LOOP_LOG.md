@@ -822,3 +822,42 @@ moved to the shared setup cell, which is where it belonged once two stages
 needed it.
 
 88 tests passing.
+
+---
+
+## Iteration 12 — 2026-11-14 03:45 UTC — curated record caught up
+
+v18 at 1 h of ~3.5 h. Nothing to decide, so `PROJECT_RECORD.md` now carries the
+last four iterations properly -- it is the document a supervisor reads, and it
+was four substantial findings behind. 918 -> ~1130 lines.
+
+New sections: **9.6** second model family at n=100 with paired significance,
+**9.7** the directional split, **9.8** the probe-validity diagnostics, **9.9**
+the ARGUS steering result including the gate's 100%-vs-0% separation.
+
+**Four rows added to the errors table**, two of them predictions I recorded
+before measuring and which were then refuted:
+
+* *#15* -- predicted the gate would fire on benign signage, from the probe
+  reaching 89.7% on attack-vs-benign-text after one decoder block. It fires on
+  100% of attacked frames and 0% of benign ones. The inference about what the
+  probe keys on was sound; the conclusion that it therefore could not
+  discriminate did not follow.
+* *#16* -- predicted the attack would work in the cautious `STOP` direction.
+  Exactly inverted.
+
+Both are in the record because they were written down first. Two code defects
+also added: the Qwen layer-offset bug (#13), which would have steered a
+neighbouring layer with no error anywhere, and the `fit-defense` crash (#14),
+caught by pre-flighting on synthetic activations before the real sweeps existed.
+
+**Open items rewritten.** Three closed by this run -- scene count beyond 23,
+legitimate-instruction controls, second model family -- and one hypothesis
+explicitly *ruled out* rather than left open: the ARGUS schedule as the
+explanation for section 8.
+
+The new top item is **probe validity**, which is now the real obstacle. The
+steering direction is fitted on a label that a clean-frame control already
+predicts at 84%, against an attack wording that is literally the target action
+word. Fixing that needs attack wordings disjoint from the answer vocabulary --
+a phrasing change, not more compute, and the most promising thing left to try.
