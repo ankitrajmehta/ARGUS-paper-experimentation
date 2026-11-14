@@ -171,6 +171,21 @@ def main(argv: list[str] | None = None) -> int:
         help="with --labels-from drivelm, keep scenes whose behaviour is "
         "neither clearly moving nor clearly stopped instead of dropping them",
     )
+    parser.add_argument(
+        "--only-action", choices=["a)", "b)"], default=None,
+        help="keep only scenes with this benign action, i.e. only one attack "
+        "direction. 'b)' (the driver was stopped) gives scenes whose sign reads "
+        "Proceed -- the direction where the attack actually works: +58.6 points "
+        "on Qwen2.5-VL-3B against +11.3, not significant, for the other. "
+        "DriveLM's 100-scene default yields only 29 of these, which is the "
+        "binding limit on that number.",
+    )
+    parser.add_argument(
+        "--balance", action="store_true",
+        help="equal numbers of each benign action, so neither attack direction "
+        "dominates the aggregate. Stopped-vehicle frames are the scarcer kind, "
+        "so this caps the total at twice however many of those are found.",
+    )
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument(
         "--require-images",
@@ -196,9 +211,21 @@ def main(argv: list[str] | None = None) -> int:
     if args.placement == "sample" and not placements:
         raise SystemExit("--placement sample needs CHAI's scene files; run setup_vendor.sh")
 
+    if (args.only_action or args.balance) and args.labels_from != "drivelm":
+        raise SystemExit(
+            "--only-action and --balance select on the benign action, so they "
+            "need --labels-from drivelm; with labels left null there is nothing "
+            "to select on."
+        )
+
     records: list[dict] = []
     seen_scenes: dict[str, int] = {}
     skipped_missing_paths = skipped_missing_files = skipped_ambiguous = 0
+    skipped_direction = 0
+    # With --balance, each action gets half the budget. The odd scene goes to
+    # the scarcer class, which is always the stopped one.
+    per_action = {"a)": args.limit // 2, "b)": args.limit - args.limit // 2}
+    kept: dict[str, int] = {"a)": 0, "b)": 0}
 
     for scene_token, frame_token, frame in iter_key_frames(qa):
         if len(records) >= args.limit:
@@ -221,6 +248,13 @@ def main(argv: list[str] | None = None) -> int:
             if action is None and not args.keep_ambiguous:
                 skipped_ambiguous += 1
                 continue
+            if args.only_action and action != args.only_action:
+                skipped_direction += 1
+                continue
+            if args.balance and kept.get(action, 0) >= per_action.get(action, 0):
+                skipped_direction += 1
+                continue
+            kept[action] = kept.get(action, 0) + 1
 
         placement = rng.choice(placements) if placements else MEDIAN_PLACEMENT
         seen_scenes[scene_token] = seen_scenes.get(scene_token, 0) + 1
@@ -265,6 +299,13 @@ def main(argv: list[str] | None = None) -> int:
         if skipped_ambiguous:
             print(f"  dropped {skipped_ambiguous} scenes with ambiguous behaviour "
                   f"({', '.join(AMBIGUOUS_BEHAVIORS)})")
+        if skipped_direction:
+            why = (f"benign action is not {args.only_action}" if args.only_action
+                   else "that action's half of the budget was full")
+            print(f"  dropped {skipped_direction} scenes: {why}")
+        if len(records) < args.limit:
+            print(f"  NOTE: asked for {args.limit}, found {len(records)}. "
+                  "The QA file ran out of usable frames before the budget did.")
     print(f"  placement: {args.placement}")
     if skipped_missing_paths:
         print(f"  skipped {skipped_missing_paths} frames with incomplete camera paths")

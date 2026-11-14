@@ -9,6 +9,7 @@ rendered off-frame, a scene whose attack target equals its benign answer.
 from __future__ import annotations
 
 import json
+from collections import Counter
 import numpy as np
 import pytest
 
@@ -1604,3 +1605,88 @@ def test_qwen_activations_validates_the_readout():
     runner = QwenVLDriveLM.__new__(QwenVLDriveLM)
     with pytest.raises(ValueError, match="readout must be"):
         runner.activations([], answer="brake", readout="penultimate")
+
+
+def _fake_qa(tmp_path, n_moving=6, n_stopped=3, n_slow=2):
+    """A DriveLM-shaped QA file with a controlled behaviour mix."""
+    qa = {}
+    i = 0
+
+    def add(behaviour):
+        nonlocal i
+        i += 1
+        cams = ("CAM_FRONT", "CAM_FRONT_LEFT", "CAM_FRONT_RIGHT",
+                "CAM_BACK", "CAM_BACK_LEFT", "CAM_BACK_RIGHT")
+        qa[f"scene{i}"] = {"key_frames": {f"frame{i}": {
+            "image_paths": {c: f"../nuscenes/{c}/{i}.jpg" for c in cams},
+            "QA": {"behavior": [{"A": f"The ego vehicle {behaviour}."}]},
+        }}}
+
+    for _ in range(n_moving):
+        add("is going straight. The ego vehicle is driving with normal speed")
+    for _ in range(n_stopped):
+        add("is going straight. The ego vehicle is not moving")
+    for _ in range(n_slow):
+        add("is going straight. The ego vehicle is driving slowly")
+
+    path = tmp_path / "qa.json"
+    path.write_text(json.dumps(qa))
+    return path
+
+
+def test_build_scenes_can_select_one_attack_direction(tmp_path, capsys):
+    """The attack only works in one direction, so that subset must be buildable.
+
+    The sign's wording follows the target, which is the opposite of the benign
+    action -- so scenes whose driver was stopped ("b)") are the ones that get a
+    `Proceed` sign. Those are where the measured effect is (+58.6 points,
+    against +11.3 and not significant for the other direction), and DriveLM's
+    default 100-scene set contains only 29 of them.
+    """
+    from midas.cli import build_scenes
+
+    qa = _fake_qa(tmp_path, n_moving=6, n_stopped=3)
+    out = tmp_path / "only.json"
+    rc = build_scenes.main([
+        "--qa", str(qa), "--root", str(tmp_path), "--no-require-images",
+        "--limit", "50", "--labels-from", "drivelm",
+        "--only-action", "b)", "--out", str(out),
+    ])
+    assert rc == 0
+    records = json.loads(out.read_text())
+    assert len(records) == 3, "should find exactly the stopped-vehicle frames"
+    assert {r["correct_internvl"] for r in records} == {"b)"}
+
+    captured = capsys.readouterr().out
+    # Asking for more than exist must say so rather than look complete.
+    assert "asked for 50, found 3" in captured
+
+
+def test_build_scenes_balance_splits_the_directions(tmp_path):
+    """A balanced set stops the aggregate being dominated by one direction."""
+    from midas.cli import build_scenes
+
+    qa = _fake_qa(tmp_path, n_moving=20, n_stopped=20)
+    out = tmp_path / "balanced.json"
+    build_scenes.main([
+        "--qa", str(qa), "--root", str(tmp_path), "--no-require-images",
+        "--limit", "10", "--labels-from", "drivelm", "--balance",
+        "--out", str(out),
+    ])
+    records = json.loads(out.read_text())
+    counts = Counter(r["correct_internvl"] for r in records)
+    assert counts == {"a)": 5, "b)": 5}, counts
+
+
+def test_direction_selection_requires_drivelm_labels(tmp_path):
+    """With labels left null there is no action to select on."""
+    import pytest
+
+    from midas.cli import build_scenes
+
+    qa = _fake_qa(tmp_path)
+    with pytest.raises(SystemExit, match="labels-from drivelm"):
+        build_scenes.main([
+            "--qa", str(qa), "--root", str(tmp_path), "--no-require-images",
+            "--only-action", "b)", "--out", str(tmp_path / "x.json"),
+        ])

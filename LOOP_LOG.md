@@ -618,3 +618,43 @@ the steering numbers will be reported **both overall and by direction**, with th
 proceed subgroup flagged as indicative rather than conclusive. A confirmation run
 of the winning configuration on all 29 proceed-target scenes is the obvious
 follow-up.
+
+---
+
+## Iteration 9 — 2026-11-14 01:35 UTC — built the replication set for the direction that matters
+
+v17 at 4 h 32 m. Expected ~4.3 h of evaluation plus two defense fits and a layer
+sweep, so this is on schedule, not stuck.
+
+The +58.6 point result rests on **29 scenes**. That is the binding limit on the
+most important number in the project, and it is limited only by how the scene
+set was built -- DriveLM has plenty of stopped-vehicle frames, the 100-scene
+default just happened to catch 29 of them.
+
+So `midas-build-scenes` gained two options:
+
+* `--only-action b)` -- keep only scenes whose driver was **stopped**, i.e. the
+  ones that get a `Proceed` sign. 150 built, from 696 nuScenes scenes.
+* `--balance` -- equal numbers of each direction, so the aggregate is not
+  dominated by the direction where nothing happens. Worth having, because the
+  100-scene set's 71/29 split is why the headline read +25 instead of +58.
+
+Both refuse to run without `--labels-from drivelm`, since with labels left null
+there is no action to select on.
+
+**The new set overlaps the old deliberately, and usefully.** All 29 original
+`Proceed` scenes are in the 150, plus **121 entirely new ones**. So one run
+gives two things:
+
+* n = 29 -> 150 on the headline direction, a 5x improvement;
+* the 121 new scenes alone are a **disjoint out-of-sample replication** -- the
+  honest test, since the 29 are the scenes the finding was discovered on.
+
+Reporting both is the plan. Quoting only the 150 would be quoting a number
+partly fitted on itself.
+
+Also fixed a reporting gap while there: asking for more scenes than the QA file
+can supply used to print the smaller count with no comment, which looks like a
+complete set. It now says `NOTE: asked for 150, found N`.
+
+85 -> 88 tests.
