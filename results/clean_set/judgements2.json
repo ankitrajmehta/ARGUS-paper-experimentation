@@ -1238,5 +1238,45 @@
   "id": 247,
   "verdict": "b)",
   "evidence": "red lights clearly visible governing the ego approach; ego at the crosswalk"
+ },
+ {
+  "id": 248,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; cars parked both kerbs; traffic far off; wet"
+ },
+ {
+  "id": 249,
+  "verdict": "b)",
+  "evidence": "pedestrian crossing the ego path directly ahead at close range; red lights at the junction"
+ },
+ {
+  "id": 250,
+  "verdict": "b)",
+  "evidence": "boom barrier lowered across the ego path at the car park control point"
+ },
+ {
+  "id": 251,
+  "verdict": "unclear",
+  "evidence": "night, unlit campus road; lane only faintly visible and pedestrians at the left edge not resolvable"
+ },
+ {
+  "id": 252,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead under the footbridge; motorcycle far off; car stopped in the adjacent left lane"
+ },
+ {
+  "id": 253,
+  "verdict": "a)",
+  "evidence": "night but street-lit with lane markings clear; vehicle ahead at normal following distance; oncoming car on the far side"
+ },
+ {
+  "id": 254,
+  "verdict": "b)",
+  "evidence": "red light at close range governing the ego approach plus further reds; pedestrian crossing at the right"
+ },
+ {
+  "id": 255,
+  "verdict": "a)",
+  "evidence": "green signal governing; ego lane clear round the curve; works barriers off to the left"
  }
 ]
