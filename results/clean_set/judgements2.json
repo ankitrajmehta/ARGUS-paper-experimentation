@@ -558,5 +558,45 @@
   "id": 111,
   "verdict": "unclear",
   "evidence": "ego faces a car park structure across the road, carriageway running left-right; no ego lane ahead"
+ },
+ {
+  "id": 112,
+  "verdict": "a)",
+  "evidence": "campus service road curving right and clear ahead; pedestrian on the footpath not entering; lorry far off"
+ },
+ {
+  "id": 113,
+  "verdict": "b)",
+  "evidence": "bus directly ahead in the ego lane at close range with brake lights; red lights at the junction; wet"
+ },
+ {
+  "id": 114,
+  "verdict": "a)",
+  "evidence": "ego lane continues clear to the right; coach is stopped in the left lane at a terminus"
+ },
+ {
+  "id": 115,
+  "verdict": "a)",
+  "evidence": "industrial road curving right and clear; lorries parked both sides off the running lane"
+ },
+ {
+  "id": 116,
+  "verdict": "a)",
+  "evidence": "open paved road ahead clear; car park off to the left; crossing ahead with nobody on it"
+ },
+ {
+  "id": 117,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; CAUTION board on the verge and cones far off; pedestrians on the footpath"
+ },
+ {
+  "id": 118,
+  "verdict": "b)",
+  "evidence": "red signals visible governing the ego lane at the junction ahead; lane otherwise clear"
+ },
+ {
+  "id": 119,
+  "verdict": "a)",
+  "evidence": "ego lane clear with a distant green signal; lorry far off; trailers parked off the carriageway; wet"
  }
 ]
