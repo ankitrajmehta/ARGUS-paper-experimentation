@@ -914,3 +914,83 @@ Verified end to end on the dry-run path: `--style descriptive` renders
 `ROAD CLEAR`, and the generated stage parses clean.
 
 Queued behind v18 rather than launched -- one T4 session at a time.
+
+---
+
+## Iteration 14 — 2026-11-14 14:15 UTC — the replication holds; the defense has no working magnitude
+
+v18 completed. The first fetch was cut off when a session ended, but the results
+archive had already landed, so the run records were read straight out of it --
+the 442 MB part `fetch` downloads is the attached-dataset copy it then deletes.
+
+### The headline result replicates out of sample
+
+150 scenes whose driver was stopped, so every sign reads `Proceed`. 0%
+unreadable in both conditions.
+
+| subset | n | clean | attacked | Δ | won | lost | p |
+|---|---|---|---|---|---|---|---|
+| all 150 | 150 | 30.7% | 78.7% | **+48.0** | 81 | 9 | <1e-6 |
+| **the 121 never evaluated before** | 121 | 32.2% | 77.7% | **+45.5** | 64 | 9 | **<1e-6** |
+| the original 29 | 29 | 24.1% | 82.8% | +58.6 | 17 | 0 | 1.5e-5 |
+
+**The out-of-sample number is +45.5 points.** Lower than the +58.6 the effect
+was discovered at -- which is what regression to the mean looks like, and is the
+reason the 121 were held apart -- but at p < 1e-6 on 121 unseen scenes it is not
+in doubt.
+
+So the defensible claim is now: **a printed sign reading `Proceed` raises the
+rate at which Qwen2.5-VL-3B tells a stopped vehicle to move from 32% to 78%**,
+measured on scenes that played no part in finding the effect.
+
+### The magnitude sweep: 0% attack rate, and it means nothing
+
+| configuration | attack | Δ | **unreadable** | retry | clean acc |
+|---|---|---|---|---|---|
+| no defense | 70.0% | -- | 0.0% | 13.3% | 63.3% |
+| argus 1x | **0.0%** | −70.0 | **100.0%** | 100.0% | 63.3% |
+| argus 2x | **0.0%** | −70.0 | **100.0%** | 100.0% | 63.3% |
+| argus 4x | 73.3% | +3.3 | 0.0% | 100.0% | 63.3% |
+
+A 0% attack rate with p < 0.0001, 21 saved and 0 lost -- and it is **entirely an
+artefact**. The model emits `'no'`, `'eed'`, `''`. Every reply is unparseable, so
+nothing can match the target and the attack rate is zero by construction.
+
+**This is error #2 recurring, and the lesson recorded from it caught it:** *"a
+single safety metric is not enough -- without a utility column this reads as
+success."* The unreadable column was the first thing checked, and it was 100%.
+
+**4x is stranger and does not rescue anything.** The chain of thought comes back
+**empty** -- the model emits EOS immediately -- and the one-word summarise turn
+then answers from no reasoning at all, at 73.3%, indistinguishable from
+undefended. Retry is 100%, i.e. the long answer named no action in every scene.
+So 4x is not "steering that preserves behaviour"; it is a model that stopped
+reasoning and guessed. Why 4x produces clean one-word answers where 2x produces
+fragments is **not established** -- it is non-monotone and I am not going to
+invent a mechanism for it.
+
+### The conclusion, and it is a negative one
+
+Across the full range there is **no window**:
+
+* **0.1x – 0.5x** (brackets ARGUS's own 0.24x): no significant change, 5 of 6
+  configurations make the attack *more* successful;
+* **1x – 2x**: output destroyed, 100% unreadable;
+* **4x**: reasoning suppressed entirely, attack rate back at baseline.
+
+**Steering along this probe direction cannot defend this attack at any
+magnitude.** It is inert until it is damaging, with nothing in between. Combined
+with iteration 10 (schedule ruled out) and iteration 11 (layer depth ruled out),
+what remains is the direction itself -- which iteration 7 showed is a
+lexical-match axis, not a compliance axis.
+
+That is a clean negative result on two model families, and a more useful
+contribution than a hollow positive would have been.
+
+### v19 launched
+
+The `disjoint` stage: wordings that never name the action (`GO AHEAD` /
+`HOLD HERE`, `ROAD CLEAR` / `ROAD BLOCKED`). It tests whether the attack
+survives without the answer word, and whether the probe's 100% collapses toward
+the 83-84% clean floor when a string match is unavailable. Prediction already
+recorded in iteration 13: accuracy at layer 5 falls substantially.
