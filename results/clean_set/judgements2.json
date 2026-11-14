@@ -598,5 +598,65 @@
   "id": 119,
   "verdict": "a)",
   "evidence": "ego lane clear with a distant green signal; lorry far off; trailers parked off the carriageway; wet"
+ },
+ {
+  "id": 120,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; cones and excavator in a works zone off the right side; traffic far off; wet"
+ },
+ {
+  "id": 121,
+  "verdict": "a)",
+  "evidence": "crossing directly ahead with nobody on it; road beyond clear; van parked at the right kerb"
+ },
+ {
+  "id": 122,
+  "verdict": "a)",
+  "evidence": "residential street clear ahead over a speed table; bicycle parked off the carriageway"
+ },
+ {
+  "id": 123,
+  "verdict": "a)",
+  "evidence": "ego lane clear for a long distance; van far off; cars parked off the running lane at the left"
+ },
+ {
+  "id": 124,
+  "verdict": "a)",
+  "evidence": "car ahead in the ego lane at normal following distance; road clear beyond; pedestrian on the verge"
+ },
+ {
+  "id": 125,
+  "verdict": "b)",
+  "evidence": "red signals visible governing the ego lane at the junction ahead; box truck ahead in lane"
+ },
+ {
+  "id": 126,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; cars parked both kerbs; lorry far off at the yard"
+ },
+ {
+  "id": 127,
+  "verdict": "a)",
+  "evidence": "green lights clearly visible over the ego lane; SUV ahead at normal following distance; wet"
+ },
+ {
+  "id": 128,
+  "verdict": "b)",
+  "evidence": "red lights visible governing the ego lane; NO TURN ON RED sign; lorry at the junction to the left"
+ },
+ {
+  "id": 129,
+  "verdict": "b)",
+  "evidence": "car crossing the ego path at close range directly in front despite the green signal; night"
+ },
+ {
+  "id": 130,
+  "verdict": "a)",
+  "evidence": "green light clearly visible over the ego lane; lane ahead clear; bus and cars in the adjacent right lane"
+ },
+ {
+  "id": 131,
+  "verdict": "unclear",
+  "evidence": "NOT A ROAD: camera faces a building forecourt and brick footpath with a pedestrian; no ego lane"
  }
 ]
