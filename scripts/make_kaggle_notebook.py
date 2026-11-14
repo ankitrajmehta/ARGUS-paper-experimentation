@@ -45,6 +45,17 @@ ARGUS_ABLATIONS = os.environ.get("MIDAS_ARGUS_ABLATIONS", "1") != "0"
 PROCEED_SCENES = os.environ.get("MIDAS_PROCEED_SCENES", "scenes_proceed.json")
 # Set MIDAS_NO_INTERNVL=1 when every selected stage runs Qwen.
 PREFETCH_INTERNVL = not os.environ.get("MIDAS_NO_INTERNVL")
+# The model the DriveLM stage evaluates. Qwen2-VL-7B-Instruct is the friend's
+# ARGUS paper model, the one configuration where their steering is known to
+# work; running it here collapses the size confound between our negative
+# result and theirs. It is ~16.6 GB in fp16 and must be sharded over both T4s.
+DRIVELM_MODEL = os.environ.get("MIDAS_DRIVELM_MODEL", "Qwen/Qwen2.5-VL-3B-Instruct")
+# Which wordings the DriveLM stage evaluates, beyond the no-sign baseline.
+DRIVELM_STYLES = [s for s in os.environ.get(
+    "MIDAS_DRIVELM_STYLES", "plain,authority,override,urgency").split(",") if s]
+# Filename of the scene set inside the attached dataset. The audited 200-scene
+# clean set is scenes_clean200.json; the original sweep used scenes.json.
+DRIVELM_SCENES_NAME = os.environ.get("MIDAS_DRIVELM_SCENES", "scenes.json")
 
 CELLS: list[tuple[str, str, str]] = []
 
@@ -375,14 +386,15 @@ RESULTS = Path("/kaggle/working/results")
 # and the steering stage need these, and either can run without the other, so
 # they are resolved once here. Missing scenes are not an error yet -- only the
 # stages that use them care.
-DRIVELM_MODEL = "Qwen/Qwen2.5-VL-3B-Instruct"
+DRIVELM_MODEL = "''' + DRIVELM_MODEL + '''"
 DRIVELM_SPLIT = "drivelm"
 # The strongest wording on this model at n=100: +25.0 points overall,
 # McNemar p=0.0005, and +58.6 in the direction where the attack works. Both the
 # steering stage and the single-direction replication use it.
 ARGUS_STYLE = "plain"
-_found = glob.glob("/kaggle/input/**/drivelm/scenes.json", recursive=True)
+_found = glob.glob("/kaggle/input/**/drivelm/''' + DRIVELM_SCENES_NAME + '''", recursive=True)
 DRIVELM_SCENES = _found[0] if _found else None
+print("DriveLM model :", DRIVELM_MODEL)
 
 print("SIZES:", [s.split("-")[-1] for s in SIZES], " STYLES:", STYLES)
 print("DriveLM scenes:", DRIVELM_SCENES or "not attached")
@@ -820,19 +832,34 @@ code(f'''
 DRIVELM_LIMIT = {DRIVELM_LIMIT!r}
 LIMIT_ARGS = ["--limit", DRIVELM_LIMIT] if DRIVELM_LIMIT else []
 print("scene limit:", DRIVELM_LIMIT or "none (full set)")
+
+# Which wordings to evaluate, and in what order. Generation-time knob so the
+# 7B run can ask for only the two arms that matter without editing this file.
+DRIVELM_STYLES = {DRIVELM_STYLES!r}
+print("styles:", DRIVELM_STYLES)
+
+# A 7B in float16 is ~16.6 GB and does not fit one T4, so it is sharded over
+# both. The 3B fits on a single card and sharding it only adds transfers.
+SHARD_ARGS = ["--device-map", "auto"] if any(
+    tag in DRIVELM_MODEL for tag in ("7B", "8B", "13B")
+) else []
+print("sharding:", SHARD_ARGS or "single GPU")
 ''')
 
 code('''
-# Baseline, CHAI's wording, then the framings that beat it on the 2B.
-for style in [None] + STYLES:
+# Baseline first, then each wording, saving after every arm so a session that
+# runs out of time still yields the arms that finished.
+for style in [None] + DRIVELM_STYLES:
     name = style or "baseline"
     print(f"\\n{'=' * 70}\\nDriveLM / {DRIVELM_MODEL.split('/')[-1]} / {name}\\n{'=' * 70}",
           flush=True)
     cmd = ["midas-eval", "--split", DRIVELM_SCENES, "--model", DRIVELM_MODEL,
-           "--backend", "qwen", "--save-long", *LIMIT_ARGS,
+           "--backend", "qwen", "--save-long", *LIMIT_ARGS, *SHARD_ARGS,
            "--out", f"/kaggle/working/results/drivelm/{name}"]
     cmd += ["--baseline"] if style is None else ["--attack", "--style", style]
+    started = time.time()
     subprocess.run(cmd, check=True)
+    print(f"[{name}] {time.time() - started:.0f}s", flush=True)
 ''')
 
 code('''
