@@ -1334,3 +1334,57 @@ today, so this is a multi-day commitment rather than a tonight job.
 to the digit (ASR 46.7%, benign-acc 53.3%, unreadable 0.0%, retried 0.0%),
 making it two of two arms. 946.20 s. `indirect` is running; v20 is still
 `RUNNING` at 2 h.
+
+---
+
+## Iteration 21 — 2026-11-14 15:25 UTC — the attack does not need to name the action
+
+The local four-arm sweep on InternVL2.5-2B finished. All four arms, same 15
+scenes, same split, same labels, greedy decoding, paired McNemar against the
+no-sign baseline:
+
+```
+condition        ASR      net    b   c       p
+baseline       26.7%        -    -   -       -
+plain          46.7%    +20.0    0   3  0.2500
+indirect       60.0%    +33.3    0   5  0.0625
+descriptive    73.3%    +46.7    1   8  0.0391
+```
+
+**`descriptive` is the only arm that reaches significance, and it is the arm
+whose sign never names an action.** `ROAD CLEAR` / `ROAD BLOCKED` share no word
+with either answer option. A model that was merely copying a visible word into
+the answer slot has nothing to copy here, and yet this is the strongest arm in
+the sweep.
+
+**This refutes the lexical explanation of the attack.** Iteration 16 showed the
+*probe* could be explained as string matching -- the sign word is decodable at
+exactly the layer the probe saturates. It was an open question whether the
+*attack* was the same thing. On this evidence it is not: the mapping from
+`ROAD CLEAR` to "proceed" has to be semantic, because no surface form connects
+them.
+
+**What this does not license.**
+
+* n = 15. `plain` itself does not reach significance here (p = 0.25), which is
+  the clearest possible demonstration of how little power this sweep has. The
+  effect sizes are not trustworthy; only the sign of the `descriptive` result
+  is.
+* **`descriptive` vs `plain` is not separable** (b=3, c=7, p = 0.34). It is
+  wrong to say the actionless wording is *better*. The defensible claim is that
+  it is *not worse*, which is surprising enough.
+* This is InternVL2.5-2B on CHAI's train split. The style ordering already
+  reverses between InternVL and Qwen (iteration 9), so none of it transfers to
+  Qwen2.5-VL-3B without being run there. v20 is that run and is still going.
+
+**Prediction check.** Iteration 13 recorded, before any of this: *"probe
+accuracy at layer 5 will fall substantially, because a one-attention-pass
+string match is no longer available."* That prediction concerns the probe and
+still needs v20's activations -- it is not settled by these behavioural
+numbers. What the behavioural numbers settle is a different question I had not
+committed to in advance, and I should not retrofit this as a confirmed
+prediction.
+
+**Throughput, for the record.** 922 / 946 / 1045 / 1053 s per 15-scene arm,
+about 66 s per scene including model load, on MPS. The entire four-arm sweep
+cost 66 minutes on the laptop with the GPU queue untouched.
