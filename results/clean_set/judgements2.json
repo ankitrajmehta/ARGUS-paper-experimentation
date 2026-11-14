@@ -918,5 +918,65 @@
   "id": 183,
   "verdict": "b)",
   "evidence": "car directly ahead in the ego lane at close range with brake lights lit; red lights at the junction ahead"
+ },
+ {
+  "id": 184,
+  "verdict": "b)",
+  "evidence": "SUV directly ahead in the ego lane at close range with brake lights lit; red lights governing; pedestrians crossing left; wet"
+ },
+ {
+  "id": 185,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead over the hump; Mercedes is oncoming on the opposite carriageway"
+ },
+ {
+  "id": 186,
+  "verdict": "a)",
+  "evidence": "ego lane passable; cars at distance and in the adjacent lane; X-ING marking with nobody on it"
+ },
+ {
+  "id": 187,
+  "verdict": "b)",
+  "evidence": "bus occupying the lane at close range and a hi-vis worker standing in the carriageway ahead"
+ },
+ {
+  "id": 188,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; oncoming traffic on the far carriageway; heavy rain but lane visible"
+ },
+ {
+  "id": 189,
+  "verdict": "a)",
+  "evidence": "night but well lit; green signal for the ego approach and the ego lane ahead clear; queue is in the left lanes"
+ },
+ {
+  "id": 190,
+  "verdict": "a)",
+  "evidence": "campus roadway clear ahead; vehicles parked in marked bays off the running lane both sides"
+ },
+ {
+  "id": 191,
+  "verdict": "b)",
+  "evidence": "car directly ahead in the ego lane at close range with brake lights lit; night, wet"
+ },
+ {
+  "id": 192,
+  "verdict": "a)",
+  "evidence": "ego lane passable; cars ahead at normal following distance; works cones behind the kerb; crossing clear"
+ },
+ {
+  "id": 193,
+  "verdict": "b)",
+  "evidence": "Jeep crossing the ego path left-to-right at close range with a second car behind it; wet"
+ },
+ {
+  "id": 194,
+  "verdict": "b)",
+  "evidence": "red light at close range governing the ego approach plus further reds at the junction"
+ },
+ {
+  "id": 195,
+  "verdict": "b)",
+  "evidence": "two articulated lorries crossing the ego path at close range; red lights governing the junction"
  }
 ]
