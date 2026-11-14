@@ -1388,3 +1388,64 @@ prediction.
 **Throughput, for the record.** 922 / 946 / 1045 / 1053 s per 15-scene arm,
 about 66 s per scene including model load, on MPS. The entire four-arm sweep
 cost 66 minutes on the laptop with the GPU queue untouched.
+
+---
+
+## Iteration 22 — 2026-11-14 16:10 UTC — how good are DriveLM's labels, measured
+
+The user asked whether the labels can be trusted. Rather than assert, I ran a
+blind audit. Criteria were written and **committed first** (`3d546a6`, 21:05
+local) so the timestamp is checkable against the judgement file; 60 frames
+were sampled balanced 30/30 by DriveLM label, shuffled, with labels held in a
+separate file that stayed closed until all 60 verdicts were recorded.
+
+```
+decidable from CAM_FRONT alone   50/60  = 83.3%   95% CI [72.0, 90.7]
+agreement with DriveLM on those  46/50  = 92.0%   95% CI [81.2, 96.8]
+implied usable fraction                   76.7%   ~2515 of the 3281 labelled frames
+```
+
+**The 10 undecidable frames are not noise, they are categories.** Six are night
+scenes where the lane beyond the headlights cannot be established. Two are not
+road scenes at all -- one is a building forecourt with a pedestrian, one is a
+car park aisle. Two are middle-distance cases where a vehicle is in the lane
+but neither clear nor dangerously close.
+
+**All four disagreements have the same cause, and it is the one predicted.**
+
+```
+id 10, 14   me a) proceed | DriveLM b)   "the ego vehicle is not moving"
+            green signal, lane clear -- the car was stopped but need not have been
+
+id 17, 43   me b) brake   | DriveLM a)   "the ego vehicle is driving fast"
+            red light ahead / pedestrian crossing the ego path
+```
+
+So the disagreements are **not** random: in two the recorded driver was
+stopped with no reason visible, and in two the recorded driver was moving fast
+into a visible hazard. This is exactly the failure mode flagged earlier --
+**DriveLM's behaviour sentence records what the human driver did, not what was
+correct.** Where the human's behaviour lags or leads the road situation, the
+derived label is wrong as a *decision* label even though it is right as a
+*description*.
+
+**What this licenses.** 92% is good, and it means the headline attack results
+are not resting on garbage. It also means roughly **1 label in 12 is wrong in
+the decision sense**, which is worth stating whenever a result turns on a
+handful of flipped scenes.
+
+**What it does not license.** The judge here is a vision-language model and
+the experiment studies vision-language models. This measures *agreement
+between two independent sources*, not ground truth, and the clean set must be
+described that way. `results/clean_set/clean_frames.json` holds the 46
+surviving frames with the visual evidence recorded per frame so a human can
+check the reasoning rather than only the verdict. A human spot-check is
+outstanding and until it happens every number above carries that caveat.
+
+**Also measured, for the data-quality question.** Images are native nuScenes
+1600x900 RGB, ~115 KB JPEG, which is fine. The waste is elsewhere: each key
+frame carries about **79 DriveLM questions** (35 perception, 26 prediction, 17
+planning, 1 behaviour) and the pipeline uses **one**. And the attack sign sits
+at **position (450, 1050) scale 2.0 in all 250 scenes** -- never moved, never
+rescaled, pasted over whatever happens to be there. Whether the attack
+survives moving the sign is untested and is the cheapest remaining experiment.
