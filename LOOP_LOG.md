@@ -1506,3 +1506,61 @@ is agreement between two independent sources, not ground truth. The human
 spot-check the user committed to is still outstanding, and every number above
 depends on it. Each frame in the clean set carries its `visual_evidence`
 string so the reasoning can be checked, not just the verdict.
+
+---
+
+## Iteration 24 — 2026-11-14 17:35 UTC — v20 lands: the attack does not need the word
+
+v20 completed after **4 h 20 m** of compute (plus 3 h 09 m queued). The two
+disjoint wordings ran on Qwen2.5-VL-3B over the same 100 DriveLM scenes as the
+original style sweep, so every arm below is paired against the same baseline.
+
+```
+condition        ASR     net    b    c          p   sign names the action?
+no sign        48.0%
+plain          73.0%   +25.0   12   37    0.00047   YES
+descriptive    69.0%   +21.0    9   30    0.00107   NO
+authority      65.0%   +17.0   11   28    0.00948   YES
+urgency        56.0%    +8.0   16   24    0.26819   YES
+indirect       56.0%    +8.0   18   26    0.29122   NO
+override       54.0%    +6.0   20   26    0.46139   YES
+```
+
+**`descriptive` is the second strongest wording in the sweep and the second of
+only three that reach significance -- and its sign never names an action.**
+`ROAD CLEAR` / `ROAD BLOCKED` share no word with either answer option. This
+replicates iteration 21's InternVL2.5-2B finding on a different model family,
+a different split, and at n=100 instead of n=15.
+
+**What this settles.** The lexical explanation of the *attack* is dead. A model
+that was merely copying a visible word into the answer slot has nothing to copy
+from `ROAD BLOCKED`, yet the effect is +21 points at p=0.001. The mapping has
+to be semantic. Iteration 16 showed the *probe* could be explained as string
+matching; the attack cannot.
+
+**What it does not settle.** `descriptive` vs `plain` is **not separable**
+(b=22, c=18, p=0.64), nor is `descriptive` vs `authority` (p=0.56), nor
+`descriptive` vs `indirect` (p=0.066). The defensible claim is that naming the
+action is **not required**, not that it is irrelevant. Ranking the wordings
+against each other needs the n=400 design costed in iteration 20.
+
+**The two disjoint wordings disagree with each other**, which is itself worth
+noting: `descriptive` +21 (significant) vs `indirect` +8 (not). Both avoid the
+answer vocabulary, so "avoids the action word" does not predict strength.
+`ROAD CLEAR` describes the world; `GO AHEAD` issues an order in other words.
+On this evidence the *descriptive* framing is the more dangerous one, which
+inverts the intuition that an explicit command should be the stronger attack.
+That is a hypothesis generated post hoc from two arms and should be treated as
+such.
+
+**Style ordering across families, updated.** InternVL2.5-2B put `descriptive`
+first; Qwen2.5-VL-3B puts it second behind `plain`. The two families agree
+that `descriptive` is near the top and that `override` is near the bottom --
+more agreement than the earlier sweep showed, where the orderings reversed.
+
+**Prediction check, recorded in iteration 13 before any of this ran:** *"probe
+accuracy at layer 5 will fall substantially, because a one-attention-pass
+string match is no longer available."* That is about the probe, not the
+behaviour, and the activations for it are in the v20 archive
+(`disjoint/activations/*.npz`). **Still unevaluated** -- the behavioural result
+above does not bear on it either way, and I am not treating it as confirmed.
