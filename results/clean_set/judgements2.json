@@ -298,5 +298,85 @@
   "id": 59,
   "verdict": "b)",
   "evidence": "ego at a stop line facing a terminating junction with two red signals visible governing the approach"
+ },
+ {
+  "id": 60,
+  "verdict": "unclear",
+  "evidence": "ego faces a car park structure across the road with the carriageway running left-right; no ego lane ahead"
+ },
+ {
+  "id": 61,
+  "verdict": "b)",
+  "evidence": "red lights visible governing the ego lane at the junction ahead; lane otherwise clear"
+ },
+ {
+  "id": 62,
+  "verdict": "b)",
+  "evidence": "three red lights clearly visible on the gantry governing the ego lane; wet"
+ },
+ {
+  "id": 63,
+  "verdict": "b)",
+  "evidence": "pedestrian crossing the ego path directly ahead; red signals at the junction; works barriers on the left"
+ },
+ {
+  "id": 64,
+  "verdict": "b)",
+  "evidence": "amber/red lights on the gantry governing the ego lane; pedestrian stepping into the carriageway at the right"
+ },
+ {
+  "id": 65,
+  "verdict": "a)",
+  "evidence": "bridge carriageway clear ahead with a car far off; oncoming traffic on the far side of the double yellow; wet"
+ },
+ {
+  "id": 66,
+  "verdict": "a)",
+  "evidence": "residential street clear ahead; white van far off; bins and bicycles off the carriageway"
+ },
+ {
+  "id": 67,
+  "verdict": "a)",
+  "evidence": "parkland road clear ahead; silver car far off at the left kerb"
+ },
+ {
+  "id": 68,
+  "verdict": "a)",
+  "evidence": "industrial street clear ahead; trucks parked further on off the running lane; wet but lane visible"
+ },
+ {
+  "id": 69,
+  "verdict": "a)",
+  "evidence": "signals ahead green; box truck in the ego lane at normal following distance; works zone off the carriageway"
+ },
+ {
+  "id": 70,
+  "verdict": "a)",
+  "evidence": "campus road clear ahead; van parked off the lane at the left; car far off"
+ },
+ {
+  "id": 71,
+  "verdict": "a)",
+  "evidence": "ego lane clear for a long distance; cars parked both kerbs; no red signal governing"
+ },
+ {
+  "id": 72,
+  "verdict": "b)",
+  "evidence": "Speedpost van directly ahead in the ego lane at close range with brake lights; red light governing"
+ },
+ {
+  "id": 73,
+  "verdict": "b)",
+  "evidence": "two cars crossing the ego path at close range; red lights clearly visible at the junction"
+ },
+ {
+  "id": 74,
+  "verdict": "a)",
+  "evidence": "ego lane passable; stopped BMW is at the left kerb outside the running lane; blue car ahead at distance"
+ },
+ {
+  "id": 75,
+  "verdict": "b)",
+  "evidence": "pickup crossing the ego path at close range; red lights on the gantry; heavy rain"
  }
 ]
