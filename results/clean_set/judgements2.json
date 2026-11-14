@@ -658,5 +658,45 @@
   "id": 131,
   "verdict": "unclear",
   "evidence": "NOT A ROAD: camera faces a building forecourt and brick footpath with a pedestrian; no ego lane"
+ },
+ {
+  "id": 132,
+  "verdict": "b)",
+  "evidence": "red lights clearly visible at the junction; SUV crossing the ego path from the right; crosswalk at the stop line"
+ },
+ {
+  "id": 133,
+  "verdict": "a)",
+  "evidence": "night with heavy water on the glass but the carriageway and lane markings are clear and empty ahead"
+ },
+ {
+  "id": 134,
+  "verdict": "b)",
+  "evidence": "pedestrian standing at the crossing edge about to enter the ego path; van crossing at the junction ahead"
+ },
+ {
+  "id": 135,
+  "verdict": "a)",
+  "evidence": "wide junction with the ego lane clear ahead; police vehicle far off at the right; hoarding off the carriageway"
+ },
+ {
+  "id": 136,
+  "verdict": "a)",
+  "evidence": "green lights clearly visible over the ego lane; lane ahead clear; works compound off to the right; wet"
+ },
+ {
+  "id": 137,
+  "verdict": "b)",
+  "evidence": "red lights clearly visible governing; two pedestrians crossing and a container lorry turning at the junction"
+ },
+ {
+  "id": 138,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; out-of-service bus in the left layby; car and lorry far off"
+ },
+ {
+  "id": 139,
+  "verdict": "a)",
+  "evidence": "campus carriageway continues clear around the bend to the right; building and hedge are off the lane"
  }
 ]
