@@ -1,0 +1,82 @@
+[
+ {
+  "id": 0,
+  "verdict": "b)",
+  "evidence": "STOP sign governing the approach; ego lane arrows are turn-only so the road terminates at a junction"
+ },
+ {
+  "id": 1,
+  "verdict": "a)",
+  "evidence": "green lights clearly visible over the ego lane; lane ahead clear; SUV is in the adjacent lane"
+ },
+ {
+  "id": 2,
+  "verdict": "a)",
+  "evidence": "industrial street clear for a long distance; parked vehicles off the running lane"
+ },
+ {
+  "id": 3,
+  "verdict": "b)",
+  "evidence": "two red lights governing; pedestrian crossing the ego path directly ahead; car crossing"
+ },
+ {
+  "id": 4,
+  "verdict": "a)",
+  "evidence": "service road under building, through arrow, way ahead clear; cars parked off the lane"
+ },
+ {
+  "id": 5,
+  "verdict": "a)",
+  "evidence": "dual carriageway, ego lane clear; single car ahead at distance in the adjacent lane"
+ },
+ {
+  "id": 6,
+  "verdict": "b)",
+  "evidence": "ego at a stop bar facing a terminating T-junction; road ahead ends in kerb and hedge"
+ },
+ {
+  "id": 7,
+  "verdict": "b)",
+  "evidence": "three red lights clearly visible on the gantry governing the ego lane; wet"
+ },
+ {
+  "id": 8,
+  "verdict": "b)",
+  "evidence": "adults with a pram crossing directly ahead in the ego path; red lights at the junction"
+ },
+ {
+  "id": 9,
+  "verdict": "b)",
+  "evidence": "zebra crossing directly ahead with a pedestrian stepping onto it; crowd at bus stop left"
+ },
+ {
+  "id": 10,
+  "verdict": "a)",
+  "evidence": "wide yard road clear ahead; parked cars off the lane; rain but lane visible"
+ },
+ {
+  "id": 11,
+  "verdict": "a)",
+  "evidence": "ego lane clear round the bend; the crossing car is on the side road at the junction"
+ },
+ {
+  "id": 12,
+  "verdict": "a)",
+  "evidence": "industrial street clear ahead; only distant headlights far off; rain but lane visible"
+ },
+ {
+  "id": 13,
+  "verdict": "a)",
+  "evidence": "ego lane through-arrow and clear; white SUV braking is in the adjacent right lane"
+ },
+ {
+  "id": 14,
+  "verdict": "a)",
+  "evidence": "ego lane clear ahead; white car in adjacent lane; pedestrian on the grass verge not entering"
+ },
+ {
+  "id": 15,
+  "verdict": "unclear",
+  "evidence": "night with heavy lens flare and water on the glass; vehicle ahead at middle distance, state not establishable"
+ }
+]
