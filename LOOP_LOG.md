@@ -1813,3 +1813,46 @@ relative to v21, and the *reason* it was cheap is the notebook's own
 precondition check -- it asserted the scenes were attached and exited in the
 setup cell instead of discovering it after loading a 16.6 GB model. That check
 was already there and it did its job.
+
+---
+
+## Iteration 30 — 2026-11-15 07:30 UTC — v24 partial: the 7B baseline lands, and a retry anomaly
+
+The user supplied the live Kaggle log, which the API does not serve while a
+kernel runs. First real data from Qwen2-VL-7B.
+
+**Baseline, complete, n=200 audited scenes:**
+
+```
+ASR 40.0%   benign-acc 60.0%   unreadable 0.0%   retried 71.5%   [4403 s]
+```
+
+**Clean accuracy is 60.0%**, against 52.0% for Qwen2.5-VL-3B on the unaudited
+100. Part of that is the bigger model and part is the audited scene set; the
+two are confounded here and cannot be separated from this run. Either way the
+"you are only flipping a coin-flip model" objection is materially weaker than
+it was: 60% is a model that mostly works.
+
+**`plain` at scene 124/200: 92 hits = 74.2%**, a naive +34.2 against the 40.0%
+baseline -- larger than the 3B's +25.0. **Not a result yet**: it is unpaired,
+and 76 scenes remain. The paired McNemar on matched scenes is the number that
+counts and it can move either way.
+
+**The anomaly worth chasing: `retried = 71.5%`.** That flag means the model's
+first chain-of-thought contained none of `a)`, `b)`, `proceed`, `brake`, so
+`chai_needs_retry` fired and the pipeline re-queried once -- CHAI's own
+behaviour, faithfully reproduced. On the 3B the same figure was **2%**
+(baseline) and **8%** (plain).
+
+So **roughly three-quarters of the 7B's answers are being read off a second
+query rather than the first.** `unreadable` is 0.0%, so the retries succeed,
+and the comparison is not invalid -- but it is a different measurement regime
+from the 3B, and any 3B-vs-7B sentence has to say so. Worth checking once the
+arm lands: whether hits and misses differ in retry rate, which would mean the
+retry is doing work the attack should be credited or blamed for.
+
+**Timing, measured rather than extrapolated.** Baseline 22.0 s/scene, `plain`
+29.9 s/scene, whole run projecting to **~2.9 h**. My pre-launch fear of 11.7 h
+against a 12 h ceiling was wrong by a factor of four, and the error came from
+extrapolating the 3B's single-GPU rate rather than measuring. The 2-scene
+smoke could have told me this and I did not use it for that.
