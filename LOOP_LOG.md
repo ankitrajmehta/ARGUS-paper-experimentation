@@ -1713,3 +1713,57 @@ stub model and cannot touch device placement; I knew that and still treated it
 as a pre-flight. A two-scene GPU smoke costs minutes and would have caught
 this before the long run. That is now the rule for any new model or new
 sharding setup, not an afterthought.
+
+---
+
+## Iteration 28 — 2026-11-15 04:40 UTC — diagnosed: the eval works, the activation sweep OOMs
+
+The 2-scene smoke reproduced the failure in **17 minutes**, and the log is
+retrievable after all -- not through `kernels output`, but through the REST
+endpoint with the `access_token` as a **bearer** header. My earlier `403` came
+from passing it as HTTP basic auth, which is the format for `kaggle.json`
+username/key pairs, not for a `KGAT_` token. Worth recording: `GET
+/api/v1/kernels/output?user_name=...&kernel_slug=...` returns a `log` field
+holding the full stream even when `kernels output` serves no `.log` file.
+
+**The failure is not where I expected, and the evaluation is fine.**
+
+```
+sharding: ['--device-map', 'auto']
+DriveLM / Qwen2-VL-7B-Instruct / baseline
+  baseline  n=2  ASR= 50.0%  benign-acc=50.0%        [baseline] 217s
+DriveLM / Qwen2-VL-7B-Instruct / plain
+  attack    n=2  ASR=100.0%  benign-acc= 0.0%        [plain]    150s
+activations: prompt-only (detection gate)
+  torch.OutOfMemoryError: GPU 0 has 14.56 GiB of which 40.81 MiB is free
+```
+
+**Both evaluation arms ran on the 7B.** The OOM is in `midas-activations`,
+which runs after them -- and the diagnostic detail is "GPU 0 ... 40.81 MiB
+free": the whole 16.6 GB model landed on **one** card. The `SHARD_ARGS` fix I
+added went into the evaluation loop only. The activation command never
+received it, so it loaded unsharded onto a 14.56 GiB T4.
+
+**My leading hypothesis was wrong.** Iteration 27 reasoned that
+`device_map="auto"` would scatter Qwen2-VL's vision tower and text embedding
+across cards, as InternVL does. It does not: sharded evaluation worked on the
+first try. The actual fault was the opposite -- a command that never got
+sharded at all. Recording this because the wrong hypothesis was plausible,
+specific, and would have sent the fix in entirely the wrong direction.
+
+**Two fixes.**
+1. `*SHARD_ARGS` added to the activation command.
+2. `MIDAS_DRIVELM_ACTIVATIONS=0` added, so the behavioural arms can be secured
+   first and activations extracted in a separate kernel. **v21 lost three
+   completed arms** because this OOM aborted the notebook before the packaging
+   step ran -- the per-arm saving I was relying on writes to
+   `/kaggle/working`, but nothing is retrievable if the notebook dies before
+   packaging. That is the real lesson from v21, and it is a different one from
+   "save after each arm".
+
+**Timing, measured rather than guessed.** baseline 217 s and plain 150 s for
+two scenes, each paying its own model load in a fresh subprocess. The 67 s gap
+between them is roughly the marginal cost of nothing, so load dominates at
+n=2 and the per-scene rate cannot be read off this. A 200-scene arm is
+therefore bounded well below the 11.7 h I feared, but I am not putting a
+number on it until an arm of real size reports.

@@ -56,6 +56,12 @@ DRIVELM_STYLES = [s for s in os.environ.get(
 # Filename of the scene set inside the attached dataset. The audited 200-scene
 # clean set is scenes_clean200.json; the original sweep used scenes.json.
 DRIVELM_SCENES_NAME = os.environ.get("MIDAS_DRIVELM_SCENES", "scenes.json")
+# The activation sweep feeds the probe and steering work, not the attack
+# result, and it is the most expensive part of the stage. Set
+# MIDAS_DRIVELM_ACTIVATIONS=0 to secure the behavioural arms first and extract
+# activations in a separate kernel -- v21 lost three completed arms because an
+# OOM in this step aborted the notebook before anything was packaged.
+DRIVELM_ACTIVATIONS = os.environ.get("MIDAS_DRIVELM_ACTIVATIONS", "1") != "0"
 
 CELLS: list[tuple[str, str, str]] = []
 
@@ -903,16 +909,24 @@ the steering work (section 13) needs two readouts of it:
   is fitted on.
 """)
 
+code(f'''
+EXTRACT_ACTIVATIONS = {DRIVELM_ACTIVATIONS!r}
+print("activation sweep:", "on" if EXTRACT_ACTIVATIONS else "SKIPPED by MIDAS_DRIVELM_ACTIVATIONS=0")
+''')
+
 code('''
 for readout_args, label in (
     (["--prompt-only"], "prompt-only (detection gate)"),
     ([], "answer token (steering direction)"),
-):
+) if EXTRACT_ACTIVATIONS else ():
     print(f"\\n{'=' * 70}\\nactivations: {label}\\n{'=' * 70}", flush=True)
+    # SHARD_ARGS matters as much here as in the evaluation: without it a 7B
+    # lands entirely on GPU 0 and dies at 14.56 GiB. v21 and v22 both failed
+    # exactly here, after the evaluation arms had already succeeded.
     subprocess.run(
         ["midas-activations", "--split", DRIVELM_SCENES, "--model", DRIVELM_MODEL,
          "--backend", "qwen", "--phrases", "1", "--controls", "2",
-         *LIMIT_ARGS, *readout_args,
+         *LIMIT_ARGS, *readout_args, *SHARD_ARGS,
          "--out", "/kaggle/working/results/drivelm/activations"],
         check=True,
     )
