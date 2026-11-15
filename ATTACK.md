@@ -236,7 +236,18 @@ otherwise.
 | `scripts/paired_significance.py` | exact McNemar |
 | `scripts/probe_decomposition.py` | tests whether a probe result is just string matching |
 | `results/clean_set/` | the audit: criteria, 330 judgements, the 200-scene set |
-| `results/review_images/` | 200 clean-vs-attacked pairs + contact sheets |
+| `results/review_images/` | **not committed** (images are gitignored); regenerate with step 3 above |
+
+### Checking the numbers without a GPU
+
+```bash
+python scripts/verify_attack_claims.py
+```
+
+Recomputes every figure in sections 1, 2, 3 and 5 of this document from the
+committed result files and prints PASS/FAIL against the values written here.
+It needs no model, no GPU and no DriveLM download. If a row says FAIL, this
+document is wrong and the script is right.
 
 ---
 
