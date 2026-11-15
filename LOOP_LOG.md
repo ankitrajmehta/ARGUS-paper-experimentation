@@ -1767,3 +1767,49 @@ between them is roughly the marginal cost of nothing, so load dominates at
 n=2 and the per-scene rate cannot be read off this. A 200-scene arm is
 therefore bounded well below the 11.7 h I feared, but I am not putting a
 number on it until an arm of real size reports.
+
+---
+
+## Iteration 29 — 2026-11-15 05:20 UTC — v23 died on my own upload mistake
+
+v23 failed after 31 minutes, and the cause is entirely mine:
+
+```
+DriveLM scenes: not attached
+SystemExit: no DriveLM scenes in the attached dataset.
+```
+
+**An upload replaces the dataset; it does not add to it.** The upload that
+carried the sharding fix was `kaggle_deploy.py upload -m "..."` with no
+`--drivelm`, so it removed the scene files and 344 MB of frames that the
+*previous* upload had put there. The notebook then correctly refused to run.
+
+**This is the third deploy-time failure in this project with the same shape:**
+v19 launched on stale source, v21/v22 launched on an unsharded command, v23
+launched against a dataset missing its data. Each wasted a GPU slot and each
+was knowable before launch. The source-hash guard was built after the first.
+This is the second guard.
+
+**Guard added.** `kaggle_deploy.py upload` now refuses outright when
+`data/drivelm/scenes*.json` exist locally but `--drivelm` was not passed,
+naming the files it would drop and what would break:
+
+```
+refusing: scenes.json, scenes_clean200.json, scenes_proceed.json exist
+locally but --drivelm was not passed.
+An upload replaces the whole dataset, so this would remove the DriveLM
+scenes and frames from Kaggle and every drivelm stage would fail with
+'no DriveLM scenes in the attached dataset'.
+Pass --drivelm to keep them, or --no-drivelm to drop them deliberately.
+```
+
+`--no-drivelm` exists so the deliberate case stays expressible -- a guard that
+cannot be overridden gets worked around instead of read. Exercised both
+branches directly rather than trusting the code path: bare upload refuses,
+either flag allows. 91 tests still pass.
+
+**What this cost.** Roughly 31 minutes of T4 time and one restart. Cheap
+relative to v21, and the *reason* it was cheap is the notebook's own
+precondition check -- it asserted the scenes were attached and exited in the
+setup cell instead of discovering it after loading a 16.6 GB model. That check
+was already there and it did its job.

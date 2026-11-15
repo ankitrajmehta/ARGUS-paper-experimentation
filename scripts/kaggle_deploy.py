@@ -145,8 +145,33 @@ def stage_activations(requested, dest: Path, roots: list[Path] | None = None) ->
     return source
 
 
+def warn_if_dropping_drivelm(staging_drivelm: bool) -> None:
+    """Refuse an upload that would silently drop DriveLM data from the dataset.
+
+    Each upload *replaces* the dataset rather than adding to it, so omitting
+    ``--drivelm`` when scenes exist locally removes them from Kaggle. v23 died
+    on "no DriveLM scenes in the attached dataset" for exactly this reason: a
+    fix-only upload that forgot the flag undid the data the previous upload had
+    put there.
+    """
+    if staging_drivelm:
+        return
+    local = sorted((ROOT / "data" / "drivelm").glob("scenes*.json"))
+    if not local:
+        return
+    names = ", ".join(p.name for p in local)
+    sys.exit(
+        f"refusing: {names} exist locally but --drivelm was not passed.\n"
+        "An upload replaces the whole dataset, so this would remove the DriveLM\n"
+        "scenes and frames from Kaggle and every drivelm stage would fail with\n"
+        "'no DriveLM scenes in the attached dataset'.\n"
+        "Pass --drivelm to keep them, or --no-drivelm to drop them deliberately."
+    )
+
+
 def cmd_upload(args: argparse.Namespace) -> None:
     user = require_credentials()
+    warn_if_dropping_drivelm(args.drivelm or getattr(args, "no_drivelm", False))
 
     if STAGING.exists():
         shutil.rmtree(STAGING)
@@ -473,7 +498,13 @@ def main(argv: list[str] | None = None) -> int:
     up.add_argument("-m", "--message", default="update source")
     up.add_argument(
         "--drivelm", action="store_true",
-        help="also stage data/drivelm/scenes.json and the frames it references",
+        help="also stage data/drivelm/scenes*.json and the frames they reference",
+    )
+    up.add_argument(
+        "--no-drivelm", action="store_true",
+        help="deliberately upload without DriveLM data. Required to confirm, "
+             "because an upload replaces the dataset and would otherwise drop "
+             "scenes that are present locally.",
     )
     up.add_argument(
         "--activations", nargs="?", const=True, default=None, metavar="DIR",
