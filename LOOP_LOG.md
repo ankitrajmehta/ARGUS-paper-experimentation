@@ -1665,3 +1665,51 @@ model groping for any cue, it should shrink on a stronger one. **If
 project.** If it collapses while `plain` holds, the lexical story returns in a
 new form -- that the actionless attack only works on models that cannot read
 the scene properly.
+
+---
+
+## Iteration 27 — 2026-11-15 04:10 UTC — v21 failed, and the log is not retrievable
+
+v21 (Qwen2-VL-7B, 200 audited scenes, 3 arms) is `ERROR`.
+
+**What is known, and the limit of it.** Kaggle's output for the run contains
+**only `midas_src`** -- the attached dataset copy -- and no results directory
+and no `.log`. Every earlier run produced
+`midas-chai-attack-on-internvl2-5-8b.log` through the same `kernels output`
+call, so its absence is informative: **the kernel failed before writing
+anything**, which places the failure in setup or model load rather than in
+evaluation. Had it reached even the first arm there would be a `baseline/`
+directory, because the loop writes after each arm.
+
+**The log could not be retrieved.** `kernels output` returns no log for this
+run; the REST endpoint answers `403 kernels.get denied` with the token in use;
+and the kernel page is private, so an unauthenticated fetch gets 404. Kaggle's
+web UI has the traceback but this session cannot reach it.
+
+**Cost is probably much smaller than the elapsed time suggests.** The kernel
+was pushed 17:57 UTC and read `ERROR` at 03:59 UTC, but Kaggle reports
+`lastRunTime` as the *start*, and a failed kernel sits in `ERROR` afterwards.
+An early failure is consistent with the empty output. I do not know the true
+GPU time and will not claim it.
+
+**What I am not doing: guessing.** There are at least three plausible causes --
+`device_map="auto"` scattering Qwen2-VL's vision tower and text embedding
+across the two cards (the exact failure InternVL needed `build_device_map`
+for, and Qwen has no equivalent), OOM from eager attention on this prompt
+length, and a transformers incompatibility. The first is the strongest
+candidate because `qwen.py` passes `device_map` straight through with no
+custom placement, and Qwen2-VL merges image embeddings into the text sequence
+by masked scatter exactly as InternVL does. **That remains a hypothesis.**
+
+**Action: a 2-scene smoke on the identical configuration**, launched 04:13
+UTC. Same model, same scene file, same sharding, `--limit 2`, one arm. It
+either reproduces the failure in minutes with a readable log, or it succeeds
+and the fault lies in scale rather than configuration.
+
+**The process error is mine and it is the obvious one.** I committed a
+600-evaluation run on a model and a sharding configuration that had **never
+been executed once** in this project. The `--dry-run` I did beforehand uses a
+stub model and cannot touch device placement; I knew that and still treated it
+as a pre-flight. A two-scene GPU smoke costs minutes and would have caught
+this before the long run. That is now the rule for any new model or new
+sharding setup, not an afterthought.
