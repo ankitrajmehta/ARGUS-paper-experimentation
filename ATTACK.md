@@ -175,6 +175,29 @@ Measured cost: **~43 min per 100-scene arm** on one T4 for Qwen2.5-VL-3B
 
 ## 7. Reproducing
 
+### What is in the repo and what you must fetch
+
+All the code is here: `src/` (the `midas` package), `scripts/`, `tests/`,
+`pyproject.toml`. Two things are deliberately **not** committed because they
+are large and re-downloadable:
+
+| not in git | size | get it with |
+|---|---|---|
+| `data/drivelm/nuscenes/` frames + `v1_1_train_nus.json` | ~3.5 GB | `python scripts/fetch_drivelm.py --out data/drivelm` |
+| `vendor/chai` (CHAI's released code) | — | `bash scripts/setup_vendor.sh` |
+
+The **scene files are committed**, because they record exactly which frames
+each experiment used and that is the one thing you cannot regenerate:
+
+- `data/drivelm/scenes.json` — the main 100
+- `data/drivelm/scenes_proceed.json` — the 150 brake-direction scenes
+- `data/drivelm/scenes_clean200.json` — the audited 200, with the judge's
+  evidence line on every row
+
+Per-scene result JSONs are committed too (~4.6 MB), so **every number in this
+document can be recomputed without a GPU.** Activation tensors (`.npz`),
+rendered images and archives are excluded for size.
+
 ```bash
 pip install -e .                      # or see requirements.txt
 

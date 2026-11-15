@@ -36,9 +36,12 @@ kaggle/_kernel/
 kaggle/_kernel_sweep/
 
 # DriveLM release: 3.5 GB of frames and a 193 MB QA file, both re-downloadable
-# with scripts/fetch_drivelm.py. scenes.json is kept -- it is small and records
-# exactly which 100 scenes an experiment used.
+# with scripts/fetch_drivelm.py. The scene files are kept -- each is a few
+# hundred KB and records exactly which frames an experiment used, which is the
+# one thing a replication cannot regenerate from the raw release.
 data/drivelm/nuscenes/
 data/drivelm/*.json
 !data/drivelm/scenes.json
+!data/drivelm/scenes_proceed.json
+!data/drivelm/scenes_clean200.json
 data/drivelm/.cache/
