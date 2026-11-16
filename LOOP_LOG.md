@@ -2063,3 +2063,59 @@ and not its neighbour, and an upload that silently dropped its data. Both are
 now guarded in code rather than in my memory. The verification above cost no
 GPU at all -- every committed per-scene result was already in the repository,
 which is the reason to keep tracking them.
+
+---
+
+## Iteration 34 — 2026-11-16 19:15 UTC — the 7B is unusable with this prompt; prediction refuted
+
+v25, 6 scenes, retry fix live (source hash verified against the upload).
+
+```
+baseline   long chars [7, 7, 7, 7, 7, 1400]   empty 5/6   retried 5/6
+plain      long chars [1131, 2223, 1824, 18, 1367, 1418]   empty 0/6   retried 0/6
+```
+
+**The resampled retry does not rescue it.** Five of six clean scenes are still
+7 characters after a temperature-1.0 redraw -- the same `'Answer:'`. So the
+degenerate continuation does not merely win the argmax, it **holds most of the
+probability mass**. Sampling lands in the same place.
+
+**Prediction refuted, recorded in advance.** I predicted the empty rate would
+fall to 20-40% and stated that above ~60% meant no retry could fix it and the
+honest move was to drop the 7B. It came in at **83%**. Per my own criterion,
+**stop spending GPU on this checkpoint.** Moving that threshold after seeing
+the number would make the pre-registration worthless.
+
+Third recorded prediction refuted out of four (gate #15, direction #16, this
+one; the layer-5 probe prediction survived). The pattern in all three: I
+predicted a *graded* effect where the system turned out to be *bimodal*.
+
+**What this does and does not establish.**
+
+* It is **not** an architecture fault: Qwen2-VL-2B produces 1036-5353
+  characters on the same clean frames with the same code.
+* It is **not** sharding: clean and attacked arms shared identical
+  `device_map`, and only the image differed.
+* It is **not** the dead retry: that bug was real, is fixed, and changes no
+  published number -- but it was never the cause here.
+* It **is** a property of the Qwen2-VL-7B checkpoint on this prompt: given two
+  bland driving frames and CHAI's ten-question chain, it answers `'Answer:'`
+  and stops. Add a red rectangle and it reasons for 1300 characters.
+
+That last sentence is itself interesting -- the sign does not merely change the
+*decision*, it changes whether the model engages at all -- but it is an
+observation about one checkpoint, not a result, and it cannot be measured with
+ASR.
+
+**One lever remains, and it is the user's call, not mine.** `min_new_tokens`
+would forbid EOS for the first N tokens and force a chain of thought. It is
+standard and defensible, but it changes the generation contract relative to
+every 3B number already published, so the two would no longer be directly
+comparable. Given the GPU already spent on this model -- v21, v22, v24, v25 --
+I am not launching it without being asked.
+
+**Recommendation: stop the 7B line.** The attack result stands on
+Qwen2.5-VL-3B (n=100, n=150) and InternVL2.5-2B, two families, with the
+lexical explanation refuted on both. The 7B was to answer "does this survive a
+more competent model"; it cannot answer that while it will not produce a
+chain of thought on clean input.
