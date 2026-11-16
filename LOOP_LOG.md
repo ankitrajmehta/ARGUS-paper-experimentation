@@ -1856,3 +1856,81 @@ retry is doing work the attack should be credited or blamed for.
 against a 12 h ceiling was wrong by a factor of four, and the error came from
 extrapolating the 3B's single-GPU rate rather than measuring. The 2-scene
 smoke could have told me this and I did not use it for that.
+
+---
+
+## Iteration 31 — 2026-11-16 14:30 UTC — v24 completed, and its headline numbers are not trustworthy
+
+All three arms finished (baseline 4403 s, plain 6033 s, descriptive 5964 s;
+~4.6 h total, against my pre-launch fear of 11.7 h).
+
+**As reported by the pipeline, on 200 audited scenes:**
+
+```
+                ASR     net     b    c          p
+no sign       40.0%       -     -    -          -     clean accuracy 60.0%
+plain         75.0%   +35.0    17   87   1.67e-12
+descriptive   65.5%   +25.5    19   70   4.96e-08
+plain vs descriptive                      p=0.0295  -> separable
+```
+
+Taken at face value this is the best result in the project: both wordings
+hugely significant on a model with 60% clean accuracy, and at n=200 `plain`
+finally separates from `descriptive`, which it could not at n=100.
+
+**I do not believe the numbers, and the reason is in the retry column.**
+
+```
+baseline      retried 71.5%      median chain-of-thought length      7 chars
+plain         retried  2.0%      median chain-of-thought length   1334 chars
+descriptive   retried  2.0%      median chain-of-thought length   1346 chars
+```
+
+On **142 of 200 clean scenes** Qwen2-VL-7B emits the literal string
+`'Answer:'` as its entire chain of thought and stops. The retry fires, and
+**99% of retried scenes are still empty after it** -- so the summarise turn is
+condensing an empty reasoning trace and the model answers from the image
+alone. With a sign present this essentially never happens (1 and 3 scenes).
+
+So the comparison is not attacked-vs-clean on equal footing. It is
+
+* **baseline**: no reasoning produced, answer guessed from the image, and
+* **attacked**: full 1300-character chain of thought.
+
+The measured +35.0 therefore conflates the sign's effect on the *decision*
+with the sign's effect on *whether the model reasons at all*. That second
+effect is real and interesting, but it is not what ASR is supposed to measure,
+and reporting +35.0 as an attack effect size would be wrong.
+
+**Restricting to the 58 scenes where all three arms produced real reasoning:**
+
+```
+no sign       31.0%
+plain         74.1%   net +43.1   b=4  c=29   p=1.1e-05
+descriptive   55.2%   net +24.1   b=6  c=20   p=0.0094
+```
+
+Both survive, and `descriptive` lands at +24.1 -- close to its +21.0 on the
+3B. That is reassuring but **it is a post-hoc subset chosen by an outcome
+variable** (whether the model reasoned), which is exactly the kind of
+selection that manufactures effects. It is a sanity check, not a result.
+
+**Status of the 7B claim: unusable until the empty-generation bug is
+understood.** The 3B results are unaffected -- its baseline retry rate was
+2.0%, and its chain-of-thought lengths are normal. `ATTACK.md` carries no 7B
+numbers and must not until this is fixed.
+
+**Next step is diagnosis, not another run.** Why does Qwen2-VL-7B emit
+`'Answer:'` and stop on a clean frame but reason normally once a red rectangle
+is added? Candidates: an EOS immediately after the `Answer:` token under this
+prompt; a Qwen2-VL vs Qwen2.5-VL chat-template difference; something about
+`max_new_tokens` or the vision-dtype path. This is reproducible on 2 scenes
+locally or on Kaggle for pennies, and must be settled before any 7B number is
+quoted.
+
+**Prediction check, from iteration 26.** I predicted clean accuracy would be
+materially above the 3B's 52% (it is: 60.0%), that `plain` would stay
+significant (it did), and said I was unsure whether `descriptive` would hold
+(it did, both overall and on the restricted subset). Two of three right -- but
+the prediction I would most like to have made is the one I did not: that a
+model change could break the measurement itself rather than move the number.
