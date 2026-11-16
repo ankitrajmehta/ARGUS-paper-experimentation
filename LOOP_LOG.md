@@ -2119,3 +2119,29 @@ Qwen2.5-VL-3B (n=100, n=150) and InternVL2.5-2B, two families, with the
 lexical explanation refuted on both. The 7B was to answer "does this survive a
 more competent model"; it cannot answer that while it will not produce a
 chain of thought on clean input.
+
+---
+
+## Iteration 35 — 2026-11-16 19:30 UTC — switching the 7B to the family that works
+
+The user wants a 7B ASR for the updated phrases. Qwen2-VL-7B cannot give one
+(iteration 34), so the question became which 7B-class model can, checked on
+paper before any GPU:
+
+* **Qwen2.5-VL-7B-Instruct** -- `model_type=qwen2_5_vl`, the same family and
+  the same shipped generation config as the 3B that ran at a 2% retry rate.
+  Already dispatched by `models/qwen.py`; same size as the checkpoint that
+  just ran sharded over both T4s. Results stay directly comparable to the 3B.
+* **InternVL2.5-8B** -- fallback. Ran repeatedly in this pipeline with a 0%
+  retry rate and no empty replies.
+
+The trade-off, stated: Qwen2.5-VL-7B is *not* the friend's ARGUS checkpoint
+(that was Qwen2-VL-7B), so it answers "does the attack survive a larger
+model" but no longer aligns us with the one configuration where their
+steering is known to work.
+
+**v26 launched: 6-scene smoke, baseline + plain + descriptive.** The only
+thing read off it is whether the clean baseline produces a real chain of
+thought. No prediction this time beyond the obvious one -- a 2.5-family model
+should behave like the 2.5-family 3B -- and if it does not, InternVL2.5-8B is
+next, again smoke first.
