@@ -1934,3 +1934,76 @@ significant (it did), and said I was unsure whether `descriptive` would hold
 (it did, both overall and on the restricted subset). Two of three right -- but
 the prediction I would most like to have made is the one I did not: that a
 model change could break the measurement itself rather than move the number.
+
+---
+
+## Iteration 32 — 2026-11-16 15:05 UTC — diagnosis: the retry has been a no-op all along
+
+**Qwen2-VL-2B does not reproduce the fault.** Same prompt, same code, four
+scenes clean and attacked, on MPS:
+
+```
+scene cond    chars  tok  stop
+    0 clean    1457  325  EOS
+    1 clean    1611  366  EOS
+    2 clean    1036  233  EOS
+    3 clean    5353 1250  BUDGET
+clean median 1611 chars, empty 0/4
+```
+
+So the empty generation is **not** the Qwen2-VL architecture, not the prompt,
+and not the DriveLM question chain -- all three are shared with the 2B.
+
+**Sharding is ruled out without spending a GPU-hour.** The clean and attacked
+arms of v24 ran in the same process, on the same scenes, with identical
+`device_map="auto"`. The only variable between them was the image. A constant
+cannot explain a difference, so `device_map` is not the cause.
+
+That leaves the 7B checkpoint's own behaviour on these frames, which is a
+model property rather than a bug of ours. **But looking for it turned up a bug
+that is ours, and it is worse.**
+
+### The retry has never worked under greedy decoding
+
+```python
+retried = True
+long = self._generate(inputs)      # identical inputs
+...
+do_sample: bool = False            # greedy
+```
+
+Greedy decoding is deterministic. Re-running identical inputs returns a
+**bit-identical** reply, so the retry could never change anything. v24's data
+says exactly that: of 143 retried baseline scenes, **142 (99%) were still
+empty afterwards.**
+
+CHAI's retry works because they decode with `do_sample=True`, where a second
+draw differs. We switched to greedy deliberately -- a good change, it stops
+decoding noise swamping the effect -- and that silently converted an inherited
+mechanism into a no-op. **Both runners had it**, Qwen and InternVL alike.
+
+It stayed invisible because the retry fired on ~2% of scenes for every model
+we had used. Qwen2-VL-7B fires it on 71.5%, and a dead branch that runs on 7
+scenes in 10 stops being invisible.
+
+**Fix.** `_generate(inputs, resample=True)` for Qwen and
+`_generation_config(resample=True)` for InternVL: sampling on the retry path
+only, greedy everywhere else. The primary measurement is unchanged, so no
+existing number moves; only the retry path, which previously did nothing, now
+does something.
+
+**Regression test added** (92 tests). It reads the source of both `ask`
+methods and asserts the retry requests a resample, because the failure mode is
+silent -- a no-op retry produces no error, no warning, and plausible numbers.
+
+### What this does and does not rescue
+
+It does **not** make v24's numbers usable. The baseline would still be
+answering from a largely empty chain of thought; a working retry would give it
+*a* reasoning trace, but the arms would still differ in how they were
+produced. v24 must be re-run before any 7B figure is quoted.
+
+It does mean every prior run with a non-trivial retry rate deserves a second
+look. The 3B DriveLM sweep sits at 2% (baseline) and 8% (plain), so at most a
+handful of scenes are affected and the headline numbers are safe -- but that
+is a statement I should verify rather than assert, and it is the next task.

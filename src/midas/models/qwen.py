@@ -198,14 +198,26 @@ class QwenVLDriveLM:
         )
         return {k: v.to(self.model.device) for k, v in batch.items()}
 
-    def _generate(self, inputs: dict) -> str:
+    def _generate(self, inputs: dict, resample: bool = False) -> str:
+        """Generate one reply.
+
+        ``resample`` forces sampling for this call only. It exists for the
+        retry path: CHAI re-query when a reply names no action, which works
+        for them because they decode with ``do_sample=True`` and a second
+        draw differs. We decode greedily by default, so re-running the same
+        inputs returns a *bit-identical* reply and the retry is a no-op. That
+        went unnoticed while the retry fired on 2% of scenes; on
+        Qwen2-VL-7B it fires on 71.5% and silently does nothing (v24, 99% of
+        retried scenes still empty afterwards).
+        """
+        sample = self.do_sample or resample
         with torch.inference_mode():
             out = self.model.generate(
                 **inputs,
                 max_new_tokens=self.max_new_tokens,
-                do_sample=self.do_sample,
-                temperature=None if not self.do_sample else 1.0,
-                top_p=None if not self.do_sample else 1.0,
+                do_sample=sample,
+                temperature=1.0 if sample else None,
+                top_p=1.0 if sample else None,
                 pad_token_id=self.processor.tokenizer.pad_token_id,
             )
         trimmed = out[:, inputs["input_ids"].shape[1]:]
@@ -244,9 +256,11 @@ class QwenVLDriveLM:
 
             retried = False
             if retry_on_unreadable and drivelm.chai_needs_retry(long):
-                # CHAI re-query once when the reply names no action.
+                # CHAI re-query once when the reply names no action. Under
+                # greedy decoding a plain re-run is deterministic and returns
+                # the same reply, so the retry must resample to mean anything.
                 retried = True
-                long = self._generate(inputs)
+                long = self._generate(inputs, resample=True)
 
             # Second turn: a fresh exchange carrying the first answer's tail,
             # which is what CHAI do rather than continuing the conversation.

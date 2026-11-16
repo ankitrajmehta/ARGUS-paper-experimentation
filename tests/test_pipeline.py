@@ -1778,3 +1778,36 @@ def test_launcher_refuses_source_newer_than_the_upload(tmp_path, monkeypatch, ca
     (src / "styles.py").write_text("STYLES = ('plain',)\n")
     deploy.check_source_is_uploaded()
     assert "matches src/" in capsys.readouterr().out
+
+
+def test_retry_resamples_rather_than_repeating_a_greedy_draw():
+    """A retry that re-runs greedy decoding is a no-op and must not ship.
+
+    CHAI re-query when a reply names no action. That works for them because
+    they sample. We decode greedily, so re-running identical inputs returns an
+    identical reply -- the retry fired on 71.5% of Qwen2-VL-7B baseline scenes
+    in v24 and changed nothing in 99% of them. Both runners must therefore ask
+    for sampling on the retry path specifically.
+    """
+    import inspect
+
+    from midas.models import internvl, qwen
+
+    qwen_src = inspect.getsource(qwen.QwenVLDriveLM.ask)
+    assert "resample=True" in qwen_src, (
+        "qwen retry must resample; a plain _generate(inputs) under greedy "
+        "decoding returns the same reply and cannot help"
+    )
+
+    gen_src = inspect.getsource(qwen.QwenVLDriveLM._generate)
+    assert "resample" in gen_src and "self.do_sample or resample" in gen_src, (
+        "_generate must honour a per-call resample override"
+    )
+
+    internvl_src = inspect.getsource(internvl.InternVLDriveLM.ask)
+    assert "resample=True" in internvl_src, (
+        "internvl retry must request a resampled generation config"
+    )
+
+    cfg_src = inspect.getsource(internvl.InternVLDriveLM._generation_config)
+    assert "self.do_sample or resample" in cfg_src

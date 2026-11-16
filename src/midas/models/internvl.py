@@ -304,9 +304,18 @@ class InternVLDriveLM:
             return torch.mps.current_allocated_memory() / 1e9
         return 0.0
 
-    def _generation_config(self) -> dict:
-        cfg = {"max_new_tokens": self.max_new_tokens, "do_sample": self.do_sample}
-        if self.do_sample:
+    def _generation_config(self, resample: bool = False) -> dict:
+        """Generation settings. ``resample`` forces sampling for one call.
+
+        The retry path needs it: CHAI re-query when a reply names no action,
+        which only helps because they decode with ``do_sample=True``. Greedy
+        decoding is deterministic, so re-running identical inputs returns an
+        identical reply and the retry does nothing. See the matching comment
+        in models/qwen.py.
+        """
+        sample = self.do_sample or resample
+        cfg = {"max_new_tokens": self.max_new_tokens, "do_sample": sample}
+        if sample:
             cfg["temperature"] = 1.0
         return cfg
 
@@ -559,7 +568,7 @@ class InternVLDriveLM:
                     self.tokenizer,
                     pixel_values,
                     drivelm.build_prompt(),
-                    gen_cfg,
+                    self._generation_config(resample=True),
                     num_patches_list=num_patches_list,
                     history=None,
                     return_history=True,
