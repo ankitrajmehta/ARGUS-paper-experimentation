@@ -2007,3 +2007,59 @@ It does mean every prior run with a non-trivial retry rate deserves a second
 look. The 3B DriveLM sweep sits at 2% (baseline) and 8% (plain), so at most a
 handful of scenes are affected and the headline numbers are safe -- but that
 is a statement I should verify rather than assert, and it is the next task.
+
+---
+
+## Iteration 33 — 2026-11-16 15:25 UTC — verified: the dead retry does not touch any published number
+
+Audited every committed run (89 with a retry or an empty reply), then tested
+the headline results directly rather than reasoning about them.
+
+**First, a false alarm I nearly reported.** A naive scan flagged dozens of runs
+as having "empty" chain-of-thought answers. They were runs saved **without
+`--save-long`** -- the field is absent, not empty. Every headline run has a
+real reply stored for **100% of its scenes**. The empty-generation fault is
+Qwen2-VL-7B's alone.
+
+**Why the published numbers are unaffected, stated exactly.** Because the
+retry re-ran greedy decoding on identical inputs, it returned the identical
+reply. The text that flowed into the summarise turn is therefore the same text
+the first pass produced. **Every published number is precisely what a
+no-retry pipeline yields** -- nothing was corrupted, a step simply did nothing.
+What is wrong is fidelity to CHAI, not the arithmetic.
+
+**Sensitivity check -- drop every scene that touched the retry, in either arm:**
+
+```
+arm           published net       p     kept   retry-free net       p    verdict
+plain                 +25.0  0.0005       90           +24.4  0.0016  unchanged
+authority             +17.0  0.0095       88           +15.9  0.0288  unchanged
+urgency                +8.0  0.2682       77            +6.5  0.4869  unchanged
+override               +6.0  0.4614       85            +8.2  0.3604  unchanged
+descriptive           +21.0  0.0011       83           +21.7  0.0039  unchanged
+indirect               +8.0  0.2912       82            +4.9  0.6271  unchanged
+```
+
+**No conclusion flips.** Every significant arm stays significant, every null
+stays null, and the largest shift is 3.1 points on `indirect`, which was never
+significant. `descriptive` -- the arm the whole lexical argument rests on --
+moves *up*, from +21.0 to +21.7.
+
+**Direction split, n=150:** +48.0 (p=1.3e-15) published, **+55.5 (p=8.5e-17)**
+with the 22 retry-touched scenes dropped. Also unchanged in conclusion, and
+stronger without them.
+
+**InternVL2.5-2B sweep:** 1 retried scene across all four arms. Immaterial.
+
+**Conclusion.** `ATTACK.md` needs no correction. The fix changes what *future*
+runs do -- retried scenes will now get a genuinely different draw -- so the
+numbers will shift slightly on any re-run, and that must be stated when
+comparing old and new. The one result that cannot stand is v24's 7B, which was
+already withdrawn for a different reason.
+
+**On cost.** Three failed GPU launches in this sequence (v21, v23, and a
+17-minute smoke) were all preventable: a sharding flag applied to one command
+and not its neighbour, and an upload that silently dropped its data. Both are
+now guarded in code rather than in my memory. The verification above cost no
+GPU at all -- every committed per-scene result was already in the repository,
+which is the reason to keep tracking them.
