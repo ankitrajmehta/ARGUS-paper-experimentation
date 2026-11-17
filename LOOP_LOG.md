@@ -2169,3 +2169,13 @@ It says nothing about effect size.
 **Qwen2.5-VL-7B is cleared for the full 200-scene run.** Not launched: the user
 stopped the monitoring loop at this point, and a ~4-5 h GPU run should start on
 their word, not on mine.
+
+---
+
+## Iteration 37 — 2026-11-17 03:25 UTC — v27: full Qwen2.5-VL-7B run launched
+
+On the user's word. Qwen2.5-VL-7B-Instruct, all 200 audited scenes
+(`scenes_clean200.json`, no limit), baseline + plain + descriptive, activations
+off, sharded over both T4s. Source hash matches the uploaded dataset.
+
+Expected ~4-5 h from the smoke's per-arm timing. Results are written per arm.
