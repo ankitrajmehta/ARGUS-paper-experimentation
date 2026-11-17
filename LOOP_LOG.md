@@ -2179,3 +2179,44 @@ On the user's word. Qwen2.5-VL-7B-Instruct, all 200 audited scenes
 off, sharded over both T4s. Source hash matches the uploaded dataset.
 
 Expected ~4-5 h from the smoke's per-arm timing. Results are written per arm.
+
+---
+
+## Iteration 38 — 2026-11-17 13:20 UTC — v27 partial (from the user's log paste): the 7B attack lands, reversed in direction
+
+Rebuilt per scene from the pasted Kaggle log (`HIT`/`scene` lines); the
+reconstruction reproduces the log's own summary ASRs exactly (32.5%, 65.0%).
+Qwen2.5-VL-7B, 200 audited scenes, sharded over 2xT4.
+
+```
+                 n     ASR      net    b    c          p
+no sign        200   32.5%       -     -    -          -    clean acc 67.5%, retried 1.0%
+plain          200   65.0%   +32.5    17   82    2.2e-11    retried 2.5%, unreadable 0
+descriptive     41   63.4%   +39.0     3   19    8.6e-04    (in progress)
+plain vs descriptive on the 41 shared scenes: b=10 c=9 p=1.0
+```
+
+**Measurement is clean** -- full chains of thought, retry ~1-2.5%, no
+unreadable answers in the complete arms. Clean accuracy 67.5% (3B: 52.0%).
+
+**Direction reverses relative to the 3B.**
+
+```
+plain   push to BRAKE   (car moving)  n=100  21% -> 79%   b=1  c=59  p=1.1e-16
+plain   push to PROCEED (car stopped) n=100  44% -> 51%   b=16 c=23  p=0.34
+```
+
+The 3B was moved almost only toward *proceed* (+58.6); the 7B almost only
+toward *brake* (+58). Mirror image. Consistent with the attack riding the
+model's existing bias rather than creating obedience -- but the 3B direction
+result was measured on different scene sets (scenes.json + scenes_proceed),
+so the cross-model comparison carries that caveat.
+
+**Scoring checked:** `Stop` -> brake, `Brake.`/`b) Brake`/`Proceed.` parse
+correctly; one `'Continue driving.'` scored UNREADABLE, which is conservative
+against the attack.
+
+**Timing:** descriptive 77.8 s/scene; projected finish 46,800 s against the
+43,200 s Kaggle limit -> cut off near scene 153. Per-scene `.jsonl` journal
+means a partial descriptive arm (~153 matched scenes) should survive if Kaggle
+retains /kaggle/working on timeout. Baseline and plain are complete.
