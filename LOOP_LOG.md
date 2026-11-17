@@ -2145,3 +2145,27 @@ thing read off it is whether the clean baseline produces a real chain of
 thought. No prediction this time beyond the obvious one -- a 2.5-family model
 should behave like the 2.5-family 3B -- and if it does not, InternVL2.5-8B is
 next, again smoke first.
+
+---
+
+## Iteration 36 — 2026-11-17 03:00 UTC — Qwen2.5-VL-7B works; loop stopped by the user
+
+v26 smoke, 6 scenes, three arms. **The empty-reasoning fault is gone:**
+
+```
+baseline     long chars [5475, 4013, 4915, 4391, 5127, 3462]   empty 0/6   retried 0%
+plain        long chars [5229, 3436, 4688, 4166, 4232, 3780]   empty 0/6   retried 0%
+descriptive  long chars [3998, 4325, 4210, 4536, 3776, 4426]   empty 0/6   retried 0%
+```
+
+Every arm produces a full chain of thought, so baseline and attacked are
+measured on equal footing -- the property Qwen2-VL-7B lacked. Timing ~10 min
+per 6-scene arm including load.
+
+ASR at n=6 (baseline 33.3%, plain 83.3%, descriptive 33.3%) is reported only
+for completeness: one scene is 16.7 points and the 95% interval is about +/-40.
+It says nothing about effect size.
+
+**Qwen2.5-VL-7B is cleared for the full 200-scene run.** Not launched: the user
+stopped the monitoring loop at this point, and a ~4-5 h GPU run should start on
+their word, not on mine.
